@@ -4,817 +4,429 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Ogilvy Automation Systems – Explore the automation systems we've built for teams across Ogilvy." />
-  <title>Automation Systems – Ogilvy Automation Team Portal</title>
+  <title>Automation Systems | Ogilvy Automation</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              red: '#DC2626',
-              'red-dark': '#B91C1C',
-              amber: '#F59E0B',
-              'amber-dark': '#D97706',
-            }
-          }
-        }
-      }
+      theme: { extend: { colors: { red: { 600: '#E30613', 700: '#b50510' } } } }
     }
   </script>
+  <link rel="stylesheet" href="css/style.css" />
   <style>
-    .glow-amber {
-      box-shadow: 0 0 20px rgba(245, 158, 11, 0.4), 0 0 40px rgba(245, 158, 11, 0.15);
+    .system-card { transition: transform 0.2s, border-color 0.2s; }
+    .system-card:hover { transform: translateY(-3px); border-color: var(--glass-border-h) !important; }
+    .filter-tab {
+      padding: 0.375rem 0.875rem;
+      border-radius: 9999px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      border: 1px solid var(--glass-border-h);
+      color: var(--text-secondary);
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.15s;
     }
-    .glow-amber:hover {
-      box-shadow: 0 0 28px rgba(245, 158, 11, 0.6), 0 0 56px rgba(245, 158, 11, 0.25);
+    .filter-tab:hover { color: var(--text-primary); background: var(--glass-bg-strong); }
+    .filter-tab.active { background: var(--red); color: #fff; border-color: var(--red); }
+    .filter-select {
+      background: var(--glass-bg-strong);
+      border: 1px solid var(--glass-border-h);
+      color: var(--text-secondary);
+      border-radius: 8px;
+      padding: 0.4375rem 2rem 0.4375rem 0.75rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='none' viewBox='0 0 24 24'%3E%3Cpath stroke='%23ffffff60' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.625rem center;
+      cursor: pointer;
     }
-    .nav-link {
-      position: relative;
-    }
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: #DC2626;
-      transition: width 0.25s ease;
-    }
-    .nav-link:hover::after {
+    .filter-select:focus { outline: none; border-color: var(--red); }
+    .search-input {
+      background: var(--glass-bg-strong);
+      border: 1px solid var(--glass-border-h);
+      color: var(--text-primary);
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+      font-size: 0.875rem;
       width: 100%;
     }
-    .card-hover {
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    .search-input::placeholder { color: rgba(255,255,255,0.28); }
+    .search-input:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(227,6,19,0.12); }
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
+      z-index: 100; display: none; align-items: center; justify-content: center; padding: 1rem;
+      animation: fadeInOv 0.15s ease;
     }
-    .card-hover:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+    .modal-overlay.open { display: flex; }
+    @keyframes fadeInOv { from { opacity:0; } to { opacity:1; } }
+    .modal-panel {
+      background: #0f0f1e;
+      border: 1px solid var(--glass-border-h);
+      border-radius: 16px;
+      max-width: 640px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUpModal 0.2s ease;
     }
-    .modal-backdrop {
-      animation: fadeIn 0.15s ease-out;
-    }
-    .modal-content {
-      animation: slideUp 0.2s ease-out;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .system-card[data-hidden="true"] {
-      display: none;
-    }
-    .filter-tab.active {
-      background-color: #DC2626;
-      color: white;
+    @keyframes slideUpModal { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    .tag-chip { font-size: 0.7rem; font-family: monospace; background: rgba(255,255,255,0.06); color: var(--text-muted); padding: 0.2rem 0.5rem; border-radius: 4px; border: 1px solid var(--glass-border); }
+    .impact-chip { display:inline-flex; align-items:center; gap:0.3rem; font-size:0.75rem; font-weight:700; background:rgba(227,6,19,0.1); border:1px solid rgba(227,6,19,0.2); color:#fca5a5; padding:0.2rem 0.625rem; border-radius:9999px; }
+    .tech-chip { font-size:0.7rem; font-family:monospace; background:rgba(255,255,255,0.08); color:var(--text-secondary); padding:0.25rem 0.625rem; border-radius:6px; border:1px solid var(--glass-border); }
+    .sticky-filters {
+      position: sticky;
+      top: 64px;
+      z-index: 40;
+      background: rgba(7,7,15,0.95);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 0.875rem 0;
     }
   </style>
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+<body class="public-page min-h-screen">
 
-  <!-- ========================================================
-       NAVIGATION
-  ======================================================== -->
-  <nav class="bg-gray-900 sticky top-0 z-50 shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
-        <!-- Logo -->
-        <a href="index.html" class="flex items-center gap-2 flex-shrink-0">
-          <span class="text-xl">⚙️</span>
-          <span class="text-white font-bold text-lg tracking-tight">
-            Ogilvy <span class="text-red-600">Automation</span>
-          </span>
-        </a>
-        <!-- Desktop Links -->
-        <div class="hidden md:flex items-center gap-6">
-          <a href="index.html"            class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">Home</a>
-          <a href="systems.html"          class="nav-link text-white text-sm font-medium transition-colors border-b-2 border-red-600 pb-0.5">Systems</a>
-          <a href="what-we-automate.html" class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">What We Automate</a>
-          <a href="about.html"            class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">About</a>
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <!-- Navigation -->
+  <nav class="site-nav z-content">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
         </div>
-        <!-- Desktop CTA -->
-        <div class="hidden md:flex items-center gap-3">
-          <a href="book-consultation.html"
-             class="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors glow-amber">
-            📅 Request Consultation
-          </a>
-        </div>
-        <!-- Mobile hamburger -->
-        <button id="mobile-menu-btn"
-                class="md:hidden text-gray-300 hover:text-white p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600"
-                aria-label="Toggle navigation menu"
-                aria-expanded="false">
-          <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-          </svg>
-          <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
+        <span>Ogilvy <span class="text-red-600">Automation</span></span>
+      </a>
+      <div class="nav-links hidden md:flex">
+        <a href="index.html" class="nav-link">Home</a>
+        <a href="systems.html" class="nav-link active">Systems</a>
+        <a href="what-we-automate.html" class="nav-link">What We Automate</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="book-consultation.html" class="nav-cta ml-3">Request Consultation</a>
       </div>
+      <button class="md:hidden btn-glass btn btn-sm" id="mobile-menu-btn" aria-label="Toggle navigation" aria-expanded="false">Menu</button>
     </div>
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden md:hidden bg-gray-800 border-t border-gray-700">
-      <div class="px-4 pt-3 pb-4 space-y-1">
-        <a href="index.html"            class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
-        <a href="systems.html"          class="block text-white bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Systems</a>
-        <a href="what-we-automate.html" class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">What We Automate</a>
-        <a href="about.html"            class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
-        <div class="pt-2 border-t border-gray-700">
-          <a href="book-consultation.html"
-             class="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-3 py-2.5 rounded-md text-sm font-semibold transition-colors">
-            📅 Request Consultation
-          </a>
-        </div>
-      </div>
+    <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 px-4 py-3 space-y-1">
+      <a href="index.html" class="nav-link block py-2">Home</a>
+      <a href="systems.html" class="nav-link active block py-2">Systems</a>
+      <a href="what-we-automate.html" class="nav-link block py-2">What We Automate</a>
+      <a href="about.html" class="nav-link block py-2">About</a>
+      <a href="book-consultation.html" class="btn btn-primary btn-sm block text-center mt-2">Request Consultation</a>
     </div>
   </nav>
 
-  <!-- ========================================================
-       HERO
-  ======================================================== -->
-  <section class="bg-gradient-to-br from-red-800 via-red-700 to-red-600 text-white py-20 px-4">
-    <div class="max-w-4xl mx-auto text-center">
-      <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">Our Automation Systems</h1>
-      <p class="text-red-100 text-lg md:text-xl max-w-2xl mx-auto">
-        Explore the systems we've built for teams across Ogilvy — from simple task automation to complex workflow orchestration.
-      </p>
-    </div>
-  </section>
+  <div class="z-content relative">
 
-  <!-- ========================================================
-       CONSULTATION CTA BANNER
-  ======================================================== -->
-  <section class="bg-amber-500 py-5 px-4 shadow-md">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="text-center md:text-left">
-        <p class="text-white font-bold text-lg">🚀 Want something like this for your team?</p>
-        <p class="text-amber-900 text-sm font-medium">Request a free consultation to explore automation opportunities</p>
-      </div>
-      <a href="book-consultation.html"
-         class="flex-shrink-0 bg-white text-amber-600 font-bold px-6 py-3 rounded-lg hover:bg-amber-50 transition-colors shadow-md text-sm whitespace-nowrap">
-        📅 Request Consultation →
-      </a>
-    </div>
-  </section>
-
-  <!-- ========================================================
-       FILTERS BAR (sticky)
-  ======================================================== -->
-  <div id="filters-bar" class="sticky top-16 z-40 bg-white border-b border-gray-200 shadow-sm py-4 px-4">
-    <div class="max-w-7xl mx-auto space-y-3">
-      <!-- Row 1: Search + Sort -->
-      <div class="flex flex-col sm:flex-row gap-3">
-        <div class="relative flex-1">
-          <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-          </svg>
-          <input id="search-input" type="text" placeholder="Search systems..."
-            class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent" />
+    <!-- Hero -->
+    <section style="padding:3.5rem 1.5rem 2rem; text-align:center;">
+      <div class="container-md">
+        <div class="hero-eyebrow">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          Live Systems
         </div>
-        <div class="flex items-center gap-2">
-          <label class="text-sm text-gray-600 whitespace-nowrap font-medium">Sort by:</label>
-          <select id="sort-select"
-            class="border border-gray-300 rounded-lg text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-white">
-            <option value="newest">Newest</option>
-            <option value="impact">Most Impact</option>
-            <option value="department">Department</option>
-          </select>
-        </div>
-        <div class="flex items-center gap-2">
-          <label class="text-sm text-gray-600 whitespace-nowrap font-medium">Department:</label>
-          <select id="dept-select"
-            class="border border-gray-300 rounded-lg text-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-white">
-            <option value="all">All Departments</option>
-            <option value="Marketing">Marketing</option>
-            <option value="Finance">Finance</option>
-            <option value="HR">HR</option>
-            <option value="Operations">Operations</option>
-            <option value="IT">IT</option>
-            <option value="Legal">Legal</option>
-            <option value="Creative">Creative</option>
-          </select>
-        </div>
-      </div>
-      <!-- Row 2: Status tabs + Count -->
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div class="flex flex-wrap gap-2">
-          <button class="filter-tab active text-sm font-medium px-3 py-1.5 rounded-full border border-gray-300 hover:border-red-500 transition-colors" data-status="all">All</button>
-          <button class="filter-tab text-sm font-medium px-3 py-1.5 rounded-full border border-gray-300 hover:border-red-500 transition-colors" data-status="Active">Active</button>
-          <button class="filter-tab text-sm font-medium px-3 py-1.5 rounded-full border border-gray-300 hover:border-red-500 transition-colors" data-status="In Development">In Development</button>
-          <button class="filter-tab text-sm font-medium px-3 py-1.5 rounded-full border border-gray-300 hover:border-red-500 transition-colors" data-status="Maintenance">Maintenance</button>
-          <button class="filter-tab text-sm font-medium px-3 py-1.5 rounded-full border border-gray-300 hover:border-red-500 transition-colors" data-status="Deprecated">Deprecated</button>
-        </div>
-        <p id="system-count" class="text-sm text-gray-500 whitespace-nowrap font-medium">Showing 12 systems</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================================
-       SYSTEMS GRID
-  ======================================================== -->
-  <main class="max-w-7xl mx-auto px-4 py-10">
-    <div id="systems-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- Cards rendered by JavaScript -->
-    </div>
-    <div id="no-results" class="hidden text-center py-20">
-      <p class="text-gray-400 text-lg">No systems match your filters.</p>
-      <p class="text-gray-400 text-sm mt-1">Try adjusting your search or filter criteria.</p>
-    </div>
-  </main>
-
-  <!-- ========================================================
-       DETAIL MODAL
-  ======================================================== -->
-  <div id="modal-backdrop"
-       class="modal-backdrop fixed inset-0 bg-black bg-opacity-60 z-50 hidden flex items-center justify-center p-4"
-       role="dialog" aria-modal="true" aria-labelledby="modal-title">
-    <div class="modal-content bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-      <!-- Modal Header -->
-      <div class="flex items-start justify-between p-6 border-b border-gray-100">
-        <div>
-          <h2 id="modal-title" class="text-2xl font-bold text-gray-900"></h2>
-          <div class="flex flex-wrap items-center gap-2 mt-2">
-            <span id="modal-dept-badge" class="text-xs font-semibold px-2.5 py-1 rounded-full"></span>
-            <span id="modal-status-badge" class="text-xs font-semibold px-2.5 py-1 rounded-full"></span>
-            <span id="modal-date" class="text-xs text-gray-500"></span>
-          </div>
-        </div>
-        <button id="modal-close"
-                class="ml-4 text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-md hover:bg-gray-100"
-                aria-label="Close modal">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
-      <!-- Modal Body -->
-      <div class="p-6 space-y-6">
-        <!-- Description -->
-        <div>
-          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Description</h3>
-          <p id="modal-description" class="text-gray-700 leading-relaxed"></p>
-        </div>
-        <!-- Problem -->
-        <div>
-          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Problem It Solves</h3>
-          <p id="modal-problem" class="text-gray-700 leading-relaxed"></p>
-        </div>
-        <!-- How It Works -->
-        <div>
-          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">How It Works</h3>
-          <ol id="modal-steps" class="space-y-2 list-decimal list-inside text-gray-700"></ol>
-        </div>
-        <!-- Technologies -->
-        <div>
-          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Technologies Used</h3>
-          <div id="modal-tech" class="flex flex-wrap gap-2"></div>
-        </div>
-        <!-- Impact -->
-        <div id="modal-impact-block" class="bg-green-50 border border-green-200 rounded-xl p-4">
-          <h3 class="text-sm font-semibold text-green-700 uppercase tracking-wider mb-1">Impact</h3>
-          <p id="modal-impact" class="text-green-800 font-semibold text-lg"></p>
-        </div>
-        <!-- Screenshots Placeholder -->
-        <div>
-          <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Screenshots</h3>
-          <div class="grid grid-cols-2 gap-3">
-            <div class="bg-gray-100 rounded-lg h-28 flex items-center justify-center text-gray-400 text-sm font-medium border border-gray-200">Screenshot 1</div>
-            <div class="bg-gray-100 rounded-lg h-28 flex items-center justify-center text-gray-400 text-sm font-medium border border-gray-200">Screenshot 2</div>
-          </div>
-        </div>
-      </div>
-      <!-- Modal Footer -->
-      <div class="p-6 pt-0">
-        <a href="book-consultation.html"
-           class="block text-center bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-xl transition-colors glow-amber">
-          Want something similar? Request a consultation →
+        <h1 class="section-title" style="font-size:clamp(1.875rem,4vw,2.75rem);">Our <span style="color:var(--red);">Automation Systems</span></h1>
+        <p class="section-subtitle" style="margin:0 auto 1.5rem; text-align:center;">Explore systems we've built for teams across Ogilvy — from simple task automation to complex workflow orchestration.</p>
+        <a href="book-consultation.html" class="btn btn-primary" style="display:inline-flex;">
+          Want something like this for your team? →
         </a>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <!-- ========================================================
-       FOOTER
-  ======================================================== -->
-  <footer class="bg-gray-900 text-gray-400 py-10 mt-16 px-4">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-      <div class="flex items-center gap-2">
-        <span class="text-xl">⚙️</span>
-        <span class="text-white font-bold">Ogilvy <span class="text-red-500">Automation</span></span>
+    <!-- Sticky filters -->
+    <div class="sticky-filters z-content">
+      <div class="container">
+        <div style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;margin-bottom:0.625rem;">
+          <!-- Search -->
+          <div style="position:relative;flex:1;min-width:200px;max-width:320px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.35)" stroke-width="2" style="position:absolute;left:0.625rem;top:50%;transform:translateY(-50%);pointer-events:none;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input id="search-input" type="text" placeholder="Search systems…" class="search-input" />
+          </div>
+          <!-- Sort -->
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <span style="font-size:0.8rem;color:var(--text-muted);white-space:nowrap;">Sort:</span>
+            <select id="sort-select" class="filter-select">
+              <option value="newest">Newest</option>
+              <option value="impact">Most Impact</option>
+              <option value="department">Department</option>
+            </select>
+          </div>
+          <!-- Dept -->
+          <div style="display:flex;align-items:center;gap:0.5rem;">
+            <span style="font-size:0.8rem;color:var(--text-muted);white-space:nowrap;">Dept:</span>
+            <select id="dept-select" class="filter-select">
+              <option value="all">All Departments</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Finance">Finance</option>
+              <option value="HR">HR</option>
+              <option value="Operations">Operations</option>
+              <option value="IT">IT</option>
+              <option value="Legal">Legal</option>
+              <option value="Creative">Creative</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:0.5rem;">
+          <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+            <button class="filter-tab active" data-status="all">All</button>
+            <button class="filter-tab" data-status="Active">Active</button>
+            <button class="filter-tab" data-status="In Development">In Dev</button>
+            <button class="filter-tab" data-status="Maintenance">Maintenance</button>
+            <button class="filter-tab" data-status="Deprecated">Deprecated</button>
+          </div>
+          <p id="system-count" style="font-size:0.8rem;color:var(--text-muted);white-space:nowrap;">Showing 12 systems</p>
+        </div>
       </div>
-      <p class="text-sm text-center">Transforming repetitive work into intelligent systems.</p>
-      <a href="book-consultation.html"
-         class="bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors">
-        📅 Request Consultation
-      </a>
     </div>
-  </footer>
+
+    <!-- Systems grid -->
+    <main class="container" style="padding-top:2rem;padding-bottom:5rem;">
+      <div id="systems-grid" class="grid-3"></div>
+      <div id="no-results" style="display:none;text-align:center;padding:5rem 1rem;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.5" style="margin:0 auto 1rem;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <p style="color:var(--text-muted);font-size:1rem;margin-bottom:0.25rem;">No systems match your filters.</p>
+        <p style="color:var(--text-muted);font-size:0.875rem;">Try adjusting your search or filter criteria.</p>
+      </div>
+    </main>
+
+    <!-- Detail modal -->
+    <div id="modal-overlay" class="modal-overlay" role="dialog" aria-modal="true">
+      <div class="modal-panel">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;padding:1.5rem;border-bottom:1px solid var(--glass-border);">
+          <div>
+            <h2 id="modal-title" style="font-size:1.375rem;font-weight:800;color:var(--text-primary);margin-bottom:0.5rem;"></h2>
+            <div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center;">
+              <span id="modal-dept-badge" class="badge-dept"></span>
+              <span id="modal-status-badge" class="badge"></span>
+              <span id="modal-date" style="font-size:0.75rem;color:var(--text-muted);"></span>
+            </div>
+          </div>
+          <button id="modal-close" style="width:32px;height:32px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid var(--glass-border);color:var(--text-secondary);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background 0.15s;" aria-label="Close">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div style="padding:1.5rem;display:flex;flex-direction:column;gap:1.25rem;">
+          <div>
+            <h3 style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:0.625rem;">Description</h3>
+            <p id="modal-description" style="color:var(--text-secondary);font-size:0.9375rem;line-height:1.7;margin:0;"></p>
+          </div>
+          <div>
+            <h3 style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:0.625rem;">Problem It Solves</h3>
+            <p id="modal-problem" style="color:var(--text-secondary);font-size:0.9375rem;line-height:1.7;margin:0;"></p>
+          </div>
+          <div>
+            <h3 style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:0.625rem;">How It Works</h3>
+            <ol id="modal-steps" style="list-style:decimal;padding-left:1.25rem;display:flex;flex-direction:column;gap:0.5rem;"></ol>
+          </div>
+          <div>
+            <h3 style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:0.625rem;">Technologies Used</h3>
+            <div id="modal-tech" style="display:flex;flex-wrap:wrap;gap:0.5rem;"></div>
+          </div>
+          <div id="modal-impact-block" style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:1rem;">
+            <h3 style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:#6ee7b7;margin-bottom:0.375rem;">Impact</h3>
+            <p id="modal-impact" style="font-size:1.25rem;font-weight:800;color:#6ee7b7;margin:0;"></p>
+          </div>
+        </div>
+        <div style="padding:0 1.5rem 1.5rem;">
+          <a href="book-consultation.html" class="btn btn-primary" style="width:100%;justify-content:center;">
+            Want something similar? Request a consultation →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div style="height:3px;background:linear-gradient(90deg,var(--red) 0%,rgba(227,6,19,0.3) 60%,transparent 100%);"></div>
+      <div class="container" style="padding-top:3rem;padding-bottom:2rem;">
+        <div class="grid-4" style="gap:2.5rem;margin-bottom:2.5rem;">
+          <div>
+            <a href="index.html" class="nav-logo" style="display:inline-flex;margin-bottom:1rem;">
+              <div class="nav-logo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></div>
+              <span>Ogilvy <span class="text-red-600">Automation</span></span>
+            </a>
+            <p style="color:var(--text-muted);font-size:0.875rem;line-height:1.65;">Transforming repetitive tasks into intelligent systems across Ogilvy.</p>
+          </div>
+          <div>
+            <h4 style="color:var(--text-primary);font-weight:700;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;">Navigation</h4>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:0.625rem;">
+              <li><a href="index.html" style="color:var(--text-secondary);font-size:0.875rem;">Home</a></li>
+              <li><a href="systems.html" style="color:var(--text-secondary);font-size:0.875rem;">Systems</a></li>
+              <li><a href="what-we-automate.html" style="color:var(--text-secondary);font-size:0.875rem;">What We Automate</a></li>
+              <li><a href="about.html" style="color:var(--text-secondary);font-size:0.875rem;">About</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 style="color:var(--text-primary);font-weight:700;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;">Services</h4>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:0.625rem;">
+              <li><a href="request.html" style="color:var(--text-secondary);font-size:0.875rem;">Request a System</a></li>
+              <li><a href="report-issue.html" style="color:var(--text-secondary);font-size:0.875rem;">Report an Issue</a></li>
+              <li><a href="book-consultation.html" style="color:var(--text-secondary);font-size:0.875rem;">Book Consultation</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 style="color:var(--text-primary);font-weight:700;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;">Contact</h4>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:0.625rem;">
+              <li style="font-size:0.875rem;"><span style="color:var(--text-muted);font-size:0.75rem;display:block;margin-bottom:0.125rem;">Email</span><a href="mailto:automation@ogilvy.com" style="color:var(--text-secondary);">automation@ogilvy.com</a></li>
+              <li style="font-size:0.875rem;color:var(--text-secondary);"><span style="color:var(--text-muted);font-size:0.75rem;display:block;margin-bottom:0.125rem;">Teams</span>#ogilvy-automation</li>
+            </ul>
+          </div>
+        </div>
+        <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;">
+          <p style="color:var(--text-muted);font-size:0.8rem;">2025 Ogilvy Automation Team. All rights reserved.</p>
+          <p style="color:var(--text-muted);font-size:0.8rem;">Built by the Ogilvy Automation Team</p>
+        </div>
+      </div>
+    </footer>
+
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
   <script src="js/main.js"></script>
   <script>
-    // ============================================================
-    // HARDCODED SYSTEMS DATA
-    // ============================================================
-    const SYSTEMS_DATA = [
-      {
-        id: 1,
-        name: "Invoice Processing Automation",
-        department: "Finance",
-        status: "Active",
-        deployedDate: "Jan 2024",
-        description: "Automated approval routing for invoices under threshold amounts. Eliminates manual email chains and ensures invoices are processed within 24 hours.",
-        problem: "Finance teams were spending hours each week manually routing invoices to approvers via email, causing delays and lost approvals.",
-        steps: [
-          "Invoice received via email or uploaded to SharePoint",
-          "System extracts key fields (amount, vendor, PO number) automatically",
-          "Routes to correct approver based on amount and department rules",
-          "Sends automated reminders for pending approvals",
-          "Posts approved invoices directly to accounting system"
-        ],
-        technologies: ["Power Automate", "SharePoint", "Excel", "Outlook"],
-        impact: "Saves 20hrs/week",
-        impactHours: 20,
-        tags: ["#Finance", "#Excel", "#Email"]
-      },
-      {
-        id: 2,
-        name: "Social Media Content Scheduler",
-        department: "Marketing",
-        status: "Active",
-        deployedDate: "Mar 2024",
-        description: "Schedules and publishes content across multiple social media platforms from a single content calendar. Supports Instagram, LinkedIn, and Twitter simultaneously.",
-        problem: "Marketing teams were manually logging into each platform to post content, consuming significant time each week with repetitive copy-paste tasks.",
-        steps: [
-          "Content creator fills in a structured content calendar spreadsheet",
-          "Automation picks up approved entries 24 hours before scheduled time",
-          "Formats content for each platform's specific requirements",
-          "Publishes posts at the scheduled time automatically",
-          "Compiles engagement summary report weekly"
-        ],
-        technologies: ["Make (Integromat)", "Airtable", "Buffer API", "Slack"],
-        impact: "Saves 15hrs/week",
-        impactHours: 15,
-        tags: ["#Marketing", "#SocialMedia", "#API"]
-      },
-      {
-        id: 3,
-        name: "HR Onboarding Workflow",
-        department: "HR",
-        status: "Active",
-        deployedDate: "Feb 2024",
-        description: "Automates new employee onboarding paperwork, account creation requests, and checklist distribution. Ensures every new hire gets a consistent onboarding experience.",
-        problem: "HR was manually sending individual emails to IT, Facilities, and Finance for each new hire, often resulting in missed steps or delayed access.",
-        steps: [
-          "Offer letter signed triggers the workflow via DocuSign",
-          "System creates tasks for IT (laptop, accounts), Facilities (desk, badge), and Finance (payroll setup)",
-          "New hire receives welcome email with first-day checklist",
-          "Manager receives pre-boarding checklist and calendar invites",
-          "System tracks completion and sends reminders for outstanding items"
-        ],
-        technologies: ["Power Automate", "Microsoft Forms", "Teams", "Outlook"],
-        impact: "Saves 10hrs/week",
-        impactHours: 10,
-        tags: ["#HR", "#Forms", "#Email"]
-      },
-      {
-        id: 4,
-        name: "Report Generation System",
-        department: "Finance",
-        status: "Active",
-        deployedDate: "Dec 2023",
-        description: "Auto-generates monthly financial reports by pulling data from multiple sources, formatting to brand standards, and distributing to stakeholders automatically.",
-        problem: "Finance analysts were spending the first week of every month manually pulling data from five different systems to compile monthly reports.",
-        steps: [
-          "Scheduled trigger runs on the 1st of each month",
-          "Pulls data from ERP, budget tracker, and project management systems",
-          "Applies formatting and inserts data into PowerBI templates",
-          "Generates PDF version with executive summary",
-          "Distributes via email to relevant stakeholders automatically"
-        ],
-        technologies: ["Power Automate", "Power BI", "Excel", "SharePoint"],
-        impact: "Saves 8hrs/week",
-        impactHours: 8,
-        tags: ["#Finance", "#PowerBI", "#Excel"]
-      },
-      {
-        id: 5,
-        name: "Contract Review Tracker",
-        department: "Legal",
-        status: "In Development",
-        deployedDate: "In Development",
-        description: "Tracks contract review stages, deadlines, and assignees across Legal and commercial teams. Provides real-time visibility into contract pipeline and automates deadline alerts.",
-        problem: "Legal teams were using spreadsheets to track contracts, leading to missed deadlines, duplicated effort, and no clear view of review bottlenecks.",
-        steps: [
-          "Contract uploaded to SharePoint triggers tracking entry creation",
-          "System assigns review stages and sets deadline reminders",
-          "Reviewers receive automated task notifications via Teams",
-          "Status dashboard updates in real time as stages complete",
-          "Escalation alerts fire automatically for overdue items"
-        ],
-        technologies: ["SharePoint", "Power Automate", "Teams", "Power Apps"],
-        impact: null,
-        impactHours: null,
-        tags: ["#Legal", "#Tracking", "#Email"]
-      },
-      {
-        id: 6,
-        name: "Campaign Analytics Dashboard",
-        department: "Marketing",
-        status: "Active",
-        deployedDate: "Feb 2024",
-        description: "Aggregates campaign data from Google Ads, Meta, LinkedIn, and email platforms into a single dashboard. Updates automatically and sends weekly performance summaries.",
-        problem: "Account managers were spending hours each week logging into multiple ad platforms, downloading CSVs, and manually compiling performance data into client decks.",
-        steps: [
-          "Scheduled job runs nightly to pull data from each platform API",
-          "Data is normalised and loaded into a central database",
-          "Power BI dashboard refreshes automatically with latest figures",
-          "Weekly summary email compiled and sent to account teams",
-          "Anomaly alerts fire when performance drops significantly"
-        ],
-        technologies: ["Google Ads API", "Meta API", "Power BI", "Python", "Azure"],
-        impact: "Saves 12hrs/week",
-        impactHours: 12,
-        tags: ["#Marketing", "#Analytics", "#API"]
-      },
-      {
-        id: 7,
-        name: "Leave Request Automation",
-        department: "HR",
-        status: "Active",
-        deployedDate: "Nov 2023",
-        description: "Streamlines leave approval and tracking through a self-service form that automatically notifies managers, updates the shared calendar, and syncs to payroll.",
-        problem: "Employees were emailing managers directly for leave requests, leading to approvals getting lost, calendar conflicts, and payroll miscalculations.",
-        steps: [
-          "Employee submits leave request via Microsoft Forms",
-          "Manager receives approval request with one-click approve/reject",
-          "Approved leave added to team shared calendar automatically",
-          "Payroll notified of approved leave with dates and type",
-          "Employee receives confirmation and calendar invite"
-        ],
-        technologies: ["Microsoft Forms", "Power Automate", "Outlook", "SharePoint"],
-        impact: "Saves 6hrs/week",
-        impactHours: 6,
-        tags: ["#HR", "#SharePoint", "#Email"]
-      },
-      {
-        id: 8,
-        name: "Vendor Payment Processing",
-        department: "Finance",
-        status: "Maintenance",
-        deployedDate: "Oct 2023",
-        description: "Automates vendor payment notifications and reconciliation confirmations. Currently under maintenance to support new vendor portal integration.",
-        problem: "Accounts payable team was manually emailing each vendor upon payment, taking hours each week and creating a backlog during busy periods.",
-        steps: [
-          "Payment batch exported from accounting system",
-          "System matches payments to vendor records automatically",
-          "Personalised payment notification sent to each vendor",
-          "Remittance advice attached to each notification",
-          "Reconciliation log updated and shared with Finance team"
-        ],
-        technologies: ["Power Automate", "Excel", "Outlook", "SQL Database"],
-        impact: null,
-        impactHours: null,
-        tags: ["#Finance", "#Email", "#Database"]
-      },
-      {
-        id: 9,
-        name: "Client Report Generator",
-        department: "Creative",
-        status: "Active",
-        deployedDate: "Jan 2024",
-        description: "Auto-creates client performance reports by pulling campaign data and populating branded PowerPoint templates. Reduces report creation time from hours to minutes.",
-        problem: "Creative and account teams were spending an entire day each month copying data into PowerPoint templates, a process prone to errors and formatting inconsistencies.",
-        steps: [
-          "Account manager selects client and reporting period in a simple web form",
-          "System fetches performance data from relevant platforms via API",
-          "Data is inserted into the branded PowerPoint template",
-          "Charts and visuals are generated automatically",
-          "Completed report emailed to the account team within minutes"
-        ],
-        technologies: ["Python", "PowerPoint API", "Google Analytics API", "SharePoint"],
-        impact: "Saves 10hrs/week",
-        impactHours: 10,
-        tags: ["#Creative", "#Reports", "#API"]
-      },
-      {
-        id: 10,
-        name: "Meeting Notes Distribution",
-        department: "Operations",
-        status: "Active",
-        deployedDate: "Mar 2024",
-        description: "Auto-distributes meeting notes and action items to all attendees and relevant stakeholders. Integrates with Teams to capture notes and tracks action item completion.",
-        problem: "Teams were relying on one person to manually write up and email meeting notes, causing delays and inconsistent formatting across the organisation.",
-        steps: [
-          "Meeting host submits notes via a structured Teams tab during the meeting",
-          "System formats notes into standard Ogilvy template",
-          "Action items are extracted and assigned to owners automatically",
-          "Summary email sent to all calendar attendees within 30 minutes",
-          "Action items tracked in a shared dashboard until marked complete"
-        ],
-        technologies: ["Microsoft Teams", "Power Automate", "SharePoint", "Outlook"],
-        impact: "Saves 5hrs/week",
-        impactHours: 5,
-        tags: ["#Operations", "#Email", "#Teams"]
-      },
-      {
-        id: 11,
-        name: "IT Ticket Routing System",
-        department: "IT",
-        status: "Active",
-        deployedDate: "Dec 2023",
-        description: "Routes IT support tickets to the right teams automatically based on issue type, urgency, and staff location. Reduces first-response time significantly.",
-        problem: "IT support tickets were arriving via email and being manually assigned, leading to delays, misrouting, and a lack of visibility into support workload.",
-        steps: [
-          "Staff submits support request via web form or email",
-          "AI classification determines issue type and urgency level",
-          "Ticket routed to correct team (hardware, software, network, accounts)",
-          "Assignee notified via Teams with all relevant context",
-          "SLA timer starts and escalates if response threshold exceeded"
-        ],
-        technologies: ["Power Automate", "Microsoft Forms", "Teams", "Azure AI"],
-        impact: "Saves 8hrs/week",
-        impactHours: 8,
-        tags: ["#IT", "#Ticketing", "#Email"]
-      },
-      {
-        id: 12,
-        name: "Budget Variance Reporter",
-        department: "Finance",
-        status: "In Development",
-        deployedDate: "In Development",
-        description: "Alerts finance teams and budget owners on budget variances in real-time. Provides instant notifications when spend exceeds predefined thresholds.",
-        problem: "Budget overruns were only identified at month-end when it was too late to take corrective action, leading to repeated overspend across departments.",
-        steps: [
-          "Finance system exports daily spend data to Azure storage",
-          "Automation compares actual spend against approved budget by category",
-          "Variance calculation flags items above configurable threshold",
-          "Alert sent to budget owner and finance partner with drill-down detail",
-          "Weekly summary of all variances compiled into executive report"
-        ],
-        technologies: ["Power Automate", "Power BI", "Excel", "Azure", "Teams"],
-        impact: null,
-        impactHours: null,
-        tags: ["#Finance", "#Analytics", "#Alerts"]
-      }
+    // Mobile menu
+    (function(){
+      var btn = document.getElementById('mobile-menu-btn');
+      var menu = document.getElementById('mobile-menu');
+      var open = false;
+      btn.addEventListener('click', function(){
+        open = !open;
+        menu.classList.toggle('hidden', !open);
+        btn.setAttribute('aria-expanded', String(open));
+        btn.textContent = open ? 'Close' : 'Menu';
+      });
+    })();
+
+    var SYSTEMS_DATA = [
+      { id:1, name:"Invoice Processing Automation", department:"Finance", status:"Active", deployedDate:"Jan 2024", description:"Automated approval routing for invoices under threshold amounts. Eliminates manual email chains and ensures invoices are processed within 24 hours.", problem:"Finance teams were spending hours each week manually routing invoices to approvers via email, causing delays and lost approvals.", steps:["Invoice received via email or uploaded to SharePoint","System extracts key fields (amount, vendor, PO number) automatically","Routes to correct approver based on amount and department rules","Sends automated reminders for pending approvals","Posts approved invoices directly to accounting system"], technologies:["Power Automate","SharePoint","Excel","Outlook"], impact:"Saves 20hrs/week", impactHours:20, tags:["#Finance","#Excel","#Email"] },
+      { id:2, name:"Social Media Content Scheduler", department:"Marketing", status:"Active", deployedDate:"Mar 2024", description:"Schedules and publishes content across multiple social media platforms from a single content calendar. Supports Instagram, LinkedIn, and Twitter simultaneously.", problem:"Marketing teams were manually logging into each platform to post content, consuming significant time each week.", steps:["Content creator fills in a structured content calendar spreadsheet","Automation picks up approved entries 24 hours before scheduled time","Formats content for each platform's specific requirements","Publishes posts at the scheduled time automatically","Compiles engagement summary report weekly"], technologies:["Make (Integromat)","Airtable","Buffer API","Slack"], impact:"Saves 15hrs/week", impactHours:15, tags:["#Marketing","#SocialMedia","#API"] },
+      { id:3, name:"HR Onboarding Workflow", department:"HR", status:"Active", deployedDate:"Feb 2024", description:"Automates new employee onboarding paperwork, account creation requests, and checklist distribution. Ensures every new hire gets a consistent onboarding experience.", problem:"HR was manually sending individual emails to IT, Facilities, and Finance for each new hire, often resulting in missed steps.", steps:["Offer letter signed triggers the workflow via DocuSign","System creates tasks for IT, Facilities, and Finance","New hire receives welcome email with first-day checklist","Manager receives pre-boarding checklist and calendar invites","System tracks completion and sends reminders"], technologies:["Power Automate","Microsoft Forms","Teams","Outlook"], impact:"Saves 10hrs/week", impactHours:10, tags:["#HR","#Forms","#Email"] },
+      { id:4, name:"Report Generation System", department:"Finance", status:"Active", deployedDate:"Dec 2023", description:"Auto-generates monthly financial reports by pulling data from multiple sources, formatting to brand standards, and distributing to stakeholders automatically.", problem:"Finance analysts were spending the first week of every month manually pulling data from five different systems to compile monthly reports.", steps:["Scheduled trigger runs on the 1st of each month","Pulls data from ERP, budget tracker, and project management systems","Applies formatting and inserts data into PowerBI templates","Generates PDF version with executive summary","Distributes via email to relevant stakeholders automatically"], technologies:["Power Automate","Power BI","Excel","SharePoint"], impact:"Saves 8hrs/week", impactHours:8, tags:["#Finance","#PowerBI","#Excel"] },
+      { id:5, name:"Contract Review Tracker", department:"Legal", status:"In Development", deployedDate:"In Development", description:"Tracks contract review stages, deadlines, and assignees across Legal and commercial teams. Provides real-time visibility into contract pipeline.", problem:"Legal teams were using spreadsheets to track contracts, leading to missed deadlines and no clear view of review bottlenecks.", steps:["Contract uploaded to SharePoint triggers tracking entry creation","System assigns review stages and sets deadline reminders","Reviewers receive automated task notifications via Teams","Status dashboard updates in real time","Escalation alerts fire automatically for overdue items"], technologies:["SharePoint","Power Automate","Teams","Power Apps"], impact:null, impactHours:null, tags:["#Legal","#Tracking","#Email"] },
+      { id:6, name:"Campaign Analytics Dashboard", department:"Marketing", status:"Active", deployedDate:"Feb 2024", description:"Aggregates campaign data from Google Ads, Meta, LinkedIn, and email platforms into a single dashboard. Updates automatically and sends weekly performance summaries.", problem:"Account managers were spending hours each week logging into multiple ad platforms and manually compiling performance data.", steps:["Scheduled job runs nightly to pull data from each platform API","Data is normalised and loaded into a central database","Power BI dashboard refreshes automatically","Weekly summary email compiled and sent to account teams","Anomaly alerts fire when performance drops significantly"], technologies:["Google Ads API","Meta API","Power BI","Python","Azure"], impact:"Saves 12hrs/week", impactHours:12, tags:["#Marketing","#Analytics","#API"] },
+      { id:7, name:"Leave Request Automation", department:"HR", status:"Active", deployedDate:"Nov 2023", description:"Streamlines leave approval and tracking through a self-service form that automatically notifies managers, updates the shared calendar, and syncs to payroll.", problem:"Employees were emailing managers directly for leave requests, leading to approvals getting lost and calendar conflicts.", steps:["Employee submits leave request via Microsoft Forms","Manager receives approval request with one-click approve/reject","Approved leave added to team shared calendar automatically","Payroll notified of approved leave","Employee receives confirmation and calendar invite"], technologies:["Microsoft Forms","Power Automate","Outlook","SharePoint"], impact:"Saves 6hrs/week", impactHours:6, tags:["#HR","#SharePoint","#Email"] },
+      { id:8, name:"Vendor Payment Processing", department:"Finance", status:"Maintenance", deployedDate:"Oct 2023", description:"Automates vendor payment notifications and reconciliation confirmations. Currently under maintenance to support new vendor portal integration.", problem:"Accounts payable team was manually emailing each vendor upon payment, taking hours each week.", steps:["Payment batch exported from accounting system","System matches payments to vendor records automatically","Personalised payment notification sent to each vendor","Remittance advice attached to each notification","Reconciliation log updated and shared with Finance team"], technologies:["Power Automate","Excel","Outlook","SQL Database"], impact:null, impactHours:null, tags:["#Finance","#Email","#Database"] },
+      { id:9, name:"Client Report Generator", department:"Creative", status:"Active", deployedDate:"Jan 2024", description:"Auto-creates client performance reports by pulling campaign data and populating branded PowerPoint templates. Reduces report creation time from hours to minutes.", problem:"Creative and account teams were spending an entire day each month copying data into PowerPoint templates.", steps:["Account manager selects client and reporting period in a web form","System fetches performance data from relevant platforms via API","Data is inserted into the branded PowerPoint template","Charts and visuals are generated automatically","Completed report emailed to the account team within minutes"], technologies:["Python","PowerPoint API","Google Analytics API","SharePoint"], impact:"Saves 10hrs/week", impactHours:10, tags:["#Creative","#Reports","#API"] },
+      { id:10, name:"Meeting Notes Distribution", department:"Operations", status:"Active", deployedDate:"Mar 2024", description:"Auto-distributes meeting notes and action items to all attendees and relevant stakeholders. Integrates with Teams to capture notes and tracks action item completion.", problem:"Teams were relying on one person to manually write up and email meeting notes, causing delays.", steps:["Meeting host submits notes via a structured Teams tab","System formats notes into standard Ogilvy template","Action items are extracted and assigned to owners automatically","Summary email sent to all calendar attendees within 30 minutes","Action items tracked in a shared dashboard until marked complete"], technologies:["Microsoft Teams","Power Automate","SharePoint","Outlook"], impact:"Saves 5hrs/week", impactHours:5, tags:["#Operations","#Email","#Teams"] },
+      { id:11, name:"IT Ticket Routing System", department:"IT", status:"Active", deployedDate:"Dec 2023", description:"Routes IT support tickets to the right teams automatically based on issue type, urgency, and staff location. Reduces first-response time significantly.", problem:"IT support tickets were arriving via email and being manually assigned, leading to delays and misrouting.", steps:["Staff submits support request via web form or email","AI classification determines issue type and urgency level","Ticket routed to correct team","Assignee notified via Teams with all relevant context","SLA timer starts and escalates if response threshold exceeded"], technologies:["Power Automate","Microsoft Forms","Teams","Azure AI"], impact:"Saves 8hrs/week", impactHours:8, tags:["#IT","#Ticketing","#Email"] },
+      { id:12, name:"Budget Variance Reporter", department:"Finance", status:"In Development", deployedDate:"In Development", description:"Alerts finance teams and budget owners on budget variances in real-time. Provides instant notifications when spend exceeds predefined thresholds.", problem:"Budget overruns were only identified at month-end when it was too late to take corrective action.", steps:["Finance system exports daily spend data to Azure storage","Automation compares actual spend against approved budget","Variance calculation flags items above configurable threshold","Alert sent to budget owner and finance partner with drill-down detail","Weekly summary of all variances compiled into executive report"], technologies:["Power Automate","Power BI","Excel","Azure","Teams"], impact:null, impactHours:null, tags:["#Finance","#Analytics","#Alerts"] }
     ];
 
-    // ============================================================
-    // DEPARTMENT COLOUR MAP
-    // ============================================================
-    const DEPT_COLORS = {
-      Finance:    { bg: "bg-blue-100",   text: "text-blue-800"   },
-      Marketing:  { bg: "bg-pink-100",   text: "text-pink-800"   },
-      HR:         { bg: "bg-purple-100", text: "text-purple-800" },
-      Operations: { bg: "bg-orange-100", text: "text-orange-800" },
-      IT:         { bg: "bg-cyan-100",   text: "text-cyan-800"   },
-      Legal:      { bg: "bg-yellow-100", text: "text-yellow-800" },
-      Creative:   { bg: "bg-green-100",  text: "text-green-800"  }
+    var DEPT_COLORS = {
+      Finance:    'dept-finance',    Marketing:  'dept-marketing',
+      HR:         'dept-hr',         Operations: 'dept-operations',
+      IT:         'dept-it',         Legal:      'dept-legal',
+      Creative:   'dept-creative',   Strategy:   'dept-strategy'
     };
 
-    const STATUS_STYLES = {
-      "Active":         { bg: "bg-green-100", text: "text-green-800",  dot: "bg-green-500" },
-      "In Development": { bg: "bg-blue-100",  text: "text-blue-800",   dot: "bg-blue-500"  },
-      "Maintenance":    { bg: "bg-yellow-100",text: "text-yellow-800", dot: "bg-yellow-500"},
-      "Deprecated":     { bg: "bg-gray-100",  text: "text-gray-600",   dot: "bg-gray-400"  }
+    var STATUS_STYLES = {
+      "Active":         { cls:'badge-approved', label:'Active' },
+      "In Development": { cls:'badge-info',     label:'In Dev' },
+      "Maintenance":    { cls:'badge-pending',  label:'Maintenance' },
+      "Deprecated":     { cls:'badge',          label:'Deprecated' }
     };
 
-    // ============================================================
-    // STATE
-    // ============================================================
-    let activeStatus = "all";
-    let activeDept   = "all";
-    let searchTerm   = "";
-    let sortBy       = "newest";
-    let currentSystems = [...SYSTEMS_DATA];
+    var activeStatus = 'all', activeDept = 'all', searchTerm = '', sortBy = 'newest';
 
-    // ============================================================
-    // RENDER CARD
-    // ============================================================
     function renderCard(sys) {
-      const dept   = DEPT_COLORS[sys.department]  || { bg: "bg-gray-100", text: "text-gray-700" };
-      const status = STATUS_STYLES[sys.status]    || STATUS_STYLES["Active"];
-
-      const tagsHtml = sys.tags.map(t =>
-        `<span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full font-mono">${t}</span>`
-      ).join("");
-
-      const impactHtml = sys.impact
-        ? `<div class="flex items-center gap-1.5 text-green-700 font-semibold text-sm">
-             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
-             ${sys.impact}
-           </div>`
-        : "";
-
-      return `
-        <div class="system-card bg-white rounded-2xl border border-gray-200 shadow-sm card-hover flex flex-col"
-             data-id="${sys.id}"
-             data-status="${sys.status}"
-             data-dept="${sys.department}"
-             data-name="${sys.name.toLowerCase()}"
-             data-description="${sys.description.toLowerCase()}"
-             data-tags="${sys.tags.join(' ').toLowerCase()}"
-             data-impact="${sys.impactHours || 0}">
-          <div class="p-5 flex flex-col flex-1">
-            <div class="flex items-start justify-between gap-2 mb-3">
-              <h3 class="font-bold text-gray-900 text-base leading-snug">${sys.name}</h3>
-            </div>
-            <div class="flex flex-wrap items-center gap-2 mb-3">
-              <span class="${dept.bg} ${dept.text} text-xs font-semibold px-2.5 py-1 rounded-full">${sys.department}</span>
-              <span class="${status.bg} ${status.text} text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1.5">
-                <span class="w-1.5 h-1.5 rounded-full ${status.dot}"></span>${sys.status}
-              </span>
-            </div>
-            <p class="text-gray-600 text-sm leading-relaxed mb-3 flex-1">${sys.description}</p>
-            ${impactHtml ? `<div class="mb-3">${impactHtml}</div>` : ""}
-            <div class="flex flex-wrap gap-1.5 mb-4">${tagsHtml}</div>
-            <div class="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
-              <span class="text-xs text-gray-400">Deployed: ${sys.deployedDate}</span>
-              <button class="view-details-btn bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors"
-                      data-id="${sys.id}">
-                View Details
-              </button>
-            </div>
-          </div>
-        </div>`;
+      var deptCls  = DEPT_COLORS[sys.department] || 'dept-other';
+      var statusSt = STATUS_STYLES[sys.status] || STATUS_STYLES['Active'];
+      var tagsHtml = sys.tags.map(function(t){ return '<span class="tag-chip">' + t + '</span>'; }).join('');
+      var impactHtml = sys.impact ? '<div class="impact-chip"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' + sys.impact + '</div>' : '';
+      return '<div class="glass-card system-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column;" data-id="' + sys.id + '">'
+        + '<div style="height:3px;background:var(--red);border-radius:16px 16px 0 0;"></div>'
+        + '<div style="padding:1.25rem;flex:1;display:flex;flex-direction:column;gap:0.75rem;">'
+        + '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.5rem;">'
+        + '<span class="badge-dept ' + deptCls + '">' + sys.department + '</span>'
+        + '<span class="badge ' + statusSt.cls + '" style="display:inline-flex;align-items:center;gap:0.3rem;"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;opacity:0.8;"></span>' + statusSt.label + '</span>'
+        + '</div>'
+        + '<h3 style="color:var(--text-primary);font-weight:700;font-size:1rem;line-height:1.3;margin:0;">' + sys.name + '</h3>'
+        + '<p style="color:var(--text-secondary);font-size:0.8125rem;line-height:1.6;margin:0;flex:1;">' + sys.description.substring(0,120) + '…</p>'
+        + (impactHtml ? '<div>' + impactHtml + '</div>' : '')
+        + '<div style="display:flex;flex-wrap:wrap;gap:0.375rem;">' + tagsHtml + '</div>'
+        + '<div style="display:flex;align-items:center;justify-content:space-between;padding-top:0.625rem;border-top:1px solid var(--glass-border);">'
+        + '<span style="font-size:0.75rem;color:var(--text-muted);">' + sys.deployedDate + '</span>'
+        + '<button class="btn btn-glass btn-sm view-details-btn" data-id="' + sys.id + '" style="font-size:0.75rem;">View Details</button>'
+        + '</div></div></div>';
     }
 
-    // ============================================================
-    // FILTER + RENDER
-    // ============================================================
     function applyFilters() {
-      let filtered = SYSTEMS_DATA.filter(s => {
-        const matchStatus = activeStatus === "all" || s.status === activeStatus;
-        const matchDept   = activeDept   === "all" || s.department === activeDept;
-        const matchSearch = searchTerm === "" ||
-          s.name.toLowerCase().includes(searchTerm) ||
-          s.description.toLowerCase().includes(searchTerm) ||
-          s.tags.join(" ").toLowerCase().includes(searchTerm) ||
-          s.department.toLowerCase().includes(searchTerm);
+      var filtered = SYSTEMS_DATA.filter(function(s) {
+        var matchStatus = activeStatus === 'all' || s.status === activeStatus;
+        var matchDept   = activeDept   === 'all' || s.department === activeDept;
+        var matchSearch = !searchTerm || s.name.toLowerCase().includes(searchTerm) || s.description.toLowerCase().includes(searchTerm) || s.tags.join(' ').toLowerCase().includes(searchTerm);
         return matchStatus && matchDept && matchSearch;
       });
+      if (sortBy === 'impact') filtered.sort(function(a,b){ return (b.impactHours||0)-(a.impactHours||0); });
+      else if (sortBy === 'department') filtered.sort(function(a,b){ return a.department.localeCompare(b.department); });
+      else filtered.sort(function(a,b){ return b.id-a.id; });
 
-      // Sort
-      if (sortBy === "impact") {
-        filtered.sort((a, b) => (b.impactHours || 0) - (a.impactHours || 0));
-      } else if (sortBy === "department") {
-        filtered.sort((a, b) => a.department.localeCompare(b.department));
-      } else {
-        filtered.sort((a, b) => b.id - a.id); // newest by id
-      }
+      var grid = document.getElementById('systems-grid');
+      var noRes = document.getElementById('no-results');
+      var cnt   = document.getElementById('system-count');
+      grid.innerHTML = filtered.map(renderCard).join('');
+      cnt.textContent = 'Showing ' + filtered.length + ' system' + (filtered.length !== 1 ? 's' : '');
+      noRes.style.display = filtered.length === 0 ? 'block' : 'none';
+      grid.style.display  = filtered.length === 0 ? 'none' : '';
 
-      const grid     = document.getElementById("systems-grid");
-      const noResult = document.getElementById("no-results");
-      const count    = document.getElementById("system-count");
-
-      grid.innerHTML = filtered.map(renderCard).join("");
-      count.textContent = `Showing ${filtered.length} system${filtered.length !== 1 ? "s" : ""}`;
-
-      if (filtered.length === 0) {
-        noResult.classList.remove("hidden");
-        grid.classList.add("hidden");
-      } else {
-        noResult.classList.add("hidden");
-        grid.classList.remove("hidden");
-      }
-
-      // Re-attach modal triggers
-      document.querySelectorAll(".view-details-btn").forEach(btn => {
-        btn.addEventListener("click", () => openModal(parseInt(btn.dataset.id)));
+      document.querySelectorAll('.view-details-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(){ openModal(parseInt(btn.dataset.id)); });
       });
     }
 
-    // ============================================================
-    // MODAL
-    // ============================================================
     function openModal(id) {
-      const sys = SYSTEMS_DATA.find(s => s.id === id);
+      var sys = SYSTEMS_DATA.find(function(s){ return s.id === id; });
       if (!sys) return;
-
-      const dept   = DEPT_COLORS[sys.department]  || { bg: "bg-gray-100", text: "text-gray-700" };
-      const status = STATUS_STYLES[sys.status]    || STATUS_STYLES["Active"];
-
-      document.getElementById("modal-title").textContent = sys.name;
-
-      const deptBadge = document.getElementById("modal-dept-badge");
+      var deptCls  = DEPT_COLORS[sys.department] || 'dept-other';
+      var statusSt = STATUS_STYLES[sys.status] || STATUS_STYLES['Active'];
+      document.getElementById('modal-title').textContent = sys.name;
+      var deptBadge = document.getElementById('modal-dept-badge');
       deptBadge.textContent = sys.department;
-      deptBadge.className = `text-xs font-semibold px-2.5 py-1 rounded-full ${dept.bg} ${dept.text}`;
-
-      const statusBadge = document.getElementById("modal-status-badge");
+      deptBadge.className = 'badge-dept ' + deptCls;
+      var statusBadge = document.getElementById('modal-status-badge');
       statusBadge.textContent = sys.status;
-      statusBadge.className = `text-xs font-semibold px-2.5 py-1 rounded-full ${status.bg} ${status.text}`;
-
-      document.getElementById("modal-date").textContent = `Deployed: ${sys.deployedDate}`;
-      document.getElementById("modal-description").textContent = sys.description;
-      document.getElementById("modal-problem").textContent = sys.problem;
-
-      const stepsList = document.getElementById("modal-steps");
-      stepsList.innerHTML = sys.steps.map(step => `<li class="pl-1">${step}</li>`).join("");
-
-      const techDiv = document.getElementById("modal-tech");
-      techDiv.innerHTML = sys.technologies.map(t =>
-        `<span class="bg-gray-900 text-white text-xs font-mono px-2.5 py-1 rounded-md">${t}</span>`
-      ).join("");
-
-      const impactBlock = document.getElementById("modal-impact-block");
-      const impactText  = document.getElementById("modal-impact");
-      if (sys.impact) {
-        impactBlock.classList.remove("hidden");
-        impactText.textContent = sys.impact;
-      } else {
-        impactBlock.classList.add("hidden");
-      }
-
-      const backdrop = document.getElementById("modal-backdrop");
-      backdrop.classList.remove("hidden");
-      backdrop.classList.add("flex");
-      document.body.style.overflow = "hidden";
+      statusBadge.className = 'badge ' + statusSt.cls;
+      document.getElementById('modal-date').textContent = 'Deployed: ' + sys.deployedDate;
+      document.getElementById('modal-description').textContent = sys.description;
+      document.getElementById('modal-problem').textContent = sys.problem;
+      var steps = document.getElementById('modal-steps');
+      steps.innerHTML = sys.steps.map(function(s){ return '<li style="color:var(--text-secondary);font-size:0.9rem;line-height:1.6;">' + s + '</li>'; }).join('');
+      var tech = document.getElementById('modal-tech');
+      tech.innerHTML = sys.technologies.map(function(t){ return '<span class="tech-chip">' + t + '</span>'; }).join('');
+      var ib = document.getElementById('modal-impact-block');
+      var ip = document.getElementById('modal-impact');
+      if (sys.impact) { ib.style.display='block'; ip.textContent = sys.impact; }
+      else { ib.style.display = 'none'; }
+      var overlay = document.getElementById('modal-overlay');
+      overlay.classList.add('open');
+      document.body.style.overflow = 'hidden';
     }
 
     function closeModal() {
-      const backdrop = document.getElementById("modal-backdrop");
-      backdrop.classList.add("hidden");
-      backdrop.classList.remove("flex");
-      document.body.style.overflow = "";
+      document.getElementById('modal-overlay').classList.remove('open');
+      document.body.style.overflow = '';
     }
 
-    // ============================================================
-    // EVENT LISTENERS
-    // ============================================================
-    document.addEventListener("DOMContentLoaded", () => {
-      // Initial render
+    document.addEventListener('DOMContentLoaded', function() {
       applyFilters();
-
-      // Search
-      document.getElementById("search-input").addEventListener("input", e => {
-        searchTerm = e.target.value.toLowerCase().trim();
-        applyFilters();
-      });
-
-      // Status filter tabs
-      document.querySelectorAll(".filter-tab").forEach(tab => {
-        tab.addEventListener("click", () => {
-          document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
-          tab.classList.add("active");
+      document.getElementById('search-input').addEventListener('input', function(e){ searchTerm = e.target.value.toLowerCase().trim(); applyFilters(); });
+      document.querySelectorAll('.filter-tab').forEach(function(tab) {
+        tab.addEventListener('click', function(){
+          document.querySelectorAll('.filter-tab').forEach(function(t){ t.classList.remove('active'); });
+          tab.classList.add('active');
           activeStatus = tab.dataset.status;
           applyFilters();
         });
       });
-
-      // Department dropdown
-      document.getElementById("dept-select").addEventListener("change", e => {
-        activeDept = e.target.value;
-        applyFilters();
-      });
-
-      // Sort
-      document.getElementById("sort-select").addEventListener("change", e => {
-        sortBy = e.target.value;
-        applyFilters();
-      });
-
-      // Modal close
-      document.getElementById("modal-close").addEventListener("click", closeModal);
-      document.getElementById("modal-backdrop").addEventListener("click", e => {
-        if (e.target === document.getElementById("modal-backdrop")) closeModal();
-      });
-      document.addEventListener("keydown", e => {
-        if (e.key === "Escape") closeModal();
-      });
-
-      // Mobile menu
-      const mobileBtn  = document.getElementById("mobile-menu-btn");
-      const mobileMenu = document.getElementById("mobile-menu");
-      const hamburger  = document.getElementById("hamburger-icon");
-      const closeIcon  = document.getElementById("close-icon");
-      mobileBtn.addEventListener("click", () => {
-        const open = mobileMenu.classList.toggle("hidden");
-        hamburger.classList.toggle("hidden", !open);
-        closeIcon.classList.toggle("hidden", open);
-        mobileBtn.setAttribute("aria-expanded", String(!open));
-      });
-
-      // Try Supabase if configured
-      if (typeof supabaseConfig !== "undefined" && supabaseConfig.url && supabaseConfig.url !== "YOUR_SUPABASE_URL") {
-        try {
-          const client = supabase.createClient(supabaseConfig.url, supabaseConfig.anonKey);
-          client.from("systems").select("*").then(({ data, error }) => {
-            if (!error && data && data.length > 0) {
-              // Map Supabase rows to our schema if they match
-              console.log("Loaded systems from Supabase:", data.length);
-            }
-          });
-        } catch (e) {
-          console.log("Supabase not configured, using hardcoded data.");
-        }
-      }
+      document.getElementById('dept-select').addEventListener('change', function(e){ activeDept = e.target.value; applyFilters(); });
+      document.getElementById('sort-select').addEventListener('change', function(e){ sortBy = e.target.value; applyFilters(); });
+      document.getElementById('modal-close').addEventListener('click', closeModal);
+      document.getElementById('modal-overlay').addEventListener('click', function(e){ if (e.target === this) closeModal(); });
+      document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeModal(); });
     });
   </script>
 </body>

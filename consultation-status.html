@@ -4,64 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Check the status of your consultation request with the Ogilvy Automation Team." />
-  <meta name="theme-color" content="#111827" />
+  <meta name="theme-color" content="#07070f" />
   <title>Consultation Request Status – Ogilvy Automation</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          animation: {
-            'fade-in':  'fadeIn 0.5s ease-out forwards',
-            'slide-up': 'slideUp 0.5s ease-out forwards',
-            'pulse-slow': 'pulse 2.5s cubic-bezier(0.4,0,0.6,1) infinite',
-          },
-          keyframes: {
-            fadeIn:  { from: { opacity: '0' },                             to: { opacity: '1' } },
-            slideUp: { from: { opacity: '0', transform: 'translateY(20px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
-          }
-        }
-      }
-    }
-  </script>
+  <link rel="stylesheet" href="css/style.css" />
   <style>
-    .glow-amber {
-      box-shadow: 0 0 20px rgba(245, 158, 11, 0.4), 0 0 40px rgba(245, 158, 11, 0.15);
-    }
-    .glow-amber:hover {
-      box-shadow: 0 0 28px rgba(245, 158, 11, 0.6), 0 0 56px rgba(245, 158, 11, 0.25);
-    }
-    .nav-link {
-      position: relative;
-    }
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: #DC2626;
-      transition: width 0.25s ease;
-    }
-    .nav-link:hover::after {
-      width: 100%;
-    }
-    .form-input {
-      width: 100%;
-      padding: 0.625rem 0.875rem;
-      border: 1px solid #D1D5DB;
-      border-radius: 0.5rem;
-      font-size: 0.875rem;
-      color: #111827;
-      background: #fff;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
-      outline: none;
-    }
-    .form-input:focus {
-      border-color: #DC2626;
-      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
-    }
+    /* ── Timeline ────────────────────────────────────── */
     .timeline-step {
       display: flex;
       flex-direction: column;
@@ -87,544 +35,536 @@
       height: 2px;
       margin-top: 1.1rem;
     }
+
+    /* ── Status state cards ──────────────────────────── */
+    .state-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+    .state-banner {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .state-body { padding: 1.5rem 2rem; }
+    @media (max-width: 640px) { .state-body { padding: 1.25rem; } }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      padding: 0.3rem 0.75rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .pill-amber  { background:rgba(217,119,6,0.18);  color:#fbbf24; border:1px solid rgba(217,119,6,0.3); }
+    .pill-green  { background:rgba(16,185,129,0.18); color:#34d399; border:1px solid rgba(16,185,129,0.3); }
+    .pill-red    { background:rgba(227,6,19,0.18);   color:#f87171; border:1px solid rgba(227,6,19,0.3); }
+    .pill-blue   { background:rgba(59,130,246,0.18); color:#60a5fa; border:1px solid rgba(59,130,246,0.3); }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.5rem 1.25rem;
+      font-size: 0.875rem;
+    }
+    .detail-key   { color: var(--text-muted); font-weight: 500; white-space: nowrap; }
+    .detail-value { color: var(--text-primary); font-weight: 600; }
+
+    /* pulse animation */
+    @keyframes pulse-slow { 0%,100% { opacity:1; } 50% { opacity:.5; } }
+    .animate-pulse-slow { animation: pulse-slow 2.5s cubic-bezier(.4,0,.6,1) infinite; }
+
+    /* ── Info box variants ───────────────────────────── */
+    .info-box {
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+    }
+    .info-box-amber { background:rgba(217,119,6,0.08); border:1px solid rgba(217,119,6,0.2); }
+    .info-box-green { background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); }
+    .info-box-red   { background:rgba(227,6,19,0.08); border:1px solid rgba(227,6,19,0.2); }
+    .info-box-blue  { background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.2); }
   </style>
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+<body class="public-page min-h-screen">
 
-  <!-- ========================================================
+  <!-- Background orbs -->
+  <div class="bg-orb bg-orb-1" aria-hidden="true"></div>
+  <div class="bg-orb bg-orb-2" aria-hidden="true"></div>
+
+  <!-- ============================================================
        NAVIGATION
-  ======================================================== -->
-  <nav class="bg-gray-900 sticky top-0 z-50 shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
+  ============================================================ -->
+  <nav class="site-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo" aria-label="Ogilvy Automation home">
+        <span class="nav-logo-icon" aria-hidden="true">⚙️</span>
+        <span>Ogilvy <span style="color:var(--red)">Automation</span></span>
+      </a>
 
-        <a href="index.html" class="flex items-center gap-2 flex-shrink-0">
-          <span class="text-xl">⚙️</span>
-          <span class="text-white font-bold text-lg tracking-tight">
-            Ogilvy <span class="text-red-600">Automation</span>
-          </span>
-        </a>
-
-        <div class="hidden md:flex items-center gap-6">
-          <a href="index.html"            class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">Home</a>
-          <a href="systems.html"          class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">Systems</a>
-          <a href="what-we-automate.html" class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">What We Automate</a>
-          <a href="about.html"            class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">About</a>
-        </div>
-
-        <div class="hidden md:flex items-center gap-3">
-          <a href="request.html"
-             class="text-sm text-gray-300 hover:text-white border border-gray-600 hover:border-gray-400 px-4 py-2 rounded-lg transition-colors">
-            Request a System
-          </a>
-          <a href="book-consultation.html"
-             class="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors glow-amber">
-            📅 Request Consultation
-          </a>
-        </div>
-
-        <button id="mobile-menu-btn"
-                class="md:hidden text-gray-300 hover:text-white p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600"
-                aria-label="Toggle navigation menu"
-                aria-expanded="false">
-          <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-          </svg>
-          <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
+      <div class="nav-links hidden md:flex">
+        <a href="index.html"            class="nav-link">Home</a>
+        <a href="systems.html"          class="nav-link">Systems</a>
+        <a href="what-we-automate.html" class="nav-link">What We Automate</a>
+        <a href="about.html"            class="nav-link">About</a>
       </div>
+
+      <div class="nav-cta hidden md:flex">
+        <a href="request.html"           class="btn btn-ghost btn-sm">Request a System</a>
+        <a href="book-consultation.html" class="btn btn-primary btn-sm">📅 Consultation</a>
+      </div>
+
+      <button id="mobile-menu-btn" class="btn-glass btn btn-sm md:hidden"
+              aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="mobile-menu">
+        <svg id="hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        <svg id="close-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
     </div>
 
-    <div id="mobile-menu" class="hidden md:hidden bg-gray-800 border-t border-gray-700">
-      <div class="px-4 pt-3 pb-4 space-y-1">
-        <a href="index.html"            class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
-        <a href="systems.html"          class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Systems</a>
-        <a href="what-we-automate.html" class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">What We Automate</a>
-        <a href="about.html"            class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
-        <div class="pt-2 border-t border-gray-700 space-y-2">
-          <a href="request.html"
-             class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-            Request a System
-          </a>
-          <a href="book-consultation.html"
-             class="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-3 py-2.5 rounded-md text-sm font-semibold transition-colors">
-            📅 Request Consultation
-          </a>
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="hidden md:hidden" style="background:rgba(7,7,15,0.96);border-top:1px solid var(--glass-border)">
+      <div class="px-4 pt-3 pb-5 space-y-1">
+        <a href="index.html"            class="block px-3 py-2.5 rounded-lg text-sm font-medium" style="color:var(--text-secondary)">Home</a>
+        <a href="systems.html"          class="block px-3 py-2.5 rounded-lg text-sm font-medium" style="color:var(--text-secondary)">Systems</a>
+        <a href="what-we-automate.html" class="block px-3 py-2.5 rounded-lg text-sm font-medium" style="color:var(--text-secondary)">What We Automate</a>
+        <a href="about.html"            class="block px-3 py-2.5 rounded-lg text-sm font-medium" style="color:var(--text-secondary)">About</a>
+        <div class="pt-3 border-t space-y-2" style="border-color:var(--glass-border)">
+          <a href="request.html"           class="block px-3 py-2.5 rounded-lg text-sm font-medium" style="color:var(--text-secondary)">Request a System</a>
+          <a href="book-consultation.html" class="btn btn-primary btn-sm w-full justify-center">📅 Request Consultation</a>
         </div>
       </div>
     </div>
   </nav>
 
-  <!-- ========================================================
-       HERO
-  ======================================================== -->
-  <section class="relative bg-gradient-to-br from-gray-700 to-gray-900 text-white overflow-hidden">
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
-      <div class="absolute -top-20 -right-20 w-80 h-80 bg-gray-600 opacity-20 rounded-full blur-3xl"></div>
-      <div class="absolute -bottom-12 -left-12 w-72 h-72 bg-gray-800 opacity-30 rounded-full blur-3xl"></div>
-    </div>
-    <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-      <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 text-white text-xs font-semibold px-4 py-1.5 rounded-full mb-5 uppercase tracking-wider">
-        <span class="w-1.5 h-1.5 bg-gray-300 rounded-full"></span>
-        Request Status Tracker
+  <!-- ============================================================
+       MAIN CONTENT
+  ============================================================ -->
+  <div class="z-content relative">
+
+    <!-- HERO ---------------------------------------------------- -->
+    <section class="py-16 px-4 text-center">
+      <div class="max-w-4xl mx-auto">
+        <div class="inline-flex items-center gap-2 mb-5 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider"
+             style="background:var(--glass-bg-strong);border:1px solid var(--glass-border);color:var(--text-secondary)">
+          <span class="w-1.5 h-1.5 rounded-full" style="background:var(--text-muted)"></span>
+          Request Status Tracker
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4" style="color:var(--text-primary)">
+          Check Your Consultation Request Status
+        </h1>
+        <p class="text-base sm:text-lg max-w-xl mx-auto leading-relaxed" style="color:var(--text-secondary)">
+          Enter your request ID and email address to see the current status of your consultation request.
+        </p>
       </div>
-      <h1 class="text-3xl sm:text-4xl font-extrabold leading-tight tracking-tight mb-4">
-        Check Your Consultation Request Status
-      </h1>
-      <p class="text-gray-300 text-base sm:text-lg max-w-xl mx-auto leading-relaxed">
-        Enter your request ID and email address to see the current status of your consultation request.
-      </p>
-    </div>
-  </section>
+    </section>
 
-  <!-- ========================================================
-       LOOKUP FORM
-  ======================================================== -->
-  <section class="py-12">
-    <div class="max-w-lg mx-auto px-4 sm:px-6">
+    <!-- LOOKUP FORM -------------------------------------------- -->
+    <section class="pb-12 px-4">
+      <div class="max-w-lg mx-auto">
+        <div class="glass-card" style="padding:2rem">
+          <h2 class="text-lg font-bold mb-1" style="color:var(--text-primary)">Look Up Your Request</h2>
+          <p class="text-sm mb-6" style="color:var(--text-muted)">Your Request ID was included in your confirmation email.</p>
 
-      <div class="bg-white rounded-2xl border border-gray-200 shadow-xl p-7 sm:p-8">
-        <h2 class="text-lg font-bold text-gray-900 mb-1">Look Up Your Request</h2>
-        <p class="text-sm text-gray-500 mb-6">Your Request ID was included in your confirmation email.</p>
+          <form id="lookup-form" novalidate class="space-y-4">
 
-        <form id="lookup-form" novalidate class="space-y-4">
+            <div>
+              <label for="lookup-id" class="block text-sm font-semibold mb-1.5" style="color:var(--text-secondary)">
+                Request ID <span style="color:var(--red)">*</span>
+              </label>
+              <input type="text" id="lookup-id" name="request_id"
+                     class="form-input font-mono tracking-wider" style="text-transform:uppercase"
+                     placeholder="e.g. CONSULT-REQ-001"
+                     autocomplete="off" />
+              <p class="hidden mt-1 text-xs" id="lookup-id-error" style="color:#f87171">Please enter your request ID.</p>
+            </div>
 
-          <div>
-            <label for="lookup-id" class="block text-sm font-semibold text-gray-700 mb-1.5">
-              Request ID <span class="text-red-500">*</span>
-            </label>
-            <input type="text" id="lookup-id" name="request_id"
-                   class="form-input font-mono tracking-wider uppercase"
-                   placeholder="e.g. CONSULT-REQ-001"
-                   autocomplete="off" />
-            <p class="hidden mt-1 text-xs text-red-500" id="lookup-id-error">Please enter your request ID.</p>
-          </div>
+            <div>
+              <label for="lookup-email" class="block text-sm font-semibold mb-1.5" style="color:var(--text-secondary)">
+                Email Address <span style="color:var(--red)">*</span>
+              </label>
+              <input type="email" id="lookup-email" name="email"
+                     class="form-input"
+                     placeholder="jane.smith@ogilvy.com"
+                     autocomplete="email" />
+              <p class="hidden mt-1 text-xs" id="lookup-email-error" style="color:#f87171">Please enter a valid email address.</p>
+            </div>
 
-          <div>
-            <label for="lookup-email" class="block text-sm font-semibold text-gray-700 mb-1.5">
-              Email Address <span class="text-red-500">*</span>
-            </label>
-            <input type="email" id="lookup-email" name="email"
-                   class="form-input"
-                   placeholder="jane.smith@ogilvy.com"
-                   autocomplete="email" />
-            <p class="hidden mt-1 text-xs text-red-500" id="lookup-email-error">Please enter a valid email address.</p>
-          </div>
+            <div id="lookup-error-banner" class="hidden info-box info-box-red flex items-start gap-2.5">
+              <span style="color:#f87171;flex-shrink:0">⚠️</span>
+              <p id="lookup-error-text" class="text-sm" style="color:#fca5a5">Request not found. Please check your ID and email.</p>
+            </div>
 
-          <div id="lookup-error-banner" class="hidden bg-red-50 border border-red-200 rounded-xl p-3.5 flex items-start gap-2.5">
-            <span class="text-red-500 flex-shrink-0">⚠️</span>
-            <p id="lookup-error-text" class="text-sm text-red-700">Request not found. Please check your ID and email.</p>
-          </div>
+            <button type="submit" id="lookup-btn"
+                    class="btn btn-primary w-full justify-center" style="padding:0.875rem">
+              <span id="lookup-btn-text">Check Status</span>
+              <svg id="lookup-spinner" class="hidden w-4 h-4 animate-spin ml-2" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+              </svg>
+            </button>
 
-          <button type="submit" id="lookup-btn"
-                  class="w-full flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-bold px-6 py-3 rounded-xl text-sm transition-colors shadow-md shadow-red-100 disabled:opacity-60 disabled:cursor-not-allowed">
-            <span id="lookup-btn-text">Check Status</span>
-            <svg id="lookup-spinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-            </svg>
-          </button>
-
-        </form>
+          </form>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ========================================================
-       STATUS DISPLAY SECTION (hidden by default)
-  ======================================================== -->
-  <section id="status-section" class="hidden pb-14">
-    <div class="max-w-2xl mx-auto px-4 sm:px-6 animate-slide-up">
+    <!-- STATUS DISPLAY (hidden by default) --------------------- -->
+    <section id="status-section" class="hidden pb-16 px-4">
+      <div class="max-w-2xl mx-auto">
 
-      <!-- ── STATE: PENDING_APPROVAL ──────────────────────────── -->
-      <div id="state-pending" class="hidden">
-        <div class="bg-white rounded-2xl border border-yellow-200 shadow-xl overflow-hidden">
-          <!-- Banner -->
-          <div class="bg-amber-50 border-b border-amber-200 px-6 py-4 flex items-center gap-3">
-            <span class="w-3 h-3 bg-amber-400 rounded-full animate-pulse flex-shrink-0"></span>
-            <span class="inline-flex items-center gap-1.5 bg-amber-100 text-amber-700 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide">⏳ Pending Approval</span>
-            <span class="ml-auto text-xs text-amber-600 font-medium">Expected: within 24 hours</span>
+        <!-- ── STATE: PENDING_APPROVAL ─────────────────────────── -->
+        <div id="state-pending" class="hidden state-card">
+          <div class="state-banner" style="background:rgba(217,119,6,0.06)">
+            <span class="w-3 h-3 rounded-full animate-pulse-slow flex-shrink-0" style="background:#fbbf24"></span>
+            <span class="status-pill pill-amber">⏳ Pending Approval</span>
+            <span class="ml-auto text-xs font-medium" style="color:#fbbf24">Expected: within 24 hours</span>
           </div>
-          <div class="p-6 sm:p-8">
-            <h2 class="text-xl font-bold text-gray-900 mb-2">Your request is being reviewed by our team</h2>
-            <p class="text-sm text-gray-500 mb-6 leading-relaxed">We've received your consultation request and our team is reviewing it. You'll receive an email confirmation within 24 business hours with a Microsoft Teams meeting link.</p>
+          <div class="state-body">
+            <h2 class="text-xl font-bold mb-2" style="color:var(--text-primary)">Your request is being reviewed by our team</h2>
+            <p class="text-sm mb-6 leading-relaxed" style="color:var(--text-secondary)">We've received your consultation request and our team is reviewing it. You'll receive an email confirmation within 24 business hours with a Microsoft Teams meeting link.</p>
 
             <!-- Request Details -->
-            <div class="bg-gray-50 rounded-xl p-5 mb-6 space-y-3">
-              <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Request Details</h3>
-              <div class="grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
-                <span class="text-gray-500 font-medium">Name</span>
-                <span class="text-gray-900 font-semibold status-name">—</span>
-                <span class="text-gray-500 font-medium">Email</span>
-                <span class="text-gray-900 font-semibold status-email">—</span>
-                <span class="text-gray-500 font-medium">Requested Date</span>
-                <span class="text-gray-900 font-semibold status-pref-date">—</span>
-                <span class="text-gray-500 font-medium">Requested Time</span>
-                <span class="text-gray-900 font-semibold status-pref-time">—</span>
-                <span class="text-gray-500 font-medium">Purpose</span>
-                <span class="text-gray-900 font-semibold status-purpose">—</span>
-                <span class="text-gray-500 font-medium">Submitted</span>
-                <span class="text-gray-900 font-semibold status-submitted">—</span>
+            <div class="rounded-xl p-5 mb-6" style="background:var(--glass-bg-strong);border:1px solid var(--glass-border)">
+              <p class="text-xs font-bold uppercase tracking-wider mb-4" style="color:var(--text-muted)">Request Details</p>
+              <div class="detail-grid">
+                <span class="detail-key">Name</span>            <span class="detail-value status-name">—</span>
+                <span class="detail-key">Email</span>           <span class="detail-value status-email">—</span>
+                <span class="detail-key">Requested Date</span>  <span class="detail-value status-pref-date">—</span>
+                <span class="detail-key">Requested Time</span>  <span class="detail-value status-pref-time">—</span>
+                <span class="detail-key">Purpose</span>         <span class="detail-value status-purpose">—</span>
+                <span class="detail-key">Submitted</span>       <span class="detail-value status-submitted">—</span>
               </div>
             </div>
 
             <!-- Timeline -->
             <div class="mb-6">
-              <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Progress</h3>
+              <p class="text-xs font-bold uppercase tracking-wider mb-4" style="color:var(--text-muted)">Progress</p>
               <div class="flex items-start gap-0">
                 <div class="timeline-step">
-                  <div class="timeline-step-icon bg-green-500 text-white">✓</div>
-                  <p class="text-xs font-semibold text-green-700 mt-2 text-center px-1">Submitted</p>
+                  <div class="timeline-step-icon" style="background:#22c55e;color:#fff">✓</div>
+                  <p class="text-xs font-semibold mt-2 text-center px-1" style="color:#4ade80">Submitted</p>
                 </div>
-                <div class="timeline-connector bg-amber-300 self-start"></div>
+                <div class="timeline-connector" style="background:#fbbf24"></div>
                 <div class="timeline-step">
-                  <div class="timeline-step-icon bg-amber-400 text-white animate-pulse-slow">⏳</div>
-                  <p class="text-xs font-semibold text-amber-700 mt-2 text-center px-1">Under Review</p>
+                  <div class="timeline-step-icon animate-pulse-slow" style="background:#f59e0b;color:#fff">⏳</div>
+                  <p class="text-xs font-semibold mt-2 text-center px-1" style="color:#fbbf24">Under Review</p>
                 </div>
-                <div class="timeline-connector bg-gray-200 self-start"></div>
+                <div class="timeline-connector" style="background:var(--glass-border)"></div>
                 <div class="timeline-step">
-                  <div class="timeline-step-icon bg-gray-200 text-gray-400">📧</div>
-                  <p class="text-xs text-gray-400 mt-2 text-center px-1">Email Sent</p>
+                  <div class="timeline-step-icon" style="background:var(--glass-bg-strong);color:var(--text-muted)">📧</div>
+                  <p class="text-xs mt-2 text-center px-1" style="color:var(--text-muted)">Email Sent</p>
                 </div>
-                <div class="timeline-connector bg-gray-200 self-start"></div>
+                <div class="timeline-connector" style="background:var(--glass-border)"></div>
                 <div class="timeline-step">
-                  <div class="timeline-step-icon bg-gray-200 text-gray-400">💻</div>
-                  <p class="text-xs text-gray-400 mt-2 text-center px-1">Teams Meeting</p>
+                  <div class="timeline-step-icon" style="background:var(--glass-bg-strong);color:var(--text-muted)">💻</div>
+                  <p class="text-xs mt-2 text-center px-1" style="color:var(--text-muted)">Teams Meeting</p>
                 </div>
               </div>
             </div>
 
             <!-- Support -->
-            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+            <div class="info-box info-box-blue flex items-start gap-3">
               <span class="text-lg flex-shrink-0">💬</span>
               <div>
-                <p class="text-sm font-semibold text-blue-800 mb-1">Need to change something?</p>
-                <p class="text-xs text-blue-700">Email us at <a href="mailto:automation@ogilvy.com" class="underline hover:no-underline">automation@ogilvy.com</a> quoting your request ID.</p>
+                <p class="text-sm font-semibold mb-1" style="color:#93c5fd">Need to change something?</p>
+                <p class="text-xs" style="color:#bfdbfe">Email us at <a href="mailto:automation@ogilvy.com" class="underline hover:no-underline">automation@ogilvy.com</a> quoting your request ID.</p>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- ── STATE: APPROVED ───────────────────────────────────── -->
-      <div id="state-approved" class="hidden">
-        <div class="bg-white rounded-2xl border border-green-200 shadow-xl overflow-hidden">
-          <!-- Banner -->
-          <div class="bg-green-500 px-6 py-5 text-white text-center">
-            <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
-              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
-              </svg>
-            </div>
-            <span class="inline-flex items-center gap-1.5 bg-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide mb-2">✅ Approved — Meeting Scheduled!</span>
-            <p class="text-green-100 text-sm mt-1">Your meeting is confirmed! Please add it to your calendar.</p>
+        <!-- ── STATE: APPROVED ─────────────────────────────────── -->
+        <div id="state-approved" class="hidden state-card">
+          <div class="state-banner" style="background:rgba(16,185,129,0.08)">
+            <span class="status-pill pill-green">✅ Approved — Meeting Scheduled!</span>
+            <p class="text-xs ml-auto" style="color:#6ee7b7">Your meeting is confirmed!</p>
           </div>
+          <div class="state-body">
 
-          <div class="p-6 sm:p-8">
-
-            <!-- Confirmed date/time — prominent -->
-            <div class="bg-green-50 border border-green-200 rounded-xl p-5 mb-6 text-center">
-              <p class="text-xs font-bold text-green-600 uppercase tracking-wider mb-1">Confirmed Meeting Time</p>
-              <p class="text-2xl sm:text-3xl font-extrabold text-green-800 status-confirmed-datetime">—</p>
+            <!-- Confirmed datetime prominent -->
+            <div class="rounded-xl p-5 mb-6 text-center info-box-green info-box">
+              <p class="text-xs font-bold uppercase tracking-wider mb-1" style="color:#34d399">Confirmed Meeting Time</p>
+              <p class="text-2xl sm:text-3xl font-extrabold status-confirmed-datetime" style="color:#d1fae5">—</p>
             </div>
 
             <!-- Meeting Details -->
-            <div class="bg-gray-50 rounded-xl p-5 mb-6 space-y-2.5">
-              <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Meeting Details</h3>
-              <div class="grid grid-cols-2 gap-x-4 gap-y-2.5 text-sm">
-                <span class="text-gray-500 font-medium">Date</span>
-                <span class="text-gray-900 font-semibold status-confirmed-date">—</span>
-                <span class="text-gray-500 font-medium">Time</span>
-                <span class="text-gray-900 font-semibold status-confirmed-time">—</span>
-                <span class="text-gray-500 font-medium">Duration</span>
-                <span class="text-gray-900 font-semibold">30 minutes</span>
-                <span class="text-gray-500 font-medium">Host</span>
-                <span class="text-gray-900 font-semibold">Ogilvy Automation Team</span>
-                <span class="text-gray-500 font-medium">Platform</span>
-                <span class="text-gray-900 font-semibold">Microsoft Teams</span>
+            <div class="rounded-xl p-5 mb-6" style="background:var(--glass-bg-strong);border:1px solid var(--glass-border)">
+              <p class="text-xs font-bold uppercase tracking-wider mb-4" style="color:var(--text-muted)">Meeting Details</p>
+              <div class="detail-grid">
+                <span class="detail-key">Date</span>      <span class="detail-value status-confirmed-date">—</span>
+                <span class="detail-key">Time</span>      <span class="detail-value status-confirmed-time">—</span>
+                <span class="detail-key">Duration</span>  <span class="detail-value">30 minutes</span>
+                <span class="detail-key">Host</span>      <span class="detail-value">Ogilvy Automation Team</span>
+                <span class="detail-key">Platform</span>  <span class="detail-value">Microsoft Teams</span>
               </div>
             </div>
 
             <!-- Teams Join Button -->
             <a id="teams-link" href="#" target="_blank" rel="noopener"
-               class="flex items-center justify-center gap-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-4 rounded-xl text-base transition-colors shadow-lg shadow-blue-100 mb-4">
+               class="flex items-center justify-center gap-2.5 font-bold px-6 py-4 rounded-xl text-base transition-colors mb-4"
+               style="background:#2563eb;color:#fff">
               🔗 Join Teams Meeting
             </a>
 
-            <!-- Calendar download hint -->
-            <div class="flex items-center gap-3 bg-gray-50 border border-gray-200 rounded-xl px-5 py-3.5 mb-6">
+            <!-- Calendar hint -->
+            <div class="flex items-center gap-3 rounded-xl px-5 py-3.5 mb-6" style="background:var(--glass-bg-strong);border:1px solid var(--glass-border)">
               <span class="text-lg">📅</span>
               <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-gray-800">Add to Calendar</p>
-                <p class="text-xs text-gray-500">Download the .ics file from your confirmation email to add this meeting to Outlook or Google Calendar.</p>
+                <p class="text-sm font-semibold" style="color:var(--text-primary)">Add to Calendar</p>
+                <p class="text-xs" style="color:var(--text-muted)">Download the .ics file from your confirmation email to add this meeting to Outlook or Google Calendar.</p>
               </div>
             </div>
 
             <!-- Timeline -->
-            <div class="mb-2">
-              <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Progress</h3>
+            <div>
+              <p class="text-xs font-bold uppercase tracking-wider mb-4" style="color:var(--text-muted)">Progress</p>
               <div class="flex items-start gap-0">
                 <div class="timeline-step">
-                  <div class="timeline-step-icon bg-green-500 text-white">✓</div>
-                  <p class="text-xs font-semibold text-green-700 mt-2 text-center px-1">Submitted</p>
+                  <div class="timeline-step-icon" style="background:#22c55e;color:#fff">✓</div>
+                  <p class="text-xs font-semibold mt-2 text-center px-1" style="color:#4ade80">Submitted</p>
                 </div>
-                <div class="timeline-connector bg-green-400 self-start"></div>
+                <div class="timeline-connector" style="background:#22c55e"></div>
                 <div class="timeline-step">
-                  <div class="timeline-step-icon bg-green-500 text-white">✓</div>
-                  <p class="text-xs font-semibold text-green-700 mt-2 text-center px-1">Reviewed</p>
+                  <div class="timeline-step-icon" style="background:#22c55e;color:#fff">✓</div>
+                  <p class="text-xs font-semibold mt-2 text-center px-1" style="color:#4ade80">Reviewed</p>
                 </div>
-                <div class="timeline-connector bg-green-400 self-start"></div>
+                <div class="timeline-connector" style="background:#22c55e"></div>
                 <div class="timeline-step">
-                  <div class="timeline-step-icon bg-green-500 text-white">✓</div>
-                  <p class="text-xs font-semibold text-green-700 mt-2 text-center px-1">Email Sent</p>
+                  <div class="timeline-step-icon" style="background:#22c55e;color:#fff">✓</div>
+                  <p class="text-xs font-semibold mt-2 text-center px-1" style="color:#4ade80">Email Sent</p>
                 </div>
-                <div class="timeline-connector bg-blue-300 self-start"></div>
+                <div class="timeline-connector" style="background:#3b82f6"></div>
                 <div class="timeline-step">
-                  <div class="timeline-step-icon bg-blue-500 text-white animate-pulse-slow">💻</div>
-                  <p class="text-xs font-semibold text-blue-700 mt-2 text-center px-1">Teams Meeting</p>
+                  <div class="timeline-step-icon animate-pulse-slow" style="background:#3b82f6;color:#fff">💻</div>
+                  <p class="text-xs font-semibold mt-2 text-center px-1" style="color:#60a5fa">Teams Meeting</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- ── STATE: REJECTED ───────────────────────────────────── -->
-      <div id="state-rejected" class="hidden">
-        <div class="bg-white rounded-2xl border border-red-200 shadow-xl overflow-hidden">
-          <!-- Banner -->
-          <div class="bg-red-50 border-b border-red-200 px-6 py-4 flex items-center gap-3">
-            <span class="inline-flex items-center gap-1.5 bg-red-100 text-red-700 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide">❌ Request Not Approved</span>
+        <!-- ── STATE: REJECTED ─────────────────────────────────── -->
+        <div id="state-rejected" class="hidden state-card">
+          <div class="state-banner" style="background:rgba(227,6,19,0.06)">
+            <span class="status-pill pill-red">❌ Request Not Approved</span>
           </div>
-          <div class="p-6 sm:p-8">
-            <h2 class="text-xl font-bold text-gray-900 mb-2">Your request was not approved</h2>
-            <p class="text-sm text-gray-500 mb-5 leading-relaxed">Don't worry — you can submit a new request with different times or more detail, and we'll do our best to accommodate you.</p>
+          <div class="state-body">
+            <h2 class="text-xl font-bold mb-2" style="color:var(--text-primary)">Your request was not approved</h2>
+            <p class="text-sm mb-5 leading-relaxed" style="color:var(--text-secondary)">Don't worry — you can submit a new request with different times or more detail, and we'll do our best to accommodate you.</p>
 
             <!-- Admin message -->
-            <div class="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
-              <p class="text-xs font-bold text-red-600 uppercase tracking-wider mb-2">Message from Admin</p>
-              <p id="rejection-reason" class="text-sm text-red-800 leading-relaxed">—</p>
+            <div class="info-box info-box-red mb-6">
+              <p class="text-xs font-bold uppercase tracking-wider mb-2" style="color:#f87171">Message from Admin</p>
+              <p id="rejection-reason" class="text-sm leading-relaxed" style="color:#fca5a5">—</p>
             </div>
 
             <!-- Timeline -->
             <div class="mb-6">
-              <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4">Progress</h3>
+              <p class="text-xs font-bold uppercase tracking-wider mb-4" style="color:var(--text-muted)">Progress</p>
               <div class="flex items-start gap-0">
                 <div class="timeline-step">
-                  <div class="timeline-step-icon bg-green-500 text-white">✓</div>
-                  <p class="text-xs font-semibold text-green-700 mt-2 text-center px-1">Submitted</p>
+                  <div class="timeline-step-icon" style="background:#22c55e;color:#fff">✓</div>
+                  <p class="text-xs font-semibold mt-2 text-center px-1" style="color:#4ade80">Submitted</p>
                 </div>
-                <div class="timeline-connector bg-red-300 self-start"></div>
+                <div class="timeline-connector" style="background:#f87171"></div>
                 <div class="timeline-step">
-                  <div class="timeline-step-icon bg-red-500 text-white">✕</div>
-                  <p class="text-xs font-semibold text-red-700 mt-2 text-center px-1">Not Approved</p>
+                  <div class="timeline-step-icon" style="background:#ef4444;color:#fff">✕</div>
+                  <p class="text-xs font-semibold mt-2 text-center px-1" style="color:#f87171">Not Approved</p>
                 </div>
-                <div class="timeline-connector bg-gray-200 self-start"></div>
+                <div class="timeline-connector" style="background:var(--glass-border)"></div>
                 <div class="timeline-step">
-                  <div class="timeline-step-icon bg-gray-200 text-gray-400">📧</div>
-                  <p class="text-xs text-gray-400 mt-2 text-center px-1">Email Sent</p>
+                  <div class="timeline-step-icon" style="background:var(--glass-bg-strong);color:var(--text-muted)">📧</div>
+                  <p class="text-xs mt-2 text-center px-1" style="color:var(--text-muted)">Email Sent</p>
                 </div>
-                <div class="timeline-connector bg-gray-200 self-start"></div>
+                <div class="timeline-connector" style="background:var(--glass-border)"></div>
                 <div class="timeline-step">
-                  <div class="timeline-step-icon bg-gray-200 text-gray-400">💻</div>
-                  <p class="text-xs text-gray-400 mt-2 text-center px-1">Teams Meeting</p>
+                  <div class="timeline-step-icon" style="background:var(--glass-bg-strong);color:var(--text-muted)">💻</div>
+                  <p class="text-xs mt-2 text-center px-1" style="color:var(--text-muted)">Teams Meeting</p>
                 </div>
               </div>
             </div>
 
-            <a href="book-consultation.html"
-               class="flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold px-6 py-3.5 rounded-xl text-sm transition-all glow-amber shadow-lg">
+            <a href="book-consultation.html" class="btn btn-primary w-full justify-center" style="padding:0.875rem">
               Submit New Request →
             </a>
           </div>
         </div>
-      </div>
 
-      <!-- ── STATE: INFO_REQUESTED ─────────────────────────────── -->
-      <div id="state-info-requested" class="hidden">
-        <div class="bg-white rounded-2xl border border-blue-200 shadow-xl overflow-hidden">
-          <!-- Banner -->
-          <div class="bg-blue-50 border-b border-blue-200 px-6 py-4 flex items-center gap-3">
-            <span class="inline-flex items-center gap-1.5 bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide">📋 Additional Information Requested</span>
+        <!-- ── STATE: INFO_REQUESTED ───────────────────────────── -->
+        <div id="state-info-requested" class="hidden state-card">
+          <div class="state-banner" style="background:rgba(59,130,246,0.06)">
+            <span class="status-pill pill-blue">📋 Additional Information Requested</span>
           </div>
-          <div class="p-6 sm:p-8">
-            <h2 class="text-xl font-bold text-gray-900 mb-2">Our team needs a bit more information</h2>
-            <p class="text-sm text-gray-500 mb-5 leading-relaxed">Please reply to the email we sent you with the requested information so we can proceed with your consultation.</p>
+          <div class="state-body">
+            <h2 class="text-xl font-bold mb-2" style="color:var(--text-primary)">Our team needs a bit more information</h2>
+            <p class="text-sm mb-5 leading-relaxed" style="color:var(--text-secondary)">Please reply to the email we sent you with the requested information so we can proceed with your consultation.</p>
 
             <!-- Admin message -->
-            <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
-              <p class="text-xs font-bold text-blue-600 uppercase tracking-wider mb-2">Message from Admin</p>
-              <p id="info-request-message" class="text-sm text-blue-800 leading-relaxed">—</p>
+            <div class="info-box info-box-blue mb-5">
+              <p class="text-xs font-bold uppercase tracking-wider mb-2" style="color:#60a5fa">Message from Admin</p>
+              <p id="info-request-message" class="text-sm leading-relaxed" style="color:#bfdbfe">—</p>
             </div>
 
-            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
-              <p class="text-sm text-amber-800 leading-relaxed">
-                <strong>Action required:</strong> Reply to the confirmation email you received, or contact us at <a href="mailto:automation@ogilvy.com" class="underline hover:no-underline font-semibold">automation@ogilvy.com</a> quoting your request ID.
+            <div class="info-box info-box-amber">
+              <p class="text-sm leading-relaxed" style="color:#fde68a">
+                <strong style="color:#fbbf24">Action required:</strong> Reply to the confirmation email you received, or contact us at
+                <a href="mailto:automation@ogilvy.com" class="underline hover:no-underline font-semibold">automation@ogilvy.com</a> quoting your request ID.
               </p>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- ── STATE: COMPLETED ──────────────────────────────────── -->
-      <div id="state-completed" class="hidden">
-        <div class="bg-white rounded-2xl border border-blue-200 shadow-xl overflow-hidden">
-          <!-- Banner -->
-          <div class="bg-blue-600 px-6 py-5 text-white text-center">
-            <div class="w-14 h-14 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3">
+        <!-- ── STATE: COMPLETED ────────────────────────────────── -->
+        <div id="state-completed" class="hidden state-card">
+          <div class="state-banner justify-center text-center" style="background:rgba(59,130,246,0.08);flex-direction:column;padding:2rem 1.5rem">
+            <div class="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-3" style="background:rgba(255,255,255,0.08)">
               <span class="text-2xl">🎓</span>
             </div>
-            <span class="inline-flex items-center gap-1.5 bg-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wide mb-2">✅ Consultation Completed</span>
-            <p class="text-blue-100 text-sm mt-1">Thank you for meeting with us!</p>
+            <span class="status-pill pill-green">✅ Consultation Completed</span>
+            <p class="text-xs mt-2" style="color:var(--text-muted)">Thank you for meeting with us!</p>
           </div>
-
-          <div class="p-6 sm:p-8 text-center">
-            <h2 class="text-xl font-bold text-gray-900 mb-3">We hope your consultation was valuable!</h2>
-            <p class="text-sm text-gray-500 mb-6 leading-relaxed max-w-md mx-auto">
+          <div class="state-body text-center">
+            <h2 class="text-xl font-bold mb-3" style="color:var(--text-primary)">We hope your consultation was valuable!</h2>
+            <p class="text-sm mb-6 leading-relaxed max-w-md mx-auto" style="color:var(--text-secondary)">
               Your consultation has been completed. If you'd like further assistance or want to request a new automation system, we're here to help.
             </p>
 
-            <!-- Full timeline complete -->
+            <!-- Full timeline -->
             <div class="flex items-start gap-0 mb-8 max-w-sm mx-auto">
               <div class="timeline-step">
-                <div class="timeline-step-icon bg-green-500 text-white">✓</div>
-                <p class="text-xs font-semibold text-green-700 mt-2 text-center px-1">Submitted</p>
+                <div class="timeline-step-icon" style="background:#22c55e;color:#fff">✓</div>
+                <p class="text-xs font-semibold mt-2 text-center px-1" style="color:#4ade80">Submitted</p>
               </div>
-              <div class="timeline-connector bg-green-400 self-start"></div>
+              <div class="timeline-connector" style="background:#22c55e"></div>
               <div class="timeline-step">
-                <div class="timeline-step-icon bg-green-500 text-white">✓</div>
-                <p class="text-xs font-semibold text-green-700 mt-2 text-center px-1">Approved</p>
+                <div class="timeline-step-icon" style="background:#22c55e;color:#fff">✓</div>
+                <p class="text-xs font-semibold mt-2 text-center px-1" style="color:#4ade80">Approved</p>
               </div>
-              <div class="timeline-connector bg-green-400 self-start"></div>
+              <div class="timeline-connector" style="background:#22c55e"></div>
               <div class="timeline-step">
-                <div class="timeline-step-icon bg-green-500 text-white">✓</div>
-                <p class="text-xs font-semibold text-green-700 mt-2 text-center px-1">Email Sent</p>
+                <div class="timeline-step-icon" style="background:#22c55e;color:#fff">✓</div>
+                <p class="text-xs font-semibold mt-2 text-center px-1" style="color:#4ade80">Email Sent</p>
               </div>
-              <div class="timeline-connector bg-green-400 self-start"></div>
+              <div class="timeline-connector" style="background:#22c55e"></div>
               <div class="timeline-step">
-                <div class="timeline-step-icon bg-green-500 text-white">✓</div>
-                <p class="text-xs font-semibold text-green-700 mt-2 text-center px-1">Completed</p>
+                <div class="timeline-step-icon" style="background:#22c55e;color:#fff">✓</div>
+                <p class="text-xs font-semibold mt-2 text-center px-1" style="color:#4ade80">Completed</p>
               </div>
             </div>
 
-            <a href="book-consultation.html"
-               class="inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-3.5 rounded-xl text-sm transition-all glow-amber shadow-lg">
+            <a href="book-consultation.html" class="btn btn-primary btn-lg">
               Request Another Consultation →
             </a>
           </div>
         </div>
-      </div>
 
-      <!-- ── STATE: NOT FOUND ──────────────────────────────────── -->
-      <div id="state-not-found" class="hidden">
-        <div class="bg-white rounded-2xl border border-gray-200 shadow-xl p-8 text-center">
-          <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <!-- ── STATE: NOT FOUND ────────────────────────────────── -->
+        <div id="state-not-found" class="hidden glass-card text-center" style="padding:3rem 2rem">
+          <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4" style="background:var(--glass-bg-strong)">
             <span class="text-2xl">🔍</span>
           </div>
-          <h2 class="text-xl font-bold text-gray-900 mb-2">Request Not Found</h2>
-          <p class="text-sm text-gray-500 mb-6 leading-relaxed max-w-sm mx-auto">
+          <h2 class="text-xl font-bold mb-2" style="color:var(--text-primary)">Request Not Found</h2>
+          <p class="text-sm mb-6 leading-relaxed max-w-sm mx-auto" style="color:var(--text-secondary)">
             We couldn't find a request matching that ID and email address. Please double-check your details and try again.
           </p>
           <div class="space-y-2">
             <button onclick="resetLookup()"
-                    class="w-full flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-6 py-3 rounded-xl text-sm transition-colors">
+                    class="btn btn-ghost w-full justify-center" style="padding:0.875rem">
               Try Again
             </button>
-            <a href="book-consultation.html"
-               class="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold px-6 py-3 rounded-xl text-sm transition-all glow-amber shadow-md">
+            <a href="book-consultation.html" class="btn btn-primary w-full justify-center" style="padding:0.875rem">
               Submit a New Request →
             </a>
           </div>
         </div>
+
       </div>
+    </section>
 
-    </div>
-  </section>
-
-  <!-- ========================================================
-       CONTACT SUPPORT
-  ======================================================== -->
-  <section class="py-12 bg-white border-t border-gray-100">
-    <div class="max-w-lg mx-auto px-4 sm:px-6 text-center">
-      <h2 class="text-lg font-bold text-gray-900 mb-2">Need help?</h2>
-      <p class="text-sm text-gray-500 mb-4">Contact our team and we'll assist you with your consultation request.</p>
-      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
-        <a href="mailto:automation@ogilvy.com"
-           class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-5 py-2.5 rounded-lg text-sm transition-colors">
-          ✉️ automation@ogilvy.com
-        </a>
-        <a href="book-consultation.html"
-           class="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2.5 rounded-lg text-sm transition-all glow-amber">
-          📅 Submit New Request
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================
-       FOOTER
-  ======================================================== -->
-  <footer class="bg-gray-900 text-gray-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
-        <div class="sm:col-span-2 lg:col-span-1">
-          <a href="index.html" class="flex items-center gap-2 mb-3">
-            <span class="text-xl">⚙️</span>
-            <span class="text-white font-bold text-lg tracking-tight">
-              Ogilvy <span class="text-red-500">Automation</span>
-            </span>
+    <!-- NEED HELP ----------------------------------------------- -->
+    <section class="py-12 px-4 text-center">
+      <div class="max-w-lg mx-auto">
+        <h2 class="text-lg font-bold mb-2" style="color:var(--text-primary)">Need help?</h2>
+        <p class="text-sm mb-5" style="color:var(--text-muted)">Contact our team and we'll assist you with your consultation request.</p>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <a href="mailto:automation@ogilvy.com" class="btn btn-ghost">
+            ✉️ automation@ogilvy.com
           </a>
-          <p class="text-gray-400 text-sm leading-relaxed">
-            Transforming repetitive tasks into intelligent systems that amplify human creativity and impact.
-          </p>
-        </div>
-        <div>
-          <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Navigation</h4>
-          <ul class="space-y-2.5">
-            <li><a href="index.html"            class="text-gray-400 hover:text-white text-sm transition-colors">Home</a></li>
-            <li><a href="systems.html"          class="text-gray-400 hover:text-white text-sm transition-colors">Systems</a></li>
-            <li><a href="what-we-automate.html" class="text-gray-400 hover:text-white text-sm transition-colors">What We Automate</a></li>
-            <li><a href="about.html"            class="text-gray-400 hover:text-white text-sm transition-colors">About</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Services</h4>
-          <ul class="space-y-2.5">
-            <li><a href="request.html"           class="text-gray-400 hover:text-white text-sm transition-colors">Request a System</a></li>
-            <li><a href="report-issue.html"      class="text-gray-400 hover:text-white text-sm transition-colors">Report an Issue</a></li>
-            <li><a href="book-consultation.html" class="text-gray-400 hover:text-white text-sm transition-colors">Book Consultation</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Get Started</h4>
-          <p class="text-gray-400 text-sm mb-4 leading-relaxed">Not sure where to begin? Request a free 30-minute consultation.</p>
-          <a href="book-consultation.html"
-             class="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold px-5 py-2.5 rounded-lg transition-all glow-amber">
-            📅 Request Consultation
+          <a href="book-consultation.html" class="btn btn-primary">
+            📅 Submit New Request
           </a>
         </div>
       </div>
-      <div class="border-t border-gray-700 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <p class="text-gray-500 text-xs">© 2025 Ogilvy Automation Team. All rights reserved.</p>
-        <p class="text-gray-600 text-xs">Built by the Ogilvy Automation Team</p>
-      </div>
-    </div>
-  </footer>
+    </section>
 
-  <!-- ========================================================
+    <!-- FOOTER -------------------------------------------------- -->
+    <footer class="site-footer">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+          <div class="sm:col-span-2 lg:col-span-1">
+            <a href="index.html" class="flex items-center gap-2 mb-3">
+              <span class="text-xl">⚙️</span>
+              <span class="font-bold text-lg tracking-tight" style="color:var(--text-primary)">Ogilvy <span style="color:var(--red)">Automation</span></span>
+            </a>
+            <p class="text-sm leading-relaxed" style="color:var(--text-muted)">Transforming repetitive tasks into intelligent systems that amplify human creativity and impact.</p>
+          </div>
+          <div>
+            <h4 class="font-semibold text-sm uppercase tracking-wider mb-4" style="color:var(--text-primary)">Navigation</h4>
+            <ul class="space-y-2.5">
+              <li><a href="index.html"            class="text-sm transition-colors hover:text-white" style="color:var(--text-muted)">Home</a></li>
+              <li><a href="systems.html"          class="text-sm transition-colors hover:text-white" style="color:var(--text-muted)">Systems</a></li>
+              <li><a href="what-we-automate.html" class="text-sm transition-colors hover:text-white" style="color:var(--text-muted)">What We Automate</a></li>
+              <li><a href="about.html"            class="text-sm transition-colors hover:text-white" style="color:var(--text-muted)">About</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold text-sm uppercase tracking-wider mb-4" style="color:var(--text-primary)">Services</h4>
+            <ul class="space-y-2.5">
+              <li><a href="request.html"           class="text-sm transition-colors hover:text-white" style="color:var(--text-muted)">Request a System</a></li>
+              <li><a href="report-issue.html"      class="text-sm transition-colors hover:text-white" style="color:var(--text-muted)">Report an Issue</a></li>
+              <li><a href="book-consultation.html" class="text-sm transition-colors hover:text-white" style="color:var(--text-muted)">Book Consultation</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="font-semibold text-sm uppercase tracking-wider mb-4" style="color:var(--text-primary)">Get Started</h4>
+            <p class="text-sm mb-4 leading-relaxed" style="color:var(--text-muted)">Not sure where to begin? Request a free 30-minute consultation.</p>
+            <a href="book-consultation.html" class="btn btn-primary btn-sm">📅 Request Consultation</a>
+          </div>
+        </div>
+        <div class="border-t pt-6 flex flex-col sm:flex-row items-center justify-between gap-3" style="border-color:var(--glass-border)">
+          <p class="text-xs" style="color:var(--text-muted)">© 2025 Ogilvy Automation Team. All rights reserved.</p>
+          <p class="text-xs" style="color:var(--text-muted)">Built by the Ogilvy Automation Team</p>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- /z-content -->
+
+  <!-- ============================================================
        SCRIPTS
-  ======================================================== -->
+  ============================================================ -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="../js/supabase-config.js"></script>
-  <script src="../js/main.js"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/main.js"></script>
 
   <script>
   (function () {
     'use strict';
 
-    // ── Mobile nav toggle ────────────────────────────────────────
+    // ── Mobile nav toggle ─────────────────────────────────────────
     var btn       = document.getElementById('mobile-menu-btn');
     var menu      = document.getElementById('mobile-menu');
     var hamburger = document.getElementById('hamburger-icon');
@@ -638,7 +578,7 @@
       btn.setAttribute('aria-expanded', String(navOpen));
     });
 
-    // ── Pre-fill Request ID from URL param ───────────────────────
+    // ── Pre-fill Request ID from URL param ────────────────────────
     (function prefillFromUrl() {
       try {
         var params = new URLSearchParams(window.location.search);
@@ -650,7 +590,7 @@
       } catch (e) { /* ignore */ }
     })();
 
-    // ── Demo data generators ─────────────────────────────────────
+    // ── Demo data generators ──────────────────────────────────────
     function getDemoStatus(requestId) {
       var id = (requestId || '').toUpperCase();
       if (id.indexOf('002') !== -1) {
@@ -704,7 +644,7 @@
       return null;
     }
 
-    // ── Format helpers ────────────────────────────────────────────
+    // ── Format helpers ─────────────────────────────────────────────
     function formatDate(dateStr) {
       if (!dateStr) return '—';
       try {
@@ -715,9 +655,7 @@
 
     function formatTime(timeStr) {
       if (!timeStr) return '—';
-      // Already formatted like "10:00 AM"
       if (timeStr.indexOf('AM') !== -1 || timeStr.indexOf('PM') !== -1) return timeStr;
-      // Convert "14:00" format
       try {
         var parts = timeStr.split(':');
         var h = parseInt(parts[0], 10);
@@ -728,7 +666,7 @@
       } catch (e) { return timeStr; }
     }
 
-    // ── Show/hide state panels ────────────────────────────────────
+    // ── Show/hide state panels ─────────────────────────────────────
     function hideAllStates() {
       ['pending', 'approved', 'rejected', 'info-requested', 'completed', 'not-found'].forEach(function (s) {
         var el = document.getElementById('state-' + s);
@@ -745,7 +683,7 @@
       section.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // ── Populate status details ───────────────────────────────────
+    // ── Populate status details ────────────────────────────────────
     function populateStatus(status, data) {
       if (status === 'pending_approval') {
         showState('pending');
@@ -764,9 +702,7 @@
         setTexts('.status-confirmed-date',     formatDate(confirmedDate));
         setTexts('.status-confirmed-time',     confirmedTime);
         var teamsLink = document.getElementById('teams-link');
-        if (teamsLink && data.teams_link) {
-          teamsLink.href = data.teams_link;
-        }
+        if (teamsLink && data.teams_link) { teamsLink.href = data.teams_link; }
 
       } else if (status === 'rejected') {
         showState('rejected');
@@ -791,7 +727,7 @@
       els.forEach(function (el) { el.textContent = value; });
     }
 
-    // ── Reset lookup ──────────────────────────────────────────────
+    // ── Reset lookup ───────────────────────────────────────────────
     window.resetLookup = function () {
       hideAllStates();
       document.getElementById('status-section').classList.add('hidden');
@@ -800,7 +736,7 @@
       window.scrollTo({ top: document.getElementById('lookup-form').offsetTop - 100, behavior: 'smooth' });
     };
 
-    // ── Form submission ───────────────────────────────────────────
+    // ── Form submission ────────────────────────────────────────────
     var lookupForm = document.getElementById('lookup-form');
     lookupForm.addEventListener('submit', async function (e) {
       e.preventDefault();
@@ -808,7 +744,6 @@
       var errorBanner = document.getElementById('lookup-error-banner');
       errorBanner.classList.add('hidden');
 
-      // Validate
       var idInput    = document.getElementById('lookup-id');
       var emailInput = document.getElementById('lookup-email');
       var idErr      = document.getElementById('lookup-id-error');
@@ -817,7 +752,7 @@
 
       if (!idInput.value.trim()) {
         idErr.classList.remove('hidden');
-        idInput.style.borderColor = '#EF4444';
+        idInput.style.borderColor = 'var(--red)';
         valid = false;
       } else {
         idErr.classList.add('hidden');
@@ -826,7 +761,7 @@
 
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput.value.trim())) {
         emailErr.classList.remove('hidden');
-        emailInput.style.borderColor = '#EF4444';
+        emailInput.style.borderColor = 'var(--red)';
         valid = false;
       } else {
         emailErr.classList.add('hidden');
@@ -835,17 +770,16 @@
 
       if (!valid) return;
 
-      var lookupBtn  = document.getElementById('lookup-btn');
-      var btnText    = document.getElementById('lookup-btn-text');
-      var spinner    = document.getElementById('lookup-spinner');
+      var lookupBtn = document.getElementById('lookup-btn');
+      var btnText   = document.getElementById('lookup-btn-text');
+      var spinner   = document.getElementById('lookup-spinner');
       lookupBtn.disabled = true;
       btnText.textContent = 'Checking…';
       spinner.classList.remove('hidden');
 
       var requestId = idInput.value.trim().toUpperCase();
       var email     = emailInput.value.trim().toLowerCase();
-
-      var found = false;
+      var found     = false;
 
       // Try Supabase first
       if (typeof window.supabaseClient !== 'undefined' && window.supabaseClient) {
@@ -890,18 +824,6 @@
         document.getElementById('status-section').classList.add('hidden');
       }
     });
-
-    // ── Auto-trigger lookup if URL has ?id= ──────────────────────
-    (function autoLookup() {
-      try {
-        var params = new URLSearchParams(window.location.search);
-        var id = params.get('id');
-        if (id) {
-          // Only auto-trigger if we have a demo email available, otherwise just prefill
-          // (We filled the ID field already; don't auto-submit without email)
-        }
-      } catch (e) { /* ignore */ }
-    })();
 
   })();
   </script>
