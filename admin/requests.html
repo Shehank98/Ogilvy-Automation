@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Requests – Ogilvy Automation Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#DC2626',
+              'red-dark': '#B91C1C',
+              amber: '#F59E0B',
+              'amber-dark': '#D97706',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Scrollbar styling */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #1f2937; }
+    ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+
+    /* Modal transitions */
+    .modal-backdrop {
+      transition: opacity 0.2s ease;
+    }
+    .modal-panel {
+      transition: transform 0.25s ease, opacity 0.25s ease;
+    }
+    .modal-hidden .modal-backdrop { opacity: 0; pointer-events: none; }
+    .modal-hidden .modal-panel { transform: translateY(16px); opacity: 0; }
+
+    /* Table row hover */
+    tbody tr { transition: background-color 0.1s ease; }
+
+    /* Sidebar active */
+    .sidebar-active {
+      background-color: rgba(220, 38, 38, 0.15);
+      border-right: 3px solid #DC2626;
+      color: #fff;
+    }
+
+    /* Tooltip */
+    [data-tooltip]:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: calc(100% + 6px);
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      background: #111827;
+      color: #f9fafb;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      pointer-events: none;
+      z-index: 50;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-900 antialiased font-sans">
+
+<!-- ============================================================
+     LAYOUT WRAPPER
+============================================================ -->
+<div class="flex h-screen overflow-hidden">
+
+  <!-- =========================================================
+       SIDEBAR
+  ========================================================= -->
+  <aside class="w-64 bg-gray-900 flex flex-col flex-shrink-0 fixed inset-y-0 left-0 z-30">
+
+    <!-- Logo -->
+    <div class="px-6 py-5 border-b border-gray-700/60">
+      <a href="dashboard.html" class="flex items-center gap-2.5">
+        <span class="text-xl">⚙️</span>
+        <span class="text-white font-bold text-base leading-tight">
+          Ogilvy <span class="text-red-500">Automation</span>
+          <span class="block text-gray-400 text-xs font-normal">Admin Portal</span>
+        </span>
+      </a>
+    </div>
+
+    <!-- Nav -->
+    <nav class="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
+      <a href="dashboard.html"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-700/60 hover:text-white text-sm font-medium transition-colors">
+        <span class="text-base">📊</span> Dashboard
+      </a>
+
+      <a href="consultations.html"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-700/60 hover:text-white text-sm font-medium transition-colors">
+        <span class="text-base">📅</span>
+        <span class="flex-1">Consultations</span>
+        <span class="bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">5</span>
+      </a>
+
+      <a href="requests.html"
+         class="sidebar-active flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+        <span class="text-base">📋</span> System Requests
+      </a>
+
+      <a href="bugs.html"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-700/60 hover:text-white text-sm font-medium transition-colors">
+        <span class="text-base">🐛</span> Bug Reports
+      </a>
+
+      <a href="systems.html"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-700/60 hover:text-white text-sm font-medium transition-colors">
+        <span class="text-base">⚙️</span> Systems
+      </a>
+    </nav>
+
+    <!-- User footer -->
+    <div class="px-4 py-4 border-t border-gray-700/60">
+      <p class="text-gray-400 text-xs mb-3 truncate" id="admin-email">admin@ogilvy.com</p>
+      <button onclick="handleSignOut()"
+              class="w-full flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-gray-200 hover:text-white text-sm font-medium px-3 py-2 rounded-lg transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+        </svg>
+        Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- =========================================================
+       MAIN CONTENT
+  ========================================================= -->
+  <main class="flex-1 ml-64 flex flex-col overflow-y-auto">
+
+    <!-- Top bar -->
+    <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
+      <div>
+        <h1 class="text-xl font-bold text-gray-900">System Requests</h1>
+        <p class="text-xs text-gray-500 mt-0.5">Manage and track all automation system requests</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button onclick="exportCSV()"
+                class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors border border-gray-200">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          Export CSV
+        </button>
+      </div>
+    </header>
+
+    <div class="p-6 flex flex-col gap-6">
+
+      <!-- =====================================================
+           STATS ROW
+      ===================================================== -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Requests</p>
+          <p class="text-3xl font-extrabold text-gray-900 mt-1">24</p>
+        </div>
+        <div class="bg-white rounded-xl border border-yellow-200 shadow-sm p-4">
+          <p class="text-xs font-semibold text-yellow-600 uppercase tracking-wider">Pending Review</p>
+          <p class="text-3xl font-extrabold text-yellow-600 mt-1">8</p>
+        </div>
+        <div class="bg-white rounded-xl border border-blue-200 shadow-sm p-4">
+          <p class="text-xs font-semibold text-blue-600 uppercase tracking-wider">In Progress</p>
+          <p class="text-3xl font-extrabold text-blue-600 mt-1">6</p>
+        </div>
+        <div class="bg-white rounded-xl border border-green-200 shadow-sm p-4">
+          <p class="text-xs font-semibold text-green-600 uppercase tracking-wider">Completed This Month</p>
+          <p class="text-3xl font-extrabold text-green-600 mt-1">10</p>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           FILTER BAR
+      ===================================================== -->
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-3">
+          <!-- Search -->
+          <div class="xl:col-span-2 relative">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"/>
+            </svg>
+            <input id="filter-search" type="text" placeholder="Search by name, email, description..."
+                   class="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-gray-50"/>
+          </div>
+
+          <!-- Status -->
+          <select id="filter-status"
+                  class="text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50">
+            <option value="">All Statuses</option>
+            <option value="New">New</option>
+            <option value="In Review">In Review</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Approved">Approved</option>
+            <option value="Completed">Completed</option>
+            <option value="Rejected">Rejected</option>
+          </select>
+
+          <!-- Department -->
+          <select id="filter-department"
+                  class="text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50">
+            <option value="">All Departments</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Finance">Finance</option>
+            <option value="HR">HR</option>
+            <option value="IT">IT</option>
+            <option value="Operations">Operations</option>
+            <option value="Legal">Legal</option>
+            <option value="Creative">Creative</option>
+          </select>
+
+          <!-- Priority -->
+          <select id="filter-priority"
+                  class="text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50">
+            <option value="">All Priorities</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
+          </select>
+
+          <!-- Date from -->
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-gray-500 whitespace-nowrap">From</label>
+            <input id="filter-date-from" type="date"
+                   class="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50"/>
+          </div>
+
+          <!-- Date to -->
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-gray-500 whitespace-nowrap">To</label>
+            <input id="filter-date-to" type="date"
+                   class="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50"/>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 pt-3 border-t border-gray-100">
+          <button onclick="applyFilters()"
+                  class="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
+            Apply Filters
+          </button>
+          <button onclick="clearFilters()"
+                  class="bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-medium px-5 py-2 rounded-lg transition-colors border border-gray-200">
+            Clear
+          </button>
+          <span id="filter-count" class="text-xs text-gray-400 ml-2 hidden">Showing <span id="visible-count">8</span> of 8 results</span>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           BULK ACTIONS
+      ===================================================== -->
+      <div id="bulk-bar" class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 hidden">
+        <div class="flex flex-wrap items-center gap-3">
+          <span class="text-sm font-semibold text-amber-700">
+            <span id="bulk-count">0</span> selected
+          </span>
+          <div class="flex items-center gap-2 ml-auto">
+            <select id="bulk-status"
+                    class="text-sm border border-amber-200 rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400">
+              <option value="">Change Status...</option>
+              <option value="New">New</option>
+              <option value="In Review">In Review</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Approved">Approved</option>
+              <option value="Completed">Completed</option>
+              <option value="Rejected">Rejected</option>
+            </select>
+            <button onclick="bulkStatusChange()"
+                    class="bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-4 py-1.5 rounded-lg transition-colors">
+              Apply
+            </button>
+            <select id="bulk-assign"
+                    class="text-sm border border-amber-200 rounded-lg px-3 py-1.5 bg-white focus:outline-none focus:ring-2 focus:ring-amber-400">
+              <option value="">Assign to...</option>
+              <option value="Alex J.">Alex J.</option>
+              <option value="Sarah C.">Sarah C.</option>
+              <option value="Marcus W.">Marcus W.</option>
+              <option value="Priya P.">Priya P.</option>
+            </select>
+            <button onclick="bulkAssign()"
+                    class="bg-gray-700 hover:bg-gray-800 text-white text-sm font-semibold px-4 py-1.5 rounded-lg transition-colors">
+              Assign
+            </button>
+            <button onclick="clearSelection()"
+                    class="text-gray-500 hover:text-gray-700 text-sm px-2 py-1.5 transition-colors">
+              Clear
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           REQUESTS TABLE
+      ===================================================== -->
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th class="px-4 py-3 text-left">
+                  <input type="checkbox" id="select-all" onchange="toggleSelectAll(this)"
+                         class="rounded border-gray-300 text-red-600 focus:ring-red-500"/>
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700"
+                    onclick="sortTable('ticket')">
+                  Ticket ID <span class="ml-1 text-gray-300">↕</span>
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700"
+                    onclick="sortTable('requester')">
+                  Requester <span class="ml-1 text-gray-300">↕</span>
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Department
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  System Name
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700"
+                    onclick="sortTable('priority')">
+                  Priority <span class="ml-1 text-gray-300">↕</span>
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700"
+                    onclick="sortTable('status')">
+                  Status <span class="ml-1 text-gray-300">↕</span>
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700"
+                    onclick="sortTable('submitted')">
+                  Submitted <span class="ml-1 text-gray-300">↕</span>
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Assigned To
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody id="requests-table-body" class="divide-y divide-gray-100">
+              <!-- Rows injected by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty state -->
+        <div id="empty-state" class="hidden py-16 text-center">
+          <div class="text-4xl mb-3">📭</div>
+          <p class="text-gray-500 font-medium">No requests match your filters.</p>
+          <button onclick="clearFilters()" class="mt-3 text-red-600 hover:text-red-700 text-sm font-semibold">Clear filters</button>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           PAGINATION
+      ===================================================== -->
+      <div class="flex items-center justify-between bg-white rounded-xl border border-gray-200 shadow-sm px-5 py-3">
+        <p class="text-sm text-gray-500">
+          Showing <span class="font-semibold text-gray-700">1–8</span> of <span class="font-semibold text-gray-700">24</span> results
+        </p>
+        <div class="flex items-center gap-1">
+          <button class="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200 disabled:opacity-40" disabled>
+            ← Prev
+          </button>
+          <button class="px-3 py-1.5 text-sm font-semibold bg-red-600 text-white rounded-lg">1</button>
+          <button class="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">2</button>
+          <button class="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">3</button>
+          <button class="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200">
+            Next →
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /p-6 -->
+  </main>
+</div><!-- /flex wrapper -->
+
+
+<!-- ============================================================
+     DETAIL MODAL
+============================================================ -->
+<div id="detail-modal" class="fixed inset-0 z-50 modal-hidden" role="dialog" aria-modal="true">
+  <!-- Backdrop -->
+  <div class="modal-backdrop absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal()"></div>
+
+  <!-- Panel -->
+  <div class="modal-panel relative z-10 flex items-start justify-center min-h-screen pt-10 pb-10 px-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden">
+
+      <!-- Modal header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <div>
+          <h2 class="text-lg font-bold text-gray-900" id="modal-ticket-id">SYS-REQ-2025-008</h2>
+          <p class="text-xs text-gray-500 mt-0.5" id="modal-system-name">Social Analytics Aggregator</p>
+        </div>
+        <button onclick="closeModal()"
+                class="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Modal body: scrollable -->
+      <div class="overflow-y-auto max-h-[72vh]">
+        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <!-- Left column: details -->
+          <div class="space-y-4">
+            <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wider pb-1 border-b border-gray-100">Request Details</h3>
+
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Requester</label>
+              <p class="text-sm text-gray-900 mt-0.5" id="modal-requester">Emma Clarke</p>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Email</label>
+              <p class="text-sm text-gray-900 mt-0.5" id="modal-email">emma.clarke@ogilvy.com</p>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Department</label>
+              <p class="text-sm text-gray-900 mt-0.5" id="modal-department">Marketing</p>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Priority</label>
+              <p class="mt-0.5" id="modal-priority-badge"></p>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Submitted</label>
+              <p class="text-sm text-gray-900 mt-0.5" id="modal-submitted">Today</p>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Description</label>
+              <p class="text-sm text-gray-600 mt-1 leading-relaxed" id="modal-description">
+                Need a system to aggregate social media analytics from multiple platforms into a single dashboard for weekly reporting.
+              </p>
+            </div>
+
+            <!-- Attachments -->
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Attachments</label>
+              <div class="mt-1 space-y-1" id="modal-attachments">
+                <a href="#" class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                  </svg>
+                  requirements_brief.pdf
+                </a>
+                <a href="#" class="flex items-center gap-2 text-sm text-blue-600 hover:text-blue-700">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                  </svg>
+                  wireframe_mockup.png
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right column: admin controls -->
+          <div class="space-y-4">
+            <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wider pb-1 border-b border-gray-100">Admin Controls</h3>
+
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Status</label>
+              <select id="modal-status-select"
+                      class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500">
+                <option value="New">New</option>
+                <option value="In Review">In Review</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Approved">Approved</option>
+                <option value="Completed">Completed</option>
+                <option value="Rejected">Rejected</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Assign To</label>
+              <select id="modal-assign-select"
+                      class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500">
+                <option value="Unassigned">Unassigned</option>
+                <option value="Alex J.">Alex J.</option>
+                <option value="Sarah C.">Sarah C.</option>
+                <option value="Marcus W.">Marcus W.</option>
+                <option value="Priya P.">Priya P.</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Admin Notes</label>
+              <textarea id="modal-notes" rows="4"
+                        placeholder="Add internal notes visible only to admins..."
+                        class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"></textarea>
+            </div>
+
+            <!-- Link Consultation -->
+            <button onclick="linkConsultation()"
+                    class="w-full flex items-center justify-center gap-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 font-semibold text-sm px-4 py-2.5 rounded-lg transition-colors">
+              📅 Link Consultation
+              <span class="text-xs text-amber-500 font-normal">Has this requester booked a consultation?</span>
+            </button>
+
+            <!-- Activity log -->
+            <div>
+              <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Activity Log</h4>
+              <div class="space-y-2 text-xs text-gray-600 max-h-32 overflow-y-auto pr-1" id="modal-activity-log">
+                <div class="flex items-start gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1 flex-shrink-0"></span>
+                  <span><strong>Status changed</strong> to New — Today 09:14 by System</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="w-1.5 h-1.5 rounded-full bg-gray-300 mt-1 flex-shrink-0"></span>
+                  <span><strong>Request submitted</strong> by Emma Clarke — Today 09:14</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50 gap-3">
+        <button onclick="sendEmailToRequester()"
+                class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors border border-gray-200">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+          Email Requester
+        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="closeModal()"
+                  class="bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-medium px-5 py-2 rounded-lg transition-colors border border-gray-200">
+            Cancel
+          </button>
+          <button onclick="saveChanges()"
+                  class="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-6 py-2 rounded-lg transition-colors">
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     TOAST NOTIFICATION
+============================================================ -->
+<div id="toast" class="fixed bottom-5 right-5 z-[100] hidden">
+  <div class="flex items-center gap-3 bg-gray-900 text-white text-sm font-medium px-5 py-3 rounded-xl shadow-xl border border-gray-700">
+    <span id="toast-icon">✓</span>
+    <span id="toast-msg">Changes saved</span>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SCRIPTS
+============================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/admin.js"></script>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const REQUESTS_DATA = [
+  {
+    id: 1,
+    ticket: 'SYS-REQ-2025-008',
+    requester: 'Emma Clarke',
+    email: 'emma.clarke@ogilvy.com',
+    department: 'Marketing',
+    system: 'Social Analytics Aggregator',
+    priority: 'High',
+    status: 'New',
+    submitted: 'Today',
+    submittedDate: new Date(),
+    assigned: 'Unassigned',
+    description: 'Need a system to aggregate social media analytics from multiple platforms into a single dashboard for weekly reporting. Currently manually pulling data from Instagram, LinkedIn, and Twitter.',
+    notes: '',
+    activityLog: [
+      { action: 'Request submitted', by: 'Emma Clarke', time: 'Today 09:14' },
+      { action: 'Status set to New', by: 'System', time: 'Today 09:14' }
+    ]
+  },
+  {
+    id: 2,
+    ticket: 'SYS-REQ-2025-007',
+    requester: 'James Wilson',
+    email: 'james.wilson@ogilvy.com',
+    department: 'Finance',
+    system: 'Expense Auto-Approval',
+    priority: 'Critical',
+    status: 'In Review',
+    submitted: 'Yesterday',
+    submittedDate: new Date(Date.now() - 86400000),
+    assigned: 'Alex J.',
+    description: 'Automate the expense approval workflow for amounts under £500. Currently requires manual sign-off from department heads causing delays.',
+    notes: 'Reviewing integration with existing ERP system.',
+    activityLog: [
+      { action: 'Assigned to Alex J.', by: 'Admin', time: 'Yesterday 14:22' },
+      { action: 'Status changed to In Review', by: 'Alex J.', time: 'Yesterday 15:05' },
+      { action: 'Request submitted', by: 'James Wilson', time: 'Yesterday 10:30' }
+    ]
+  },
+  {
+    id: 3,
+    ticket: 'SYS-REQ-2025-006',
+    requester: 'Sarah Ahmed',
+    email: 'sarah.ahmed@ogilvy.com',
+    department: 'HR',
+    system: 'Training Tracker',
+    priority: 'Medium',
+    status: 'In Progress',
+    submitted: '3 days ago',
+    submittedDate: new Date(Date.now() - 3 * 86400000),
+    assigned: 'Sarah C.',
+    description: 'Track mandatory training completion across the organisation. Send automated reminders for upcoming deadlines and generate compliance reports.',
+    notes: 'API integration with Learning Management System confirmed.',
+    activityLog: [
+      { action: 'Development started', by: 'Sarah C.', time: '2 days ago 09:00' },
+      { action: 'Status changed to In Progress', by: 'Sarah C.', time: '2 days ago 09:00' },
+      { action: 'Assigned to Sarah C.', by: 'Admin', time: '3 days ago 16:00' },
+      { action: 'Request submitted', by: 'Sarah Ahmed', time: '3 days ago 11:45' }
+    ]
+  },
+  {
+    id: 4,
+    ticket: 'SYS-REQ-2025-005',
+    requester: 'Tom Bradley',
+    email: 'tom.bradley@ogilvy.com',
+    department: 'IT',
+    system: 'Server Monitor Alert',
+    priority: 'High',
+    status: 'In Progress',
+    submitted: '1 week ago',
+    submittedDate: new Date(Date.now() - 7 * 86400000),
+    assigned: 'Marcus W.',
+    description: 'Monitor server health metrics and send immediate Slack/email alerts when thresholds are exceeded. Include CPU, memory, disk usage, and uptime tracking.',
+    notes: 'Working on Slack webhook integration. Expected delivery: end of week.',
+    activityLog: [
+      { action: 'Status changed to In Progress', by: 'Marcus W.', time: '5 days ago 10:00' },
+      { action: 'Assigned to Marcus W.', by: 'Admin', time: '6 days ago 14:30' },
+      { action: 'Request submitted', by: 'Tom Bradley', time: '1 week ago 08:00' }
+    ]
+  },
+  {
+    id: 5,
+    ticket: 'SYS-REQ-2025-004',
+    requester: 'Lisa Thompson',
+    email: 'lisa.thompson@ogilvy.com',
+    department: 'Operations',
+    system: 'Meeting Notes Bot',
+    priority: 'Low',
+    status: 'Completed',
+    submitted: '2 weeks ago',
+    submittedDate: new Date(Date.now() - 14 * 86400000),
+    assigned: 'Priya P.',
+    description: 'Automatically transcribe and summarise meeting notes from Teams recordings and distribute to participants via email.',
+    notes: 'Deployed successfully. User feedback positive.',
+    activityLog: [
+      { action: 'Status changed to Completed', by: 'Priya P.', time: '1 week ago 17:00' },
+      { action: 'Deployed to production', by: 'Priya P.', time: '1 week ago 16:45' },
+      { action: 'Status changed to In Progress', by: 'Priya P.', time: '12 days ago 09:00' },
+      { action: 'Request submitted', by: 'Lisa Thompson', time: '2 weeks ago 14:00' }
+    ]
+  },
+  {
+    id: 6,
+    ticket: 'SYS-REQ-2025-003',
+    requester: 'David Park',
+    email: 'david.park@ogilvy.com',
+    department: 'Legal',
+    system: 'Contract Tracker',
+    priority: 'Medium',
+    status: 'Completed',
+    submitted: '2 weeks ago',
+    submittedDate: new Date(Date.now() - 15 * 86400000),
+    assigned: 'Alex J.',
+    description: 'Track contract expiry dates and send automated renewal reminders 90, 60, and 30 days before expiry. Dashboard view of all active contracts.',
+    notes: 'Delivered and in use. Tracking 47 active contracts.',
+    activityLog: [
+      { action: 'Status changed to Completed', by: 'Alex J.', time: '1 week ago 11:00' },
+      { action: 'Status changed to In Progress', by: 'Alex J.', time: '13 days ago 10:00' },
+      { action: 'Request submitted', by: 'David Park', time: '2 weeks ago 09:30' }
+    ]
+  },
+  {
+    id: 7,
+    ticket: 'SYS-REQ-2025-002',
+    requester: 'Maria Garcia',
+    email: 'maria.garcia@ogilvy.com',
+    department: 'Creative',
+    system: 'Asset Library Organiser',
+    priority: 'Low',
+    status: 'Rejected',
+    submitted: '3 weeks ago',
+    submittedDate: new Date(Date.now() - 21 * 86400000),
+    assigned: '-',
+    description: 'Automatically tag and organise creative assets in the shared drive based on project, client, and asset type.',
+    notes: 'Rejected - functionality available in existing DAM system. User directed to IT for training.',
+    activityLog: [
+      { action: 'Status changed to Rejected', by: 'Admin', time: '3 weeks ago 15:00' },
+      { action: 'Request reviewed', by: 'Admin', time: '3 weeks ago 14:30' },
+      { action: 'Request submitted', by: 'Maria Garcia', time: '3 weeks ago 10:00' }
+    ]
+  },
+  {
+    id: 8,
+    ticket: 'SYS-REQ-2025-001',
+    requester: 'Robert Chen',
+    email: 'robert.chen@ogilvy.com',
+    department: 'Finance',
+    system: 'Invoice Processing v2',
+    priority: 'High',
+    status: 'Completed',
+    submitted: '1 month ago',
+    submittedDate: new Date(Date.now() - 30 * 86400000),
+    assigned: 'Sarah C.',
+    description: 'Enhanced version of invoice processing with multi-currency support, PO matching, and automated GL coding.',
+    notes: 'v2 successfully deployed. Processing 200+ invoices/week. 98% accuracy rate.',
+    activityLog: [
+      { action: 'Status changed to Completed', by: 'Sarah C.', time: '2 weeks ago 16:00' },
+      { action: 'UAT passed', by: 'Robert Chen', time: '2 weeks ago 14:00' },
+      { action: 'Status changed to In Progress', by: 'Sarah C.', time: '3 weeks ago 09:00' },
+      { action: 'Request submitted', by: 'Robert Chen', time: '1 month ago 11:00' }
+    ]
+  }
+];
+
+let filteredData = [...REQUESTS_DATA];
+let currentRequestId = null;
+
+// ============================================================
+// PRIORITY & STATUS HELPERS
+// ============================================================
+function priorityBadge(priority) {
+  const map = {
+    Low:      'bg-green-100 text-green-700',
+    Medium:   'bg-yellow-100 text-yellow-700',
+    High:     'bg-orange-100 text-orange-700',
+    Critical: 'bg-red-100 text-red-700'
+  };
+  return `<span class="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full ${map[priority] || 'bg-gray-100 text-gray-600'}">${priority}</span>`;
+}
+
+function statusBadge(status) {
+  const map = {
+    New:         'bg-blue-100 text-blue-700',
+    'In Review': 'bg-purple-100 text-purple-700',
+    'In Progress':'bg-yellow-100 text-yellow-700',
+    Approved:    'bg-teal-100 text-teal-700',
+    Completed:   'bg-green-100 text-green-700',
+    Rejected:    'bg-gray-100 text-gray-500'
+  };
+  return `<span class="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full ${map[status] || 'bg-gray-100 text-gray-600'}">${status}</span>`;
+}
+
+// ============================================================
+// RENDER TABLE
+// ============================================================
+function renderTable(data) {
+  const tbody = document.getElementById('requests-table-body');
+  const empty = document.getElementById('empty-state');
+
+  if (!data.length) {
+    tbody.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  tbody.innerHTML = data.map(row => {
+    const actionBtns = row.status === 'Completed' || row.status === 'Rejected'
+      ? `<button onclick="openModal(${row.id})" class="text-xs text-blue-600 hover:text-blue-800 font-semibold px-2 py-1 rounded hover:bg-blue-50 transition-colors">View</button>`
+      : `<button onclick="openModal(${row.id})" class="text-xs text-blue-600 hover:text-blue-800 font-semibold px-2 py-1 rounded hover:bg-blue-50 transition-colors">View</button>
+         <button onclick="quickAction(${row.id}, '${row.assigned === 'Unassigned' ? 'Assign' : 'Update'}')" class="text-xs text-gray-600 hover:text-gray-800 font-semibold px-2 py-1 rounded hover:bg-gray-100 transition-colors ml-1">${row.assigned === 'Unassigned' ? 'Assign' : 'Update'}</button>`;
+
+    return `
+    <tr class="hover:bg-gray-50" data-id="${row.id}">
+      <td class="px-4 py-3.5">
+        <input type="checkbox" class="row-checkbox rounded border-gray-300 text-red-600 focus:ring-red-500" value="${row.id}" onchange="updateBulkBar()"/>
+      </td>
+      <td class="px-4 py-3.5">
+        <span class="text-xs font-mono font-semibold text-gray-700">${row.ticket}</span>
+      </td>
+      <td class="px-4 py-3.5">
+        <div class="font-medium text-gray-900 text-sm">${row.requester}</div>
+        <div class="text-xs text-gray-400">${row.email}</div>
+      </td>
+      <td class="px-4 py-3.5">
+        <span class="text-sm text-gray-600">${row.department}</span>
+      </td>
+      <td class="px-4 py-3.5">
+        <span class="text-sm text-gray-800 font-medium">${row.system}</span>
+      </td>
+      <td class="px-4 py-3.5">${priorityBadge(row.priority)}</td>
+      <td class="px-4 py-3.5">${statusBadge(row.status)}</td>
+      <td class="px-4 py-3.5">
+        <span class="text-xs text-gray-500">${row.submitted}</span>
+      </td>
+      <td class="px-4 py-3.5">
+        <span class="text-xs ${row.assigned === 'Unassigned' ? 'text-gray-400 italic' : 'text-gray-700'}">${row.assigned}</span>
+      </td>
+      <td class="px-4 py-3.5 whitespace-nowrap">${actionBtns}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ============================================================
+// FILTERS
+// ============================================================
+function applyFilters() {
+  const search = document.getElementById('filter-search').value.toLowerCase();
+  const status = document.getElementById('filter-status').value;
+  const dept   = document.getElementById('filter-department').value;
+  const prio   = document.getElementById('filter-priority').value;
+
+  filteredData = REQUESTS_DATA.filter(r => {
+    const matchSearch = !search ||
+      r.requester.toLowerCase().includes(search) ||
+      r.email.toLowerCase().includes(search) ||
+      r.system.toLowerCase().includes(search) ||
+      r.description.toLowerCase().includes(search) ||
+      r.ticket.toLowerCase().includes(search);
+    const matchStatus = !status || r.status === status;
+    const matchDept   = !dept   || r.department === dept;
+    const matchPrio   = !prio   || r.priority === prio;
+    return matchSearch && matchStatus && matchDept && matchPrio;
+  });
+
+  renderTable(filteredData);
+
+  const countEl = document.getElementById('filter-count');
+  const visEl   = document.getElementById('visible-count');
+  if (filteredData.length !== REQUESTS_DATA.length) {
+    countEl.classList.remove('hidden');
+    visEl.textContent = filteredData.length;
+  } else {
+    countEl.classList.add('hidden');
+  }
+}
+
+function clearFilters() {
+  ['filter-search','filter-status','filter-department','filter-priority','filter-date-from','filter-date-to']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  filteredData = [...REQUESTS_DATA];
+  renderTable(filteredData);
+  document.getElementById('filter-count').classList.add('hidden');
+}
+
+// Real-time search
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('filter-search').addEventListener('input', applyFilters);
+  document.getElementById('filter-status').addEventListener('change', applyFilters);
+  document.getElementById('filter-department').addEventListener('change', applyFilters);
+  document.getElementById('filter-priority').addEventListener('change', applyFilters);
+  renderTable(REQUESTS_DATA);
+});
+
+// ============================================================
+// SORT
+// ============================================================
+let sortState = { col: null, asc: true };
+function sortTable(col) {
+  if (sortState.col === col) { sortState.asc = !sortState.asc; }
+  else { sortState.col = col; sortState.asc = true; }
+
+  const priorityOrder = { Low: 1, Medium: 2, High: 3, Critical: 4 };
+  const statusOrder   = { New: 1, 'In Review': 2, 'In Progress': 3, Approved: 4, Completed: 5, Rejected: 6 };
+
+  filteredData.sort((a, b) => {
+    let va, vb;
+    if (col === 'ticket')     { va = a.ticket;   vb = b.ticket; }
+    if (col === 'requester')  { va = a.requester; vb = b.requester; }
+    if (col === 'priority')   { va = priorityOrder[a.priority] || 0; vb = priorityOrder[b.priority] || 0; }
+    if (col === 'status')     { va = statusOrder[a.status] || 0;     vb = statusOrder[b.status] || 0; }
+    if (col === 'submitted')  { va = a.submittedDate; vb = b.submittedDate; }
+
+    if (va < vb) return sortState.asc ? -1 : 1;
+    if (va > vb) return sortState.asc ? 1 : -1;
+    return 0;
+  });
+  renderTable(filteredData);
+}
+
+// ============================================================
+// BULK OPERATIONS
+// ============================================================
+function toggleSelectAll(checkbox) {
+  document.querySelectorAll('.row-checkbox').forEach(cb => { cb.checked = checkbox.checked; });
+  updateBulkBar();
+}
+
+function updateBulkBar() {
+  const checked = document.querySelectorAll('.row-checkbox:checked');
+  const bar = document.getElementById('bulk-bar');
+  if (checked.length > 0) {
+    bar.classList.remove('hidden');
+    document.getElementById('bulk-count').textContent = checked.length;
+  } else {
+    bar.classList.add('hidden');
+  }
+}
+
+function getSelectedIds() {
+  return Array.from(document.querySelectorAll('.row-checkbox:checked')).map(cb => parseInt(cb.value));
+}
+
+function bulkStatusChange() {
+  const newStatus = document.getElementById('bulk-status').value;
+  if (!newStatus) { showToast('Please select a status', '⚠️'); return; }
+  const ids = getSelectedIds();
+  ids.forEach(id => {
+    const req = REQUESTS_DATA.find(r => r.id === id);
+    if (req) req.status = newStatus;
+  });
+  applyFilters();
+  clearSelection();
+  showToast(`Updated ${ids.length} request(s) to "${newStatus}"`);
+  // Supabase update would go here
+}
+
+function bulkAssign() {
+  const assignee = document.getElementById('bulk-assign').value;
+  if (!assignee) { showToast('Please select a team member', '⚠️'); return; }
+  const ids = getSelectedIds();
+  ids.forEach(id => {
+    const req = REQUESTS_DATA.find(r => r.id === id);
+    if (req) req.assigned = assignee;
+  });
+  applyFilters();
+  clearSelection();
+  showToast(`Assigned ${ids.length} request(s) to ${assignee}`);
+}
+
+function clearSelection() {
+  document.querySelectorAll('.row-checkbox').forEach(cb => { cb.checked = false; });
+  document.getElementById('select-all').checked = false;
+  document.getElementById('bulk-bar').classList.add('hidden');
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+function openModal(id) {
+  const req = REQUESTS_DATA.find(r => r.id === id);
+  if (!req) return;
+  currentRequestId = id;
+
+  document.getElementById('modal-ticket-id').textContent  = req.ticket;
+  document.getElementById('modal-system-name').textContent = req.system;
+  document.getElementById('modal-requester').textContent   = req.requester;
+  document.getElementById('modal-email').textContent       = req.email;
+  document.getElementById('modal-department').textContent  = req.department;
+  document.getElementById('modal-submitted').textContent   = req.submitted;
+  document.getElementById('modal-description').textContent = req.description;
+  document.getElementById('modal-notes').value             = req.notes || '';
+  document.getElementById('modal-priority-badge').innerHTML = priorityBadge(req.priority);
+
+  const statusSel = document.getElementById('modal-status-select');
+  statusSel.value = req.status;
+
+  const assignSel = document.getElementById('modal-assign-select');
+  assignSel.value = req.assigned || 'Unassigned';
+
+  const logEl = document.getElementById('modal-activity-log');
+  logEl.innerHTML = (req.activityLog || []).map(entry =>
+    `<div class="flex items-start gap-2">
+       <span class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1 flex-shrink-0"></span>
+       <span><strong>${entry.action}</strong> — ${entry.time}</span>
+     </div>`
+  ).join('');
+
+  const modal = document.getElementById('detail-modal');
+  modal.classList.remove('modal-hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('detail-modal').classList.add('modal-hidden');
+  document.body.style.overflow = '';
+  currentRequestId = null;
+}
+
+function saveChanges() {
+  if (!currentRequestId) return;
+  const req = REQUESTS_DATA.find(r => r.id === currentRequestId);
+  if (!req) return;
+
+  const newStatus = document.getElementById('modal-status-select').value;
+  const newAssign = document.getElementById('modal-assign-select').value;
+  const newNotes  = document.getElementById('modal-notes').value;
+
+  if (req.status !== newStatus) {
+    req.activityLog.unshift({
+      action: `Status changed to ${newStatus}`,
+      by: 'Admin',
+      time: 'Just now'
+    });
+  }
+
+  req.status   = newStatus;
+  req.assigned = newAssign;
+  req.notes    = newNotes;
+
+  applyFilters();
+  closeModal();
+  showToast('Request updated successfully');
+
+  // TODO: persist to Supabase
+  // if (window.supabaseClient) {
+  //   window.supabaseClient.from('system_requests').update({ status: newStatus, assigned_to: newAssign, admin_notes: newNotes }).eq('id', currentRequestId);
+  // }
+}
+
+function quickAction(id, action) {
+  openModal(id);
+}
+
+function linkConsultation() {
+  const req = REQUESTS_DATA.find(r => r.id === currentRequestId);
+  if (!req) return;
+  showToast(`Linking consultation for ${req.requester}...`, '📅');
+  // Navigate to consultations page with filter
+  // window.location.href = `consultations.html?requester=${encodeURIComponent(req.email)}`;
+}
+
+function sendEmailToRequester() {
+  const req = REQUESTS_DATA.find(r => r.id === currentRequestId);
+  if (!req) return;
+  window.location.href = `mailto:${req.email}?subject=Re: Your System Request – ${req.ticket}&body=Hi ${req.requester.split(' ')[0]},%0D%0A%0D%0ARegarding your request for "${req.system}" (${req.ticket}),%0D%0A`;
+}
+
+// ============================================================
+// EXPORT CSV
+// ============================================================
+function exportCSV() {
+  const headers = ['Ticket ID','Requester','Email','Department','System','Priority','Status','Submitted','Assigned To'];
+  const rows = filteredData.map(r => [
+    r.ticket, r.requester, r.email, r.department, r.system,
+    r.priority, r.status, r.submitted, r.assigned
+  ]);
+
+  const csv = [headers, ...rows]
+    .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    .join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href     = url;
+  link.download = `system-requests-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  showToast('CSV exported successfully');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastTimer;
+function showToast(msg, icon = '✓') {
+  clearTimeout(toastTimer);
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent  = msg;
+  document.getElementById('toast-icon').textContent = icon;
+  toast.classList.remove('hidden');
+  toastTimer = setTimeout(() => toast.classList.add('hidden'), 3500);
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+function handleSignOut() {
+  if (window.supabaseClient) {
+    window.supabaseClient.auth.signOut().then(() => { window.location.href = '../index.html'; });
+  } else {
+    window.location.href = '../index.html';
+  }
+}
+
+// Load admin email
+window.addEventListener('load', () => {
+  if (window.supabaseClient) {
+    window.supabaseClient.auth.getUser().then(({ data }) => {
+      if (data?.user?.email) {
+        document.getElementById('admin-email').textContent = data.user.email;
+      }
+    });
+  }
+});
+
+// Keyboard: close modal on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Meet the Ogilvy Automation Team – We transform repetitive workflows into intelligent systems that let you focus on what matters." />
+  <title>About the Team | Ogilvy Automation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#DC2626',
+              'red-dark': '#B91C1C',
+              amber: '#F59E0B',
+              'amber-dark': '#D97706',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 2px;
+      background: #DC2626;
+      transition: width 0.25s ease;
+    }
+    .nav-link:hover::after { width: 100%; }
+    .glow-amber {
+      box-shadow: 0 0 20px rgba(245,158,11,0.4), 0 0 40px rgba(245,158,11,0.15);
+    }
+    .glow-amber:hover {
+      box-shadow: 0 0 28px rgba(245,158,11,0.6), 0 0 56px rgba(245,158,11,0.25);
+    }
+    .card-hover {
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.10);
+    }
+    .step-line::after {
+      content: '';
+      position: absolute;
+      top: 2.25rem;
+      left: 50%;
+      width: 2px;
+      height: calc(100% + 1.5rem);
+      background: linear-gradient(to bottom, #DC2626, #F59E0B);
+      transform: translateX(-50%);
+      z-index: 0;
+    }
+    .step-line:last-child::after { display: none; }
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .stat-anim { animation: countUp 0.5s ease-out forwards; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+
+  <!-- ============================================================
+       NAVIGATION
+  ============================================================ -->
+  <nav class="bg-gray-900 sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="index.html" class="flex items-center gap-2 flex-shrink-0">
+          <span class="text-xl">⚙️</span>
+          <span class="text-white font-bold text-lg tracking-tight">
+            Ogilvy <span class="text-red-500">Automation</span>
+          </span>
+        </a>
+        <div class="hidden md:flex items-center gap-6">
+          <a href="index.html"            class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">Home</a>
+          <a href="systems.html"          class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">Systems</a>
+          <a href="what-we-automate.html" class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">What We Automate</a>
+          <a href="about.html"            class="nav-link text-white border-b-2 border-red-500 text-sm font-medium pb-0.5">About</a>
+        </div>
+        <div class="hidden md:flex items-center gap-3">
+          <a href="request.html"
+             class="text-sm text-gray-300 hover:text-white border border-gray-600 hover:border-gray-400 px-4 py-2 rounded-lg transition-colors">
+            Request a System
+          </a>
+          <a href="book-consultation.html"
+             class="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-black text-sm font-semibold px-4 py-2 rounded-lg transition-colors glow-amber">
+            📅 Request Consultation
+          </a>
+        </div>
+        <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-white p-2 rounded-md" aria-label="Toggle menu" aria-expanded="false">
+          <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+          <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden bg-gray-800 border-t border-gray-700">
+      <div class="px-4 pt-3 pb-4 space-y-1">
+        <a href="index.html"            class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+        <a href="systems.html"          class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Systems</a>
+        <a href="what-we-automate.html" class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">What We Automate</a>
+        <a href="about.html"            class="block text-white bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">About</a>
+        <div class="pt-2 border-t border-gray-700 space-y-2">
+          <a href="request.html"
+             class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+            Request a System
+          </a>
+          <a href="book-consultation.html"
+             class="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-black px-3 py-2.5 rounded-md text-sm font-semibold">
+            📅 Request Consultation
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section class="bg-gradient-to-br from-red-800 to-red-600 text-white py-20 px-4 relative overflow-hidden">
+    <!-- Decorative circles -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+      <div class="absolute -top-16 -right-16 w-64 h-64 bg-white/5 rounded-full"></div>
+      <div class="absolute bottom-0 -left-12 w-48 h-48 bg-white/5 rounded-full"></div>
+    </div>
+    <div class="max-w-4xl mx-auto text-center relative z-10">
+      <div class="inline-flex items-center gap-2 bg-white/15 border border-white/25 rounded-full px-4 py-1.5 text-sm font-medium mb-6">
+        👥 Our Team
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-5">
+        Meet the Automation Team
+      </h1>
+      <p class="text-red-100 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed">
+        We transform repetitive workflows into intelligent systems that let you focus on what matters.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MISSION, VISION, VALUES
+  ============================================================ -->
+  <section class="py-16 px-4 bg-white">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-10">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3">What Drives Us</h2>
+        <p class="text-gray-500 max-w-xl mx-auto text-sm">Our mission, vision, and values guide every system we build and every conversation we have.</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Mission -->
+        <div class="card-hover bg-white border border-gray-200 rounded-2xl p-7 shadow-sm">
+          <div class="w-12 h-12 bg-red-100 text-red-600 rounded-xl flex items-center justify-center text-2xl mb-4">🎯</div>
+          <h3 class="text-lg font-bold text-gray-900 mb-2">Mission</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            Empower Ogilvy teams through intelligent automation that eliminates repetitive work and amplifies human creativity.
+          </p>
+        </div>
+
+        <!-- Vision -->
+        <div class="card-hover bg-white border border-gray-200 rounded-2xl p-7 shadow-sm">
+          <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center text-2xl mb-4">🔭</div>
+          <h3 class="text-lg font-bold text-gray-900 mb-2">Vision</h3>
+          <p class="text-gray-600 text-sm leading-relaxed">
+            A future where no one wastes time on tasks that can be automated — freeing every person to do their best, most meaningful work.
+          </p>
+        </div>
+
+        <!-- Values -->
+        <div class="card-hover bg-white border border-gray-200 rounded-2xl p-7 shadow-sm">
+          <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-2xl mb-4">💎</div>
+          <h3 class="text-lg font-bold text-gray-900 mb-3">Values</h3>
+          <ul class="space-y-2">
+            <li class="flex items-center gap-2 text-sm text-gray-700"><span class="w-2 h-2 rounded-full bg-red-500 flex-shrink-0"></span> <strong>Speed</strong> — Deliver fast, iterate faster</li>
+            <li class="flex items-center gap-2 text-sm text-gray-700"><span class="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0"></span> <strong>Quality</strong> — Every system is production-grade</li>
+            <li class="flex items-center gap-2 text-sm text-gray-700"><span class="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0"></span> <strong>Collaboration</strong> — Built with your team, not just for it</li>
+            <li class="flex items-center gap-2 text-sm text-gray-700"><span class="w-2 h-2 rounded-full bg-green-500 flex-shrink-0"></span> <strong>Innovation</strong> — Always exploring better approaches</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TEAM MEMBERS
+  ============================================================ -->
+  <section class="py-16 px-4 bg-gray-50">
+    <div class="max-w-6xl mx-auto">
+      <div class="text-center mb-10">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3">The People Behind the Systems</h2>
+        <p class="text-gray-500 max-w-xl mx-auto text-sm">Our small but mighty team brings together strategy, engineering, and design.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        <!-- Alex Johnson -->
+        <div class="card-hover bg-white rounded-2xl border border-gray-200 shadow-sm p-6 flex flex-col items-center text-center">
+          <div class="w-16 h-16 rounded-full bg-red-100 text-red-700 flex items-center justify-center text-xl font-extrabold mb-3 flex-shrink-0">AJ</div>
+          <h3 class="font-bold text-gray-900 text-base">Alex Johnson</h3>
+          <p class="text-red-600 text-xs font-semibold uppercase tracking-wide mt-0.5 mb-3">Head of Automation</p>
+          <p class="text-gray-600 text-sm leading-relaxed mb-4">
+            Leading the team's automation strategy and roadmap. Alex sets the vision for how we build scalable, maintainable systems across the business.
+          </p>
+          <div class="flex flex-wrap gap-1.5 justify-center mt-auto">
+            <span class="bg-red-50 text-red-700 text-xs font-medium px-2.5 py-0.5 rounded-full">Process Design</span>
+            <span class="bg-red-50 text-red-700 text-xs font-medium px-2.5 py-0.5 rounded-full">Python</span>
+            <span class="bg-red-50 text-red-700 text-xs font-medium px-2.5 py-0.5 rounded-full">Power Automate</span>
+          </div>
+        </div>
+
+        <!-- Sarah Chen -->
+        <div class="card-hover bg-white rounded-2xl border border-gray-200 shadow-sm p-6 flex flex-col items-center text-center">
+          <div class="w-16 h-16 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xl font-extrabold mb-3 flex-shrink-0">SC</div>
+          <h3 class="font-bold text-gray-900 text-base">Sarah Chen</h3>
+          <p class="text-blue-600 text-xs font-semibold uppercase tracking-wide mt-0.5 mb-3">Systems Developer</p>
+          <p class="text-gray-600 text-sm leading-relaxed mb-4">
+            Building robust automation solutions end-to-end. Sarah specialises in API integrations and complex data transformation pipelines.
+          </p>
+          <div class="flex flex-wrap gap-1.5 justify-center mt-auto">
+            <span class="bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded-full">JavaScript</span>
+            <span class="bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded-full">APIs</span>
+            <span class="bg-blue-50 text-blue-700 text-xs font-medium px-2.5 py-0.5 rounded-full">Data Processing</span>
+          </div>
+        </div>
+
+        <!-- Marcus Williams -->
+        <div class="card-hover bg-white rounded-2xl border border-gray-200 shadow-sm p-6 flex flex-col items-center text-center">
+          <div class="w-16 h-16 rounded-full bg-green-100 text-green-700 flex items-center justify-center text-xl font-extrabold mb-3 flex-shrink-0">MW</div>
+          <h3 class="font-bold text-gray-900 text-base">Marcus Williams</h3>
+          <p class="text-green-700 text-xs font-semibold uppercase tracking-wide mt-0.5 mb-3">Process Analyst</p>
+          <p class="text-gray-600 text-sm leading-relaxed mb-4">
+            Identifying automation opportunities across every department. Marcus works with stakeholders to map current processes and model future-state solutions.
+          </p>
+          <div class="flex flex-wrap gap-1.5 justify-center mt-auto">
+            <span class="bg-green-50 text-green-700 text-xs font-medium px-2.5 py-0.5 rounded-full">Process Mapping</span>
+            <span class="bg-green-50 text-green-700 text-xs font-medium px-2.5 py-0.5 rounded-full">Excel</span>
+            <span class="bg-green-50 text-green-700 text-xs font-medium px-2.5 py-0.5 rounded-full">SQL</span>
+          </div>
+        </div>
+
+        <!-- Priya Patel -->
+        <div class="card-hover bg-white rounded-2xl border border-gray-200 shadow-sm p-6 flex flex-col items-center text-center">
+          <div class="w-16 h-16 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xl font-extrabold mb-3 flex-shrink-0">PP</div>
+          <h3 class="font-bold text-gray-900 text-base">Priya Patel</h3>
+          <p class="text-purple-600 text-xs font-semibold uppercase tracking-wide mt-0.5 mb-3">UX &amp; Testing Lead</p>
+          <p class="text-gray-600 text-sm leading-relaxed mb-4">
+            Ensuring smooth user experiences across every system we ship. Priya owns QA, user testing, and documentation so every deployment is polished.
+          </p>
+          <div class="flex flex-wrap gap-1.5 justify-center mt-auto">
+            <span class="bg-purple-50 text-purple-700 text-xs font-medium px-2.5 py-0.5 rounded-full">Testing</span>
+            <span class="bg-purple-50 text-purple-700 text-xs font-medium px-2.5 py-0.5 rounded-full">UX Design</span>
+            <span class="bg-purple-50 text-purple-700 text-xs font-medium px-2.5 py-0.5 rounded-full">Documentation</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       OUR PROCESS / METHODOLOGY
+  ============================================================ -->
+  <section class="py-16 px-4 bg-white">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-12">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3">How We Work</h2>
+        <p class="text-gray-500 max-w-xl mx-auto text-sm">Every automation goes through a structured 5-step process — from your first conversation to ongoing support.</p>
+      </div>
+
+      <div class="space-y-6">
+
+        <!-- Step 1 -->
+        <div class="step-line relative flex gap-5">
+          <div class="flex-shrink-0 flex flex-col items-center z-10">
+            <div class="w-11 h-11 rounded-full bg-red-600 text-white font-extrabold text-sm flex items-center justify-center shadow-md">1</div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-2xl p-5 flex-1 shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xl">🔍</span>
+              <h3 class="font-bold text-gray-900">Discovery</h3>
+              <span class="text-xs bg-amber-100 text-amber-700 font-semibold px-2 py-0.5 rounded-full ml-auto">Starts with a consultation</span>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">We sit down with you (in person or via Teams) to understand the problem, its scope, and your goals. This session is free and typically takes 30 minutes.</p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-line relative flex gap-5">
+          <div class="flex-shrink-0 flex flex-col items-center z-10">
+            <div class="w-11 h-11 rounded-full bg-red-500 text-white font-extrabold text-sm flex items-center justify-center shadow-md">2</div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-2xl p-5 flex-1 shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xl">📊</span>
+              <h3 class="font-bold text-gray-900">Analysis</h3>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Our process analyst maps the current workflow in detail — every step, decision, tool, and hand-off. We identify bottlenecks and automation opportunities.</p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-line relative flex gap-5">
+          <div class="flex-shrink-0 flex flex-col items-center z-10">
+            <div class="w-11 h-11 rounded-full bg-amber-500 text-white font-extrabold text-sm flex items-center justify-center shadow-md">3</div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-2xl p-5 flex-1 shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xl">✏️</span>
+              <h3 class="font-bold text-gray-900">Design</h3>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">We design the automation architecture and get your sign-off before writing a single line of code. You'll see exactly what we're building and how it will work.</p>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step-line relative flex gap-5">
+          <div class="flex-shrink-0 flex flex-col items-center z-10">
+            <div class="w-11 h-11 rounded-full bg-amber-600 text-white font-extrabold text-sm flex items-center justify-center shadow-md">4</div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-2xl p-5 flex-1 shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xl">🔧</span>
+              <h3 class="font-bold text-gray-900">Build &amp; Test</h3>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">Our developers build the system and run it through thorough QA — including edge cases, error handling, and user-acceptance testing with a small group from your team.</p>
+          </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="relative flex gap-5">
+          <div class="flex-shrink-0 flex flex-col items-center z-10">
+            <div class="w-11 h-11 rounded-full bg-green-600 text-white font-extrabold text-sm flex items-center justify-center shadow-md">5</div>
+          </div>
+          <div class="bg-white border border-gray-200 rounded-2xl p-5 flex-1 shadow-sm">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xl">🚀</span>
+              <h3 class="font-bold text-gray-900">Deploy &amp; Support</h3>
+            </div>
+            <p class="text-gray-600 text-sm leading-relaxed">We launch the system, train your team, and monitor it closely. Ongoing support and updates are handled via our bug-reporting portal — we're here for the long run.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SUCCESS METRICS
+  ============================================================ -->
+  <section class="py-16 px-4 bg-gray-900 text-white">
+    <div class="max-w-5xl mx-auto text-center">
+      <h2 class="text-2xl sm:text-3xl font-extrabold mb-2">Our Track Record</h2>
+      <p class="text-gray-400 mb-10 text-sm">Numbers that reflect real impact across the business.</p>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+
+        <div class="bg-gray-800 rounded-2xl p-6">
+          <p class="text-4xl font-extrabold text-red-400 stat-anim">50+</p>
+          <p class="text-gray-300 text-sm mt-2 font-medium">Systems Deployed</p>
+        </div>
+
+        <div class="bg-gray-800 rounded-2xl p-6">
+          <p class="text-4xl font-extrabold text-amber-400 stat-anim">10K+</p>
+          <p class="text-gray-300 text-sm mt-2 font-medium">Hours Saved Annually</p>
+        </div>
+
+        <div class="bg-gray-800 rounded-2xl p-6">
+          <p class="text-4xl font-extrabold text-green-400 stat-anim">99.2%</p>
+          <p class="text-gray-300 text-sm mt-2 font-medium">System Uptime</p>
+        </div>
+
+        <div class="bg-gray-800 rounded-2xl p-6">
+          <p class="text-4xl font-extrabold text-blue-400 stat-anim">48hr</p>
+          <p class="text-gray-300 text-sm mt-2 font-medium">Avg. Response Time</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TECHNOLOGIES WE USE
+  ============================================================ -->
+  <section class="py-16 px-4 bg-white">
+    <div class="max-w-5xl mx-auto">
+      <div class="text-center mb-10">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-3">Technologies We Use</h2>
+        <p class="text-gray-500 text-sm max-w-lg mx-auto">We choose the right tool for every job — from no-code platforms to full custom development.</p>
+      </div>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+
+        <div class="card-hover bg-gray-50 border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center">
+          <span class="text-3xl mb-2">⚡</span>
+          <p class="font-semibold text-gray-900 text-sm">Power Automate</p>
+          <p class="text-gray-500 text-xs mt-0.5">Microsoft</p>
+        </div>
+
+        <div class="card-hover bg-gray-50 border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center">
+          <span class="text-3xl mb-2">🐍</span>
+          <p class="font-semibold text-gray-900 text-sm">Python</p>
+          <p class="text-gray-500 text-xs mt-0.5">Scripting &amp; AI</p>
+        </div>
+
+        <div class="card-hover bg-gray-50 border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center">
+          <span class="text-3xl mb-2">🟨</span>
+          <p class="font-semibold text-gray-900 text-sm">JavaScript</p>
+          <p class="text-gray-500 text-xs mt-0.5">Web &amp; APIs</p>
+        </div>
+
+        <div class="card-hover bg-gray-50 border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center">
+          <span class="text-3xl mb-2">⚡</span>
+          <p class="font-semibold text-gray-900 text-sm">Zapier</p>
+          <p class="text-gray-500 text-xs mt-0.5">No-code flows</p>
+        </div>
+
+        <div class="card-hover bg-gray-50 border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center">
+          <span class="text-3xl mb-2">🗃️</span>
+          <p class="font-semibold text-gray-900 text-sm">SQL</p>
+          <p class="text-gray-500 text-xs mt-0.5">Data queries</p>
+        </div>
+
+        <div class="card-hover bg-gray-50 border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center">
+          <span class="text-3xl mb-2">📊</span>
+          <p class="font-semibold text-gray-900 text-sm">Power BI</p>
+          <p class="text-gray-500 text-xs mt-0.5">Dashboards</p>
+        </div>
+
+        <div class="card-hover bg-gray-50 border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center">
+          <span class="text-3xl mb-2">📁</span>
+          <p class="font-semibold text-gray-900 text-sm">SharePoint</p>
+          <p class="text-gray-500 text-xs mt-0.5">Document flows</p>
+        </div>
+
+        <div class="card-hover bg-gray-50 border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center">
+          <span class="text-3xl mb-2">💬</span>
+          <p class="font-semibold text-gray-900 text-sm">Teams</p>
+          <p class="text-gray-500 text-xs mt-0.5">Notifications &amp; bots</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       LARGE CONSULTATION CTA — amber/gold full-width
+  ============================================================ -->
+  <section class="bg-amber-500 py-20 px-4">
+    <div class="max-w-3xl mx-auto text-center">
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
+        Ready to Work With Us?
+      </h2>
+      <p class="text-amber-900 text-lg mb-8 max-w-xl mx-auto leading-relaxed">
+        Start with a free 30-minute consultation to discuss how we can help your team eliminate repetitive work.
+      </p>
+      <a href="book-consultation.html"
+         class="inline-flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white font-bold text-lg px-10 py-4 rounded-xl transition-colors shadow-lg">
+        📅 Request Your Free Consultation Session →
+      </a>
+      <p class="text-amber-800 text-sm mt-5">
+        Or reach out directly at
+        <a href="mailto:automation@ogilvy.com" class="font-semibold underline hover:text-gray-900 transition-colors">automation@ogilvy.com</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       CONTACT INFORMATION
+  ============================================================ -->
+  <section class="py-14 px-4 bg-gray-50">
+    <div class="max-w-4xl mx-auto">
+      <div class="text-center mb-8">
+        <h2 class="text-2xl font-extrabold text-gray-900 mb-2">Get in Touch</h2>
+        <p class="text-gray-500 text-sm">Multiple ways to reach us — we're always happy to chat.</p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+
+        <div class="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col items-center text-center shadow-sm">
+          <div class="w-12 h-12 bg-red-100 text-red-600 rounded-xl flex items-center justify-center text-2xl mb-3">📧</div>
+          <h3 class="font-bold text-gray-900 mb-1">Email Us</h3>
+          <a href="mailto:automation@ogilvy.com" class="text-red-600 hover:text-red-700 text-sm font-medium transition-colors">automation@ogilvy.com</a>
+          <p class="text-gray-400 text-xs mt-1">We reply within 48 hours</p>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col items-center text-center shadow-sm">
+          <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-2xl mb-3">💬</div>
+          <h3 class="font-bold text-gray-900 mb-1">Teams Channel</h3>
+          <p class="text-blue-600 text-sm font-medium">#ogilvy-automation</p>
+          <p class="text-gray-400 text-xs mt-1">Fastest response during work hours</p>
+        </div>
+
+        <div class="bg-white border border-gray-200 rounded-2xl p-6 flex flex-col items-center text-center shadow-sm">
+          <div class="w-12 h-12 bg-green-100 text-green-600 rounded-xl flex items-center justify-center text-2xl mb-3">📍</div>
+          <h3 class="font-bold text-gray-900 mb-1">Location</h3>
+          <p class="text-gray-600 text-sm">Ogilvy HQ, IT &amp; Innovation Floor</p>
+          <p class="text-gray-400 text-xs mt-1">Drop by anytime — we're friendly</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="bg-gray-900 text-gray-400 py-8">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="text-sm">© 2025 Ogilvy Automation Team · <a href="mailto:automation@ogilvy.com" class="text-gray-300 hover:text-white transition-colors">automation@ogilvy.com</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    /* ---- Mobile menu ---- */
+    const mobileBtn  = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const hamIcon    = document.getElementById('hamburger-icon');
+    const closeIcon  = document.getElementById('close-icon');
+    mobileBtn.addEventListener('click', () => {
+      const open = mobileMenu.classList.toggle('hidden');
+      hamIcon.classList.toggle('hidden', !open);
+      closeIcon.classList.toggle('hidden', open);
+      mobileBtn.setAttribute('aria-expanded', String(!open));
+    });
+  </script>
+</body>
+</html>

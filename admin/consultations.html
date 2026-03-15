@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consultation Requests — Ogilvy Automation Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    .tab-btn { padding:0.625rem 1.25rem; border-radius:0.5rem 0.5rem 0 0; font-weight:600; font-size:0.875rem; cursor:pointer; border:none; background:transparent; color:#6B7280; border-bottom:3px solid transparent; transition:all 0.2s; }
+    .tab-btn.active-pending { color:#92400E; background:#FEF3C7; border-bottom-color:#F59E0B; }
+    .tab-btn.active-approved { color:#065F46; background:#D1FAE5; border-bottom-color:#10B981; }
+    .tab-btn.active-completed { color:#1E40AF; background:#DBEAFE; border-bottom-color:#3B82F6; }
+    .tab-btn.active-rejected { color:#991B1B; background:#FEE2E2; border-bottom-color:#EF4444; }
+    .tab-btn.active-all { color:#374151; background:#F3F4F6; border-bottom-color:#6B7280; }
+    .tab-btn:not(.active-pending):not(.active-approved):not(.active-completed):not(.active-rejected):not(.active-all):hover { background:#F9FAFB; color:#374151; }
+    .step-dot { width:2rem; height:2rem; border-radius:50%; display:flex;align-items:center;justify-content:center; font-size:0.8rem; font-weight:700; }
+    .step-dot.active { background:#DC2626; color:#fff; }
+    .step-dot.done { background:#10B981; color:#fff; }
+    .step-dot.inactive { background:#E5E7EB; color:#9CA3AF; }
+    .modal-step { display:none; }
+    .modal-step.active { display:block; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+    .fade-in { animation:fadeIn 0.3s ease; }
+  </style>
+</head>
+<body class="bg-gray-100 admin-page">
+
+<!-- ── Sidebar ─────────────────────────────────────────────────── -->
+<aside class="admin-sidebar">
+  <div class="p-5 border-b border-gray-700">
+    <div class="flex items-center gap-3">
+      <div class="w-9 h-9 bg-red-600 rounded-lg flex items-center justify-center text-white font-bold">⚙</div>
+      <div>
+        <div class="text-white font-bold text-sm">Ogilvy Automation</div>
+        <div class="text-gray-400 text-xs">Admin Panel</div>
+      </div>
+    </div>
+  </div>
+  <nav class="flex-1 p-3 space-y-1 mt-2">
+    <a href="dashboard.html" class="admin-nav-item">📊 Dashboard</a>
+    <a href="consultations.html" class="admin-nav-item active">
+      📅 Consultations
+      <span id="sidebar-pending-badge" class="ml-auto bg-amber-500 text-black text-xs font-bold px-2 py-0.5 rounded-full">3</span>
+    </a>
+    <a href="requests.html" class="admin-nav-item">📋 System Requests</a>
+    <a href="bugs.html" class="admin-nav-item">🐛 Bug Reports</a>
+    <a href="#" class="admin-nav-item">⚙️ Systems</a>
+  </nav>
+  <div class="p-4 border-t border-gray-700">
+    <div class="text-gray-400 text-xs mb-2 admin-user-email">admin@ogilvy.com</div>
+    <button id="sign-out-btn" class="w-full text-left text-gray-400 hover:text-white text-sm flex items-center gap-2 transition-colors">
+      <span>🚪</span> Sign Out
+    </button>
+  </div>
+</aside>
+
+<!-- ── Main Content ────────────────────────────────────────────── -->
+<main class="admin-main">
+
+  <!-- Top Bar -->
+  <div class="admin-topbar">
+    <div>
+      <h1 class="text-xl font-bold text-gray-900">📅 Consultation Requests</h1>
+      <p class="text-sm text-gray-500 mt-0.5">Manage and approve consultation session requests</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <button onclick="exportConsultationsCSV()" class="btn btn-outline btn-sm">📥 Export CSV</button>
+      <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold">A</div>
+    </div>
+  </div>
+
+  <div class="p-6">
+
+    <!-- Stats Row -->
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
+        <div class="text-2xl font-bold text-amber-700" id="stat-pending">3</div>
+        <div class="text-xs text-amber-600 font-medium mt-1">⏳ Pending</div>
+      </div>
+      <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+        <div class="text-2xl font-bold text-green-700" id="stat-approved">8</div>
+        <div class="text-xs text-green-600 font-medium mt-1">✅ Approved</div>
+      </div>
+      <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+        <div class="text-2xl font-bold text-blue-700" id="stat-completed">24</div>
+        <div class="text-xs text-blue-600 font-medium mt-1">✔ Completed</div>
+      </div>
+      <div class="bg-red-50 border border-red-200 rounded-xl p-4 text-center">
+        <div class="text-2xl font-bold text-red-700" id="stat-rejected">5</div>
+        <div class="text-xs text-red-600 font-medium mt-1">❌ Rejected</div>
+      </div>
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center">
+        <div class="text-2xl font-bold text-gray-700" id="stat-total">40</div>
+        <div class="text-xs text-gray-500 font-medium mt-1">📊 Total</div>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="bg-white rounded-xl shadow-sm p-4 mb-4 flex flex-wrap gap-3 items-end">
+      <div class="flex-1 min-w-48">
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Search</label>
+        <input id="search-input" type="text" placeholder="Name, email, request ID..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-red-500" oninput="filterTable()" />
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Department</label>
+        <select id="dept-filter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-red-500" onchange="filterTable()">
+          <option value="">All Departments</option>
+          <option>Marketing</option><option>Finance</option><option>HR</option>
+          <option>Operations</option><option>IT</option><option>Legal</option><option>Creative</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Urgency</label>
+        <select id="urgency-filter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-red-500" onchange="filterTable()">
+          <option value="">All Urgency</option>
+          <option value="urgent">🔴 Urgent</option>
+          <option value="soon">🟡 Soon</option>
+          <option value="standard">🟢 Standard</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 mb-1">Purpose</label>
+        <select id="purpose-filter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-red-500" onchange="filterTable()">
+          <option value="">All Purposes</option>
+          <option>Discuss New Automation System</option>
+          <option>Troubleshoot Existing System</option>
+          <option>Explore Automation Opportunities</option>
+          <option>General Consultation</option>
+        </select>
+      </div>
+      <button onclick="clearFilters()" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50">✕ Clear</button>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex gap-1 border-b border-gray-200 mb-0 bg-white rounded-t-xl px-4 pt-3">
+      <button class="tab-btn active-pending" id="tab-pending" onclick="switchTab('pending')">⏳ Pending Approval <span class="ml-1 bg-amber-500 text-black text-xs px-1.5 py-0.5 rounded-full" id="tab-count-pending">3</span></button>
+      <button class="tab-btn" id="tab-approved" onclick="switchTab('approved')">✅ Approved <span class="ml-1 bg-green-100 text-green-800 text-xs px-1.5 py-0.5 rounded-full" id="tab-count-approved">8</span></button>
+      <button class="tab-btn" id="tab-completed" onclick="switchTab('completed')">✔ Completed <span class="ml-1 bg-blue-100 text-blue-800 text-xs px-1.5 py-0.5 rounded-full" id="tab-count-completed">24</span></button>
+      <button class="tab-btn" id="tab-rejected" onclick="switchTab('rejected')">❌ Rejected <span class="ml-1 bg-red-100 text-red-800 text-xs px-1.5 py-0.5 rounded-full" id="tab-count-rejected">5</span></button>
+      <button class="tab-btn" id="tab-all" onclick="switchTab('all')">All <span class="ml-1 bg-gray-100 text-gray-700 text-xs px-1.5 py-0.5 rounded-full" id="tab-count-all">40</span></button>
+    </div>
+
+    <!-- Pending Tab Content -->
+    <div id="content-pending" class="tab-content bg-white rounded-b-xl shadow-sm">
+      <!-- Alert Banner -->
+      <div class="bg-amber-50 border-b border-amber-200 px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">⚠️</span>
+          <div>
+            <div class="font-bold text-amber-800">3 consultation requests require your approval</div>
+            <div class="text-sm text-amber-600">Review each request and approve or reject — users are waiting for confirmation</div>
+          </div>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="admin-table" id="pending-table">
+          <thead>
+            <tr>
+              <th>Request ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Department</th>
+              <th>Preferred Date/Time</th>
+              <th>Alt Date/Time</th>
+              <th>Purpose</th>
+              <th>Urgency</th>
+              <th>Submitted</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="pending-tbody">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Approved Tab Content -->
+    <div id="content-approved" class="tab-content hidden bg-white rounded-b-xl shadow-sm">
+      <!-- View Toggle -->
+      <div class="p-4 border-b border-gray-100 flex gap-2">
+        <button onclick="setApprovedView('list')" id="view-list-btn" class="btn btn-sm bg-gray-900 text-white">📋 List View</button>
+        <button onclick="setApprovedView('calendar')" id="view-cal-btn" class="btn btn-sm btn-outline">📅 Calendar View</button>
+        <div class="ml-auto flex gap-2">
+          <button onclick="filterApproved('today')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gray-100 hover:bg-gray-200">Today</button>
+          <button onclick="filterApproved('week')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-gray-100 hover:bg-gray-200">This Week</button>
+          <button onclick="filterApproved('all')" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-red-600 text-white hover:bg-red-700">All</button>
+        </div>
+      </div>
+
+      <!-- List View -->
+      <div id="approved-list-view" class="p-6 space-y-4">
+        <!-- Populated by JS -->
+      </div>
+
+      <!-- Calendar View -->
+      <div id="approved-calendar-view" class="hidden p-6">
+        <div id="calendar-container" style="min-height:500px;"></div>
+        <p class="text-sm text-gray-500 mt-3 text-center">💡 Click any event to see meeting details and Teams link</p>
+      </div>
+    </div>
+
+    <!-- Completed Tab Content -->
+    <div id="content-completed" class="tab-content hidden bg-white rounded-b-xl shadow-sm">
+      <div class="overflow-x-auto">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Request ID</th><th>Name</th><th>Department</th><th>Date Held</th>
+              <th>Duration</th><th>Outcome</th><th>Assigned To</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="completed-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Rejected Tab Content -->
+    <div id="content-rejected" class="tab-content hidden bg-white rounded-b-xl shadow-sm">
+      <div class="overflow-x-auto">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Request ID</th><th>Name</th><th>Department</th><th>Submitted</th>
+              <th>Reason</th><th>Rejected On</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="rejected-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- All Tab Content -->
+    <div id="content-all" class="tab-content hidden bg-white rounded-b-xl shadow-sm">
+      <div class="overflow-x-auto">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Request ID</th><th>Name</th><th>Department</th><th>Purpose</th>
+              <th>Urgency</th><th>Status</th><th>Submitted</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="all-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /p-6 -->
+</main>
+
+<!-- ══════════════════════════════════════════════════════════════
+     APPROVE MODAL (Multi-step)
+══════════════════════════════════════════════════════════════════ -->
+<div id="approve-modal" class="modal-overlay hidden">
+  <div class="modal-content" style="max-width:700px;">
+    <div class="modal-header bg-green-50">
+      <div>
+        <h2 class="text-lg font-bold text-gray-900">✅ Approve Consultation Request</h2>
+        <p class="text-sm text-gray-500" id="approve-request-id-label">CONSULT-REQ-003</p>
+      </div>
+      <button class="modal-close" onclick="closeApproveModal()">✕</button>
+    </div>
+
+    <!-- Step Indicator -->
+    <div class="px-6 pt-5">
+      <div class="flex items-center gap-2">
+        <div class="flex flex-col items-center"><div class="step-dot active" id="step-dot-1">1</div><div class="text-xs text-gray-500 mt-1 text-center">Details</div></div>
+        <div class="flex-1 h-0.5 bg-gray-200" id="step-line-1"></div>
+        <div class="flex flex-col items-center"><div class="step-dot inactive" id="step-dot-2">2</div><div class="text-xs text-gray-500 mt-1 text-center">Date/Time</div></div>
+        <div class="flex-1 h-0.5 bg-gray-200" id="step-line-2"></div>
+        <div class="flex flex-col items-center"><div class="step-dot inactive" id="step-dot-3">3</div><div class="text-xs text-gray-500 mt-1 text-center">Teams Link</div></div>
+        <div class="flex-1 h-0.5 bg-gray-200" id="step-line-3"></div>
+        <div class="flex flex-col items-center"><div class="step-dot inactive" id="step-dot-4">4</div><div class="text-xs text-gray-500 mt-1 text-center">Assign</div></div>
+        <div class="flex-1 h-0.5 bg-gray-200" id="step-line-4"></div>
+        <div class="flex flex-col items-center"><div class="step-dot inactive" id="step-dot-5">5</div><div class="text-xs text-gray-500 mt-1 text-center">Confirm</div></div>
+      </div>
+    </div>
+
+    <div class="modal-body">
+      <!-- Step 1: Details -->
+      <div class="modal-step active" id="modal-step-1">
+        <h3 class="font-bold text-gray-800 mb-4">Step 1 — Confirm Request Details</h3>
+        <div class="bg-gray-50 rounded-xl p-4 space-y-3">
+          <div class="grid grid-cols-2 gap-3">
+            <div><div class="text-xs text-gray-500 font-medium">Full Name</div><div class="font-semibold text-gray-900" id="approve-name">—</div></div>
+            <div><div class="text-xs text-gray-500 font-medium">Email</div><div class="font-semibold text-gray-900" id="approve-email">—</div></div>
+            <div><div class="text-xs text-gray-500 font-medium">Department</div><div class="font-semibold text-gray-900" id="approve-dept">—</div></div>
+            <div><div class="text-xs text-gray-500 font-medium">Urgency</div><div id="approve-urgency">—</div></div>
+          </div>
+          <div><div class="text-xs text-gray-500 font-medium mb-1">Meeting Purpose</div><div class="font-semibold text-gray-900" id="approve-purpose">—</div></div>
+          <div><div class="text-xs text-gray-500 font-medium mb-1">Description</div><div class="text-gray-700 text-sm bg-white rounded p-3 border" id="approve-description">—</div></div>
+          <div class="grid grid-cols-2 gap-3">
+            <div><div class="text-xs text-gray-500 font-medium">Preferred Date/Time</div><div class="font-semibold text-green-700" id="approve-preferred">—</div></div>
+            <div><div class="text-xs text-gray-500 font-medium">Alternative Date/Time</div><div class="text-gray-600" id="approve-alt">Not provided</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Date/Time -->
+      <div class="modal-step" id="modal-step-2">
+        <h3 class="font-bold text-gray-800 mb-4">Step 2 — Set Meeting Date & Time</h3>
+        <div class="bg-green-50 border border-green-200 rounded-xl p-4 mb-4">
+          <div class="text-sm text-green-800"><strong>User's preferred slot:</strong> <span id="step2-preferred-display">—</span></div>
+        </div>
+        <div class="space-y-4">
+          <div class="flex gap-4">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="slot-choice" value="preferred" checked class="text-green-600" onchange="toggleCustomSlot(false)" />
+              <span class="font-semibold text-gray-700">✅ Use user's preferred time</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="slot-choice" value="custom" class="text-red-600" onchange="toggleCustomSlot(true)" />
+              <span class="font-semibold text-gray-700">🔄 Choose different time</span>
+            </label>
+          </div>
+          <div id="custom-slot-section" class="hidden bg-gray-50 rounded-xl p-4 space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="form-label">Confirmed Date</label>
+                <input type="date" id="confirmed-date" class="form-input" />
+              </div>
+              <div>
+                <label class="form-label">Confirmed Time</label>
+                <select id="confirmed-time" class="form-select">
+                  <option value="">Select time</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div>
+            <label class="form-label">Timezone</label>
+            <input type="text" id="meeting-timezone" class="form-input" value="Europe/London" />
+          </div>
+          <div>
+            <label class="form-label">Duration</label>
+            <select id="meeting-duration" class="form-select">
+              <option value="30">30 minutes</option>
+              <option value="60">60 minutes</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Teams Link -->
+      <div class="modal-step" id="modal-step-3">
+        <h3 class="font-bold text-gray-800 mb-4">Step 3 — Generate Teams Meeting Link</h3>
+        <button id="generate-teams-btn" onclick="generateTeamsLink()" class="btn w-full mb-4 justify-center text-white bg-blue-600 hover:bg-blue-700 py-3">
+          🔗 Generate Teams Meeting Link Automatically
+        </button>
+        <div id="teams-generating" class="hidden text-center py-4">
+          <div class="spinner spinner-dark mx-auto mb-2"></div>
+          <p class="text-sm text-gray-600">Creating Microsoft Teams meeting...</p>
+        </div>
+        <div id="teams-success" class="hidden bg-green-50 border border-green-200 rounded-xl p-3 mb-4">
+          <div class="text-xs text-green-700 font-semibold mb-1">✅ Teams meeting created successfully</div>
+        </div>
+        <div>
+          <label class="form-label">Meeting Link <span class="text-gray-400 font-normal">(auto-filled or enter manually)</span></label>
+          <input type="url" id="teams-link-input" class="form-input" placeholder="https://teams.microsoft.com/l/meetup-join/..." />
+          <p class="text-xs text-gray-500 mt-1">Paste a manual Teams link if auto-generation fails</p>
+        </div>
+      </div>
+
+      <!-- Step 4: Assign -->
+      <div class="modal-step" id="modal-step-4">
+        <h3 class="font-bold text-gray-800 mb-4">Step 4 — Assign Team Member</h3>
+        <div class="space-y-4">
+          <div>
+            <label class="form-label">Assign to Team Member</label>
+            <select id="assign-member" class="form-select">
+              <option value="">Select team member</option>
+              <option value="alex">Alex Johnson — Head of Automation</option>
+              <option value="sarah">Sarah Chen — Systems Developer</option>
+              <option value="marcus">Marcus Williams — Process Analyst</option>
+              <option value="priya">Priya Patel — UX & Testing Lead</option>
+            </select>
+          </div>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="auto-assign" class="w-4 h-4 text-red-600 rounded" />
+            <span class="text-sm text-gray-700">Auto-assign based on availability</span>
+          </label>
+          <div>
+            <label class="form-label">Internal Preparation Notes <span class="text-gray-400 font-normal">(not sent to user)</span></label>
+            <textarea id="admin-notes" class="form-textarea" rows="3" placeholder="Notes for the assigned team member..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 5: Review & Confirm -->
+      <div class="modal-step" id="modal-step-5">
+        <h3 class="font-bold text-gray-800 mb-4">Step 5 — Review & Confirm</h3>
+        <div class="bg-gray-50 rounded-xl p-4 mb-4 space-y-2">
+          <h4 class="font-bold text-gray-700 mb-3">📋 Summary</h4>
+          <div class="grid grid-cols-2 gap-3 text-sm">
+            <div><span class="text-gray-500">Requester:</span> <span class="font-semibold" id="summary-name">—</span></div>
+            <div><span class="text-gray-500">Email:</span> <span class="font-semibold" id="summary-email">—</span></div>
+            <div><span class="text-gray-500">Department:</span> <span class="font-semibold" id="summary-dept">—</span></div>
+            <div><span class="text-gray-500">Purpose:</span> <span class="font-semibold" id="summary-purpose">—</span></div>
+            <div><span class="text-gray-500">Confirmed Date:</span> <span class="font-bold text-green-700" id="summary-date">—</span></div>
+            <div><span class="text-gray-500">Confirmed Time:</span> <span class="font-bold text-green-700" id="summary-time">—</span></div>
+            <div><span class="text-gray-500">Duration:</span> <span class="font-semibold" id="summary-duration">30 minutes</span></div>
+            <div><span class="text-gray-500">Assigned To:</span> <span class="font-semibold" id="summary-assigned">—</span></div>
+          </div>
+          <div class="mt-2 pt-2 border-t border-gray-200">
+            <span class="text-gray-500 text-sm">Teams Link:</span>
+            <div class="text-blue-600 text-sm font-medium truncate" id="summary-teams-link">—</div>
+          </div>
+        </div>
+
+        <!-- Email Preview -->
+        <div class="border border-gray-200 rounded-xl overflow-hidden mb-4">
+          <button onclick="toggleEmailPreview()" class="w-full text-left px-4 py-3 bg-gray-50 font-semibold text-sm text-gray-700 hover:bg-gray-100 flex justify-between items-center">
+            <span>📧 Preview Email to User</span>
+            <span id="email-preview-toggle">▼ Show</span>
+          </button>
+          <div id="email-preview-content" class="hidden p-4">
+            <div class="bg-white border rounded-lg p-4 text-sm text-gray-700 font-mono leading-relaxed" id="email-preview-body">
+              <!-- filled by JS -->
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-sm text-green-800">
+          <strong>✅ What happens next:</strong> The user will receive an email with the confirmed date/time and Teams meeting link. The request will move to the "Approved" tab.
+        </div>
+      </div>
+    </div><!-- /modal-body -->
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+      <button id="approve-back-btn" onclick="approveStep(-1)" class="btn btn-outline hidden">← Back</button>
+      <button id="approve-next-btn" onclick="approveStep(1)" class="btn btn-primary">Next →</button>
+      <button id="approve-confirm-btn" onclick="confirmApproval()" class="btn btn-success hidden">✅ Confirm & Send Email</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     REJECT MODAL
+══════════════════════════════════════════════════════════════════ -->
+<div id="reject-modal" class="modal-overlay hidden">
+  <div class="modal-content" style="max-width:520px;">
+    <div class="modal-header bg-red-50">
+      <div>
+        <h2 class="text-lg font-bold text-gray-900">❌ Reject Consultation Request</h2>
+        <p class="text-sm text-gray-500" id="reject-request-id-label">CONSULT-REQ-003</p>
+      </div>
+      <button class="modal-close" onclick="hideModal('reject-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="bg-gray-50 rounded-xl p-3 mb-4 text-sm">
+        <strong id="reject-name">User Name</strong> — <span id="reject-email-display" class="text-gray-600">email</span>
+        <div class="text-gray-500 mt-1"><span id="reject-dept-display">Department</span> • Preferred: <span id="reject-preferred-display">—</span></div>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="form-label">Reason for Rejection <span class="required">*</span></label>
+          <select id="reject-reason" class="form-select" required onchange="updateRejectTemplate()">
+            <option value="">Select reason...</option>
+            <option value="time_unavailable">Requested time not available</option>
+            <option value="more_info">Need more information first</option>
+            <option value="out_of_scope">Outside our team's scope</option>
+            <option value="unavailable">Team member unavailable</option>
+            <option value="other">Other (specify below)</option>
+          </select>
+        </div>
+        <div>
+          <label class="form-label">Message to User <span class="required">*</span></label>
+          <textarea id="reject-message" class="form-textarea" rows="5" required placeholder="Dear [Name], thank you for your consultation request..."></textarea>
+        </div>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" id="reject-suggest-alternatives" class="w-4 h-4 text-red-600 rounded" checked />
+          <span class="text-sm text-gray-700">Include suggestion to resubmit with alternative times</span>
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="hideModal('reject-modal')" class="btn btn-outline">Cancel</button>
+      <button onclick="confirmRejection()" class="btn btn-danger bg-red-600 text-white border-0 hover:bg-red-700">Send Rejection Email</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     MORE INFO MODAL
+══════════════════════════════════════════════════════════════════ -->
+<div id="info-modal" class="modal-overlay hidden">
+  <div class="modal-content" style="max-width:520px;">
+    <div class="modal-header bg-yellow-50">
+      <div>
+        <h2 class="text-lg font-bold text-gray-900">📝 Request Additional Information</h2>
+        <p class="text-sm text-gray-500" id="info-request-id-label">CONSULT-REQ-003</p>
+      </div>
+      <button class="modal-close" onclick="hideModal('info-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="bg-gray-50 rounded-xl p-3 mb-4 text-sm">
+        <strong id="info-name">User Name</strong> — <span id="info-email-display" class="text-gray-600">email</span>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="form-label">Questions to Ask <span class="required">*</span></label>
+          <textarea id="info-questions" class="form-textarea" rows="4" required placeholder="Please provide: 1. ... 2. ..."></textarea>
+        </div>
+        <div>
+          <label class="form-label">Email Message</label>
+          <textarea id="info-message" class="form-textarea" rows="4" placeholder="We need a bit more information before we can confirm your consultation..."></textarea>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="hideModal('info-modal')" class="btn btn-outline">Cancel</button>
+      <button onclick="confirmMoreInfo()" class="btn bg-amber-500 hover:bg-amber-600 text-black font-bold">📧 Send Email</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     RESCHEDULE MODAL
+══════════════════════════════════════════════════════════════════ -->
+<div id="reschedule-modal" class="modal-overlay hidden">
+  <div class="modal-content" style="max-width:480px;">
+    <div class="modal-header">
+      <h2 class="text-lg font-bold text-gray-900">✏️ Reschedule Consultation</h2>
+      <button class="modal-close" onclick="hideModal('reschedule-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="bg-gray-50 rounded-xl p-3 mb-4 text-sm">
+        <strong id="reschedule-name">User Name</strong>
+        <div class="text-gray-500 mt-1">Current: <span id="reschedule-current-slot" class="font-medium">—</span></div>
+      </div>
+      <div class="space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="form-label">New Date</label>
+            <input type="date" id="reschedule-date" class="form-input" />
+          </div>
+          <div>
+            <label class="form-label">New Time</label>
+            <select id="reschedule-time" class="form-select"></select>
+          </div>
+        </div>
+        <div>
+          <label class="form-label">Reason for Reschedule</label>
+          <textarea id="reschedule-reason" class="form-textarea" rows="2" placeholder="Brief reason for rescheduling..."></textarea>
+        </div>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" id="reschedule-notify" class="w-4 h-4 text-red-600 rounded" checked />
+          <span class="text-sm text-gray-700">Send updated invite to user</span>
+        </label>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="hideModal('reschedule-modal')" class="btn btn-outline">Cancel</button>
+      <button onclick="confirmReschedule()" class="btn btn-primary">Confirm Reschedule</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     MEETING NOTES MODAL
+══════════════════════════════════════════════════════════════════ -->
+<div id="notes-modal" class="modal-overlay hidden">
+  <div class="modal-content" style="max-width:560px;">
+    <div class="modal-header">
+      <h2 class="text-lg font-bold text-gray-900">📝 Meeting Notes</h2>
+      <button class="modal-close" onclick="hideModal('notes-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="bg-gray-50 rounded-xl p-3 mb-4 text-sm">
+        <strong id="notes-name">User Name</strong> — <span id="notes-slot">Slot</span>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="form-label">Meeting Notes</label>
+          <textarea id="notes-content" class="form-textarea" rows="5" placeholder="Key discussion points, findings, recommendations..."></textarea>
+        </div>
+        <div>
+          <label class="form-label">Action Items</label>
+          <textarea id="notes-actions" class="form-textarea" rows="3" placeholder="1. Build X automation by Y date&#10;2. Review Z process..."></textarea>
+        </div>
+        <div>
+          <label class="form-label">Meeting Outcome</label>
+          <select id="notes-outcome" class="form-select">
+            <option value="successful">✅ Successful — Client satisfied</option>
+            <option value="follow_up">🔄 Needs Follow-up</option>
+            <option value="cancelled">❌ Cancelled</option>
+          </select>
+        </div>
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input type="checkbox" id="notes-followup" class="w-4 h-4 text-red-600 rounded" onchange="toggleFollowupFields()" />
+          <span class="text-sm text-gray-700">Follow-up required</span>
+        </label>
+        <div id="followup-fields" class="hidden bg-amber-50 rounded-xl p-3 space-y-3">
+          <div>
+            <label class="form-label">Follow-up Description</label>
+            <textarea id="notes-followup-desc" class="form-textarea" rows="2"></textarea>
+          </div>
+          <div>
+            <label class="form-label">Follow-up Due Date</label>
+            <input type="date" id="notes-followup-date" class="form-input" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button onclick="hideModal('notes-modal')" class="btn btn-outline">Cancel</button>
+      <button onclick="saveMeetingNotes()" class="btn btn-primary">💾 Save Notes</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Scripts ─────────────────────────────────────────────────── -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/admin.js"></script>
+<script>
+'use strict';
+
+// ── Data ──────────────────────────────────────────────────────────
+
+const PENDING_DATA = [
+  { id: 'CONSULT-REQ-003', fullName: 'James Wilson', email: 'j.wilson@ogilvy.com', department: 'Marketing', preferredDate: '2025-03-18', preferredTime: '14:00', preferredDisplay: 'Tue Mar 18, 2025 at 2:00 PM', altDate: '2025-03-20', altTime: '10:00', altDisplay: 'Thu Mar 20 at 10:00 AM', purpose: 'Explore Automation Opportunities', description: 'Would like to discuss opportunities to automate our social media reporting process and identify quick wins.', urgency: 'urgent', submittedAgo: '2 hours ago' },
+  { id: 'CONSULT-REQ-002', fullName: 'Sarah Ahmed', email: 's.ahmed@ogilvy.com', department: 'Finance', preferredDate: '2025-03-19', preferredTime: '10:00', preferredDisplay: 'Wed Mar 19, 2025 at 10:00 AM', altDate: '2025-03-21', altTime: '14:00', altDisplay: 'Fri Mar 21 at 2:00 PM', purpose: 'Discuss New Automation System', description: 'Looking to automate our monthly invoice reconciliation process which currently takes 15hrs/week.', urgency: 'soon', submittedAgo: '5 hours ago' },
+  { id: 'CONSULT-REQ-001', fullName: 'Tom Bradley', email: 't.bradley@ogilvy.com', department: 'HR', preferredDate: '2025-03-24', preferredTime: '11:00', preferredDisplay: 'Mon Mar 24, 2025 at 11:00 AM', altDate: '', altTime: '', altDisplay: 'Not provided', purpose: 'General Consultation', description: 'General overview of what automation options are available for the HR team onboarding process.', urgency: 'standard', submittedAgo: 'Yesterday' },
+];
+
+const APPROVED_DATA = [
+  { id: 'CONSULT-REQ-000', fullName: 'Emma Clarke', email: 'e.clarke@ogilvy.com', department: 'Marketing', confirmedDate: 'Today', confirmedTime: '2:00 PM', teamsLink: 'https://teams.microsoft.com/l/meetup-join/demo1', assignedTo: 'Alex Johnson', purpose: 'Explore Automation Opportunities', status: 'Scheduled', color: 'bg-purple-100 text-purple-800' },
+  { id: 'CONSULT-REQ-A02', fullName: 'David Park', email: 'd.park@ogilvy.com', department: 'Finance', confirmedDate: 'Tomorrow', confirmedTime: '10:30 AM', teamsLink: 'https://teams.microsoft.com/l/meetup-join/demo2', assignedTo: 'Sarah Chen', purpose: 'Discuss New Automation System', status: 'Scheduled', color: 'bg-blue-100 text-blue-800' },
+  { id: 'CONSULT-REQ-A03', fullName: 'Lisa Thompson', email: 'l.thompson@ogilvy.com', department: 'HR', confirmedDate: 'Mar 18, 9:00 AM', confirmedTime: '9:00 AM', teamsLink: 'https://teams.microsoft.com/l/meetup-join/demo3', assignedTo: 'Marcus Williams', purpose: 'General Consultation', status: 'Scheduled', color: 'bg-green-100 text-green-800' },
+  { id: 'CONSULT-REQ-A04', fullName: 'Robert Chen', email: 'r.chen@ogilvy.com', department: 'Operations', confirmedDate: 'Mar 19, 3:00 PM', confirmedTime: '3:00 PM', teamsLink: 'https://teams.microsoft.com/l/meetup-join/demo4', assignedTo: 'Priya Patel', purpose: 'Troubleshoot Existing System', status: 'Scheduled', color: 'bg-orange-100 text-orange-800' },
+  { id: 'CONSULT-REQ-A05', fullName: 'Maria Garcia', email: 'm.garcia@ogilvy.com', department: 'Creative', confirmedDate: 'Mar 21, 11:00 AM', confirmedTime: '11:00 AM', teamsLink: 'https://teams.microsoft.com/l/meetup-join/demo5', assignedTo: 'Alex Johnson', purpose: 'Discuss New Automation System', status: 'Scheduled', color: 'bg-pink-100 text-pink-800' },
+];
+
+const COMPLETED_DATA = [
+  { id: 'CONSULT-REQ-B01', fullName: 'Anna White', department: 'Finance', dateHeld: 'Mar 10, 2025', duration: '30 min', outcome: 'Successful', assignedTo: 'Sarah Chen' },
+  { id: 'CONSULT-REQ-B02', fullName: 'Kevin Lee', department: 'Marketing', dateHeld: 'Mar 8, 2025', duration: '30 min', outcome: 'Needs Follow-up', assignedTo: 'Alex Johnson' },
+  { id: 'CONSULT-REQ-B03', fullName: 'Rachel Green', department: 'HR', dateHeld: 'Mar 5, 2025', duration: '30 min', outcome: 'Successful', assignedTo: 'Marcus Williams' },
+];
+
+const REJECTED_DATA = [
+  { id: 'CONSULT-REQ-C01', fullName: 'Mike Brown', department: 'IT', submittedAgo: '3 days ago', reason: 'Requested time not available', rejectedOn: 'Mar 12, 2025' },
+  { id: 'CONSULT-REQ-C02', fullName: 'Sophie Turner', department: 'Legal', submittedAgo: '1 week ago', reason: 'Need more information', rejectedOn: 'Mar 10, 2025' },
+];
+
+// ── Current state ────────────────────────────────────────────────
+let currentTab = 'pending';
+let currentApproveData = null;
+let currentApproveStep = 1;
+let currentRejectData = null;
+let currentInfoData = null;
+let pendingRows = [...PENDING_DATA];
+
+// ── Init ─────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  await checkAdminAuth();
+  initAdminNav();
+  renderPendingTable();
+  renderApprovedList();
+  renderCompletedTable();
+  renderRejectedTable();
+  renderAllTable();
+  populateTimeSelect('confirmed-time');
+  populateTimeSelect('reschedule-time');
+
+  // Try to load from Supabase
+  if (supabaseClient) {
+    loadSupabaseConsultations();
+  }
+});
+
+// ── Tab Switching ─────────────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+  document.getElementById('content-' + tab).classList.remove('hidden');
+
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.className = 'tab-btn';
+    const id = b.id.replace('tab-', '');
+    if (id === tab) b.classList.add('active-' + tab);
+  });
+}
+
+// ── Render Tables ─────────────────────────────────────────────────
+function urgencyBadge(u) {
+  const map = { urgent: '<span class="badge badge-urgent">🔴 Urgent</span>', soon: '<span class="badge badge-soon">🟡 Soon</span>', standard: '<span class="badge badge-standard">🟢 Standard</span>' };
+  return map[u] || u;
+}
+
+function renderPendingTable() {
+  const tbody = document.getElementById('pending-tbody');
+  const s = document.getElementById('search-input')?.value.toLowerCase() || '';
+  const dept = document.getElementById('dept-filter')?.value || '';
+  const urgency = document.getElementById('urgency-filter')?.value || '';
+  const rows = pendingRows.filter(r =>
+    (!s || r.fullName.toLowerCase().includes(s) || r.email.toLowerCase().includes(s) || r.id.toLowerCase().includes(s)) &&
+    (!dept || r.department === dept) &&
+    (!urgency || r.urgency === urgency)
+  );
+  const rowClass = r => r.urgency === 'urgent' ? 'row-urgent' : r.urgency === 'soon' ? 'row-soon' : '';
+  tbody.innerHTML = rows.map(r => `
+    <tr class="${rowClass(r)}">
+      <td><span class="font-mono text-xs font-bold text-gray-700">${r.id}</span></td>
+      <td><div class="font-semibold text-gray-900">${r.fullName}</div></td>
+      <td><a href="mailto:${r.email}" class="text-blue-600 hover:underline text-xs">${r.email}</a></td>
+      <td><span class="badge dept-${r.department.toLowerCase()}">${r.department}</span></td>
+      <td><div class="text-sm font-medium text-gray-900">${r.preferredDisplay}</div></td>
+      <td class="text-sm text-gray-500">${r.altDisplay || '—'}</td>
+      <td class="text-sm text-gray-700 max-w-xs truncate">${r.purpose}</td>
+      <td>${urgencyBadge(r.urgency)}</td>
+      <td class="text-xs text-gray-500 whitespace-nowrap">${r.submittedAgo}</td>
+      <td>
+        <div class="flex gap-1">
+          <button onclick="openApproveModal('${r.id}')" class="px-2 py-1 text-xs font-bold bg-green-600 text-white rounded hover:bg-green-700">✅ Approve</button>
+          <button onclick="openRejectModal('${r.id}')" class="px-2 py-1 text-xs font-bold bg-red-600 text-white rounded hover:bg-red-700">❌ Reject</button>
+          <button onclick="openInfoModal('${r.id}')" class="px-2 py-1 text-xs font-bold bg-amber-500 text-black rounded hover:bg-amber-600">📝 Info</button>
+        </div>
+      </td>
+    </tr>`).join('');
+  document.getElementById('tab-count-pending').textContent = pendingRows.length;
+  document.getElementById('stat-pending').textContent = pendingRows.length;
+  document.getElementById('sidebar-pending-badge').textContent = pendingRows.length;
+}
+
+function renderApprovedList() {
+  const container = document.getElementById('approved-list-view');
+  container.innerHTML = APPROVED_DATA.map(r => `
+    <div class="bg-white border border-gray-200 rounded-xl p-5 fade-in">
+      <div class="flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="font-bold text-gray-900 text-lg">${r.confirmedDate} — ${r.confirmedTime}</span>
+            <span class="badge badge-approved">✅ Scheduled</span>
+          </div>
+          <div class="font-semibold text-gray-700">${r.fullName} <span class="text-gray-400">•</span> <span class="badge ${r.color}">${r.department}</span></div>
+          <div class="text-sm text-gray-500 mt-1">${r.purpose}</div>
+          <div class="text-xs text-gray-400 mt-1">Assigned: ${r.assignedTo} • ${r.id}</div>
+        </div>
+        <div class="flex flex-col gap-2 items-end">
+          <a href="${r.teamsLink}" target="_blank" class="btn btn-sm bg-blue-600 text-white hover:bg-blue-700">🔗 Join Teams</a>
+          <div class="flex gap-1">
+            <button onclick="openRescheduleModal('${r.id}','${r.fullName}','${r.confirmedDate} ${r.confirmedTime}')" class="px-2 py-1 text-xs font-medium border rounded hover:bg-gray-50">✏️ Reschedule</button>
+            <button onclick="openNotesModal('${r.id}','${r.fullName}','${r.confirmedDate} ${r.confirmedTime}')" class="px-2 py-1 text-xs font-medium border rounded hover:bg-gray-50">📝 Notes</button>
+            <button onclick="markComplete('${r.id}')" class="px-2 py-1 text-xs font-bold bg-blue-100 text-blue-800 rounded hover:bg-blue-200">✅ Complete</button>
+          </div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderCompletedTable() {
+  document.getElementById('completed-tbody').innerHTML = COMPLETED_DATA.map(r => `
+    <tr>
+      <td class="font-mono text-xs font-bold text-gray-700">${r.id}</td>
+      <td class="font-semibold">${r.fullName}</td>
+      <td>${r.department}</td>
+      <td class="text-sm text-gray-600">${r.dateHeld}</td>
+      <td class="text-sm">${r.duration}</td>
+      <td><span class="badge ${r.outcome === 'Successful' ? 'badge-approved' : 'badge-in-progress'}">${r.outcome}</span></td>
+      <td class="text-sm text-gray-600">${r.assignedTo}</td>
+      <td><button class="px-2 py-1 text-xs font-medium border rounded hover:bg-gray-50">View Notes</button></td>
+    </tr>`).join('');
+}
+
+function renderRejectedTable() {
+  document.getElementById('rejected-tbody').innerHTML = REJECTED_DATA.map(r => `
+    <tr>
+      <td class="font-mono text-xs font-bold text-gray-700">${r.id}</td>
+      <td class="font-semibold">${r.fullName}</td>
+      <td>${r.department}</td>
+      <td class="text-sm text-gray-500">${r.submittedAgo}</td>
+      <td class="text-sm text-gray-700">${r.reason}</td>
+      <td class="text-sm text-gray-500">${r.rejectedOn}</td>
+      <td>
+        <button class="px-2 py-1 text-xs font-medium border rounded hover:bg-gray-50">View</button>
+        <button onclick="restoreToPending('${r.id}')" class="px-2 py-1 text-xs font-medium bg-amber-100 text-amber-800 rounded hover:bg-amber-200 ml-1">↩ Restore</button>
+      </td>
+    </tr>`).join('');
+}
+
+function renderAllTable() {
+  const all = [
+    ...pendingRows.map(r => ({...r, status: 'pending', submittedDisplay: r.submittedAgo})),
+    ...APPROVED_DATA.map(r => ({...r, urgency: 'standard', purpose: r.purpose, status: 'approved', submittedDisplay: '—'})),
+    ...COMPLETED_DATA.map(r => ({...r, urgency: 'standard', purpose: '—', status: 'completed', submittedDisplay: r.dateHeld})),
+    ...REJECTED_DATA.map(r => ({...r, urgency: 'standard', purpose: '—', status: 'rejected', submittedDisplay: r.submittedAgo})),
+  ];
+  const statusBadge = s => ({ pending: '<span class="badge badge-pending">⏳ Pending</span>', approved: '<span class="badge badge-approved">✅ Approved</span>', completed: '<span class="badge badge-completed">✔ Completed</span>', rejected: '<span class="badge badge-rejected">❌ Rejected</span>' })[s] || s;
+  document.getElementById('all-tbody').innerHTML = all.map(r => `
+    <tr>
+      <td class="font-mono text-xs font-bold text-gray-700">${r.id}</td>
+      <td class="font-semibold">${r.fullName}</td>
+      <td>${r.department}</td>
+      <td class="text-sm text-gray-600 max-w-xs truncate">${r.purpose || '—'}</td>
+      <td>${urgencyBadge(r.urgency)}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td class="text-xs text-gray-500">${r.submittedDisplay}</td>
+      <td><button onclick="switchTab('${r.status}')" class="px-2 py-1 text-xs font-medium border rounded hover:bg-gray-50">View</button></td>
+    </tr>`).join('');
+}
+
+// ── Filter ────────────────────────────────────────────────────────
+function filterTable() { renderPendingTable(); }
+function clearFilters() {
+  ['search-input','dept-filter','urgency-filter','purpose-filter'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  filterTable();
+}
+
+// ── Approved View Toggle ──────────────────────────────────────────
+function setApprovedView(view) {
+  document.getElementById('approved-list-view').classList.toggle('hidden', view !== 'list');
+  document.getElementById('approved-calendar-view').classList.toggle('hidden', view !== 'calendar');
+  document.getElementById('view-list-btn').className = view === 'list' ? 'btn btn-sm bg-gray-900 text-white' : 'btn btn-sm btn-outline';
+  document.getElementById('view-cal-btn').className = view === 'calendar' ? 'btn btn-sm bg-gray-900 text-white' : 'btn btn-sm btn-outline';
+  if (view === 'calendar') initCalendar();
+}
+
+function filterApproved(range) { /* In production, filter APPROVED_DATA by date range */ }
+
+// ── Calendar ──────────────────────────────────────────────────────
+function initCalendar() {
+  const el = document.getElementById('calendar-container');
+  if (!el || el.dataset.initialized) return;
+  el.dataset.initialized = true;
+  if (typeof FullCalendar === 'undefined') {
+    el.innerHTML = '<div class="text-center py-12 text-gray-400"><p class="text-lg font-medium">Calendar requires FullCalendar.js</p><p class="text-sm mt-2">Add <code>https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js</code> to load the calendar view</p></div>';
+    return;
+  }
+  const today = new Date();
+  const calendar = new FullCalendar.Calendar(el, {
+    initialView: 'timeGridWeek',
+    height: 500,
+    headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,timeGridWeek,timeGridDay' },
+    events: APPROVED_DATA.map((r, i) => ({
+      id: r.id,
+      title: `${r.fullName} (${r.department})`,
+      start: new Date(today.getFullYear(), today.getMonth(), today.getDate() + i, 10 + i, 0),
+      end: new Date(today.getFullYear(), today.getMonth(), today.getDate() + i, 10 + i + 1, 0),
+      backgroundColor: ['#7C3AED','#2563EB','#059669','#D97706','#DB2777'][i % 5],
+      extendedProps: r,
+    })),
+    eventClick(info) {
+      const p = info.event.extendedProps;
+      showNotification(`${p.fullName} — Teams: ${p.teamsLink}`, 'info', 5000);
+    },
+  });
+  calendar.render();
+}
+
+// ── Approve Modal ─────────────────────────────────────────────────
+function openApproveModal(id) {
+  const row = pendingRows.find(r => r.id === id);
+  if (!row) return;
+  currentApproveData = row;
+  currentApproveStep = 1;
+
+  document.getElementById('approve-request-id-label').textContent = id;
+  document.getElementById('approve-name').textContent = row.fullName;
+  document.getElementById('approve-email').textContent = row.email;
+  document.getElementById('approve-dept').textContent = row.department;
+  document.getElementById('approve-urgency').innerHTML = urgencyBadge(row.urgency);
+  document.getElementById('approve-purpose').textContent = row.purpose;
+  document.getElementById('approve-description').textContent = row.description;
+  document.getElementById('approve-preferred').textContent = row.preferredDisplay;
+  document.getElementById('approve-alt').textContent = row.altDisplay || 'Not provided';
+  document.getElementById('step2-preferred-display').textContent = row.preferredDisplay;
+  document.getElementById('confirmed-date').value = row.preferredDate;
+
+  renderApproveStep(1);
+  showModal('approve-modal');
+}
+
+function renderApproveStep(step) {
+  for (let i = 1; i <= 5; i++) {
+    const stepEl = document.getElementById('modal-step-' + i);
+    const dot = document.getElementById('step-dot-' + i);
+    stepEl.classList.toggle('active', i === step);
+    dot.className = 'step-dot ' + (i < step ? 'done' : i === step ? 'active' : 'inactive');
+    dot.textContent = i < step ? '✓' : i;
+    const line = document.getElementById('step-line-' + i);
+    if (line) line.style.background = i < step ? '#10B981' : '#E5E7EB';
+  }
+  document.getElementById('approve-back-btn').classList.toggle('hidden', step === 1);
+  document.getElementById('approve-next-btn').classList.toggle('hidden', step === 5);
+  document.getElementById('approve-confirm-btn').classList.toggle('hidden', step !== 5);
+  if (step === 5) populateStep5Summary();
+}
+
+function approveStep(dir) {
+  const newStep = currentApproveStep + dir;
+  if (newStep < 1 || newStep > 5) return;
+  currentApproveStep = newStep;
+  renderApproveStep(newStep);
+}
+
+function toggleCustomSlot(show) {
+  document.getElementById('custom-slot-section').classList.toggle('hidden', !show);
+}
+
+async function generateTeamsLink() {
+  const btn = document.getElementById('generate-teams-btn');
+  const gen = document.getElementById('teams-generating');
+  const suc = document.getElementById('teams-success');
+  btn.classList.add('hidden');
+  gen.classList.remove('hidden');
+  const result = await generateTeamsMeetingLink({ ...currentApproveData });
+  gen.classList.add('hidden');
+  suc.classList.remove('hidden');
+  document.getElementById('teams-link-input').value = result.link || 'https://teams.microsoft.com/l/meetup-join/demo-auto-generated';
+}
+
+function populateStep5Summary() {
+  const r = currentApproveData;
+  const usePreferred = document.querySelector('input[name="slot-choice"]:checked')?.value === 'preferred';
+  const date = usePreferred ? r.preferredDisplay : (document.getElementById('confirmed-date').value + ' ' + document.getElementById('confirmed-time').value);
+  const time = usePreferred ? r.preferredTime : document.getElementById('confirmed-time').value;
+  const member = document.getElementById('assign-member');
+  const memberName = member.options[member.selectedIndex]?.text || 'Not assigned';
+  const duration = document.getElementById('meeting-duration').value;
+
+  document.getElementById('summary-name').textContent = r.fullName;
+  document.getElementById('summary-email').textContent = r.email;
+  document.getElementById('summary-dept').textContent = r.department;
+  document.getElementById('summary-purpose').textContent = r.purpose;
+  document.getElementById('summary-date').textContent = date;
+  document.getElementById('summary-time').textContent = time;
+  document.getElementById('summary-duration').textContent = duration + ' minutes';
+  document.getElementById('summary-assigned').textContent = memberName;
+  document.getElementById('summary-teams-link').textContent = document.getElementById('teams-link-input').value || '(not set)';
+
+  document.getElementById('email-preview-body').innerHTML = `
+    <div>Subject: ✅ Your Consultation Request is Confirmed — ${date}</div>
+    <br>Dear ${r.fullName},<br><br>
+    Great news! Your consultation request has been approved and your session is now confirmed.<br><br>
+    <strong>📅 Date & Time:</strong> ${date}<br>
+    <strong>⏱ Duration:</strong> ${duration} minutes<br>
+    <strong>🔗 Teams Link:</strong> <span class="text-blue-600">${document.getElementById('teams-link-input').value || '[Teams link]'}</span><br>
+    <strong>👤 Your Host:</strong> ${memberName}<br>
+    <strong>📋 Purpose:</strong> ${r.purpose}<br><br>
+    To prepare for the session, please have any relevant documents or examples ready.<br><br>
+    If you need to reschedule, please reply to this email.<br><br>
+    We look forward to speaking with you!<br><br>
+    Best regards,<br>
+    The Ogilvy Automation Team
+  `;
+}
+
+function toggleEmailPreview() {
+  const content = document.getElementById('email-preview-content');
+  const toggle = document.getElementById('email-preview-toggle');
+  const isHidden = content.classList.toggle('hidden');
+  toggle.textContent = isHidden ? '▼ Show' : '▲ Hide';
+}
+
+async function confirmApproval() {
+  const btn = document.getElementById('approve-confirm-btn');
+  toggleLoadingState(btn, true, 'Confirming...');
+  const r = currentApproveData;
+  const teamsLink = document.getElementById('teams-link-input').value;
+  const usePreferred = document.querySelector('input[name="slot-choice"]:checked')?.value === 'preferred';
+  const confirmedDate = usePreferred ? r.preferredDate : document.getElementById('confirmed-date').value;
+  const confirmedTime = usePreferred ? r.preferredTime : document.getElementById('confirmed-time').value;
+  const member = document.getElementById('assign-member');
+  const assignedTo = member.options[member.selectedIndex]?.text || '';
+
+  const { error } = await approveConsultation(r.id, { confirmedDate, confirmedTime, teamsLink, assignedTo, adminNotes: document.getElementById('admin-notes').value });
+
+  toggleLoadingState(btn, false);
+  hideModal('approve-modal');
+  pendingRows = pendingRows.filter(row => row.id !== r.id);
+  renderPendingTable();
+  showNotification(`✅ Consultation approved! Confirmation email sent to ${r.email}`, 'success', 6000);
+}
+
+function closeApproveModal() { hideModal('approve-modal'); }
+
+// ── Reject Modal ──────────────────────────────────────────────────
+function openRejectModal(id) {
+  const row = pendingRows.find(r => r.id === id);
+  if (!row) return;
+  currentRejectData = row;
+  document.getElementById('reject-request-id-label').textContent = id;
+  document.getElementById('reject-name').textContent = row.fullName;
+  document.getElementById('reject-email-display').textContent = row.email;
+  document.getElementById('reject-dept-display').textContent = row.department;
+  document.getElementById('reject-preferred-display').textContent = row.preferredDisplay;
+  document.getElementById('reject-reason').value = '';
+  document.getElementById('reject-message').value = '';
+  showModal('reject-modal');
+}
+
+const REJECTION_TEMPLATES = {
+  time_unavailable: (n) => `Dear ${n},\n\nThank you for your consultation request. Unfortunately, your preferred time slot is not available.\n\nPlease submit a new request with alternative dates and times, and we will do our best to accommodate you.\n\nBest regards,\nOgilvy Automation Team`,
+  more_info: (n) => `Dear ${n},\n\nThank you for your consultation request. To better prepare for your session, we need some additional information.\n\nPlease reply to this email with more details about your requirements.\n\nBest regards,\nOgilvy Automation Team`,
+  out_of_scope: (n) => `Dear ${n},\n\nThank you for your consultation request. Unfortunately, this request falls outside the scope of our team's current services.\n\nYou may wish to contact the relevant team directly. Please feel free to reach out if you have other automation-related needs.\n\nBest regards,\nOgilvy Automation Team`,
+  unavailable: (n) => `Dear ${n},\n\nThank you for your consultation request. Unfortunately, our team is currently unavailable during your requested time.\n\nPlease submit a new request with alternative dates, and we will confirm a suitable time.\n\nBest regards,\nOgilvy Automation Team`,
+};
+
+function updateRejectTemplate() {
+  const reason = document.getElementById('reject-reason').value;
+  const name = currentRejectData?.fullName || 'there';
+  if (REJECTION_TEMPLATES[reason]) {
+    document.getElementById('reject-message').value = REJECTION_TEMPLATES[reason](name);
+  }
+}
+
+async function confirmRejection() {
+  const reason = document.getElementById('reject-reason').value;
+  const message = document.getElementById('reject-message').value.trim();
+  if (!reason) { showNotification('Please select a rejection reason.', 'warning'); return; }
+  if (!message) { showNotification('Please write a message to the user.', 'warning'); return; }
+
+  const r = currentRejectData;
+  const { error } = await rejectConsultation(r.id, reason, message);
+  hideModal('reject-modal');
+  pendingRows = pendingRows.filter(row => row.id !== r.id);
+  renderPendingTable();
+  showNotification(`❌ Request ${r.id} rejected. Email sent to ${r.email}.`, 'info', 5000);
+}
+
+// ── More Info Modal ───────────────────────────────────────────────
+function openInfoModal(id) {
+  const row = pendingRows.find(r => r.id === id);
+  if (!row) return;
+  currentInfoData = row;
+  document.getElementById('info-request-id-label').textContent = id;
+  document.getElementById('info-name').textContent = row.fullName;
+  document.getElementById('info-email-display').textContent = row.email;
+  document.getElementById('info-questions').value = '';
+  document.getElementById('info-message').value = `Dear ${row.fullName},\n\nThank you for your consultation request. We need a little more information before we can confirm your session.\n\nPlease reply with answers to the following questions:\n\n[Questions here]\n\nBest regards,\nOgilvy Automation Team`;
+  showModal('info-modal');
+}
+
+async function confirmMoreInfo() {
+  const questions = document.getElementById('info-questions').value.trim();
+  if (!questions) { showNotification('Please specify what information is needed.', 'warning'); return; }
+  const r = currentInfoData;
+  hideModal('info-modal');
+  showNotification(`📧 Information request sent to ${r.email}`, 'info', 4000);
+}
+
+// ── Reschedule Modal ──────────────────────────────────────────────
+function openRescheduleModal(id, name, currentSlot) {
+  document.getElementById('reschedule-name').textContent = name;
+  document.getElementById('reschedule-current-slot').textContent = currentSlot;
+  document.getElementById('reschedule-date').value = '';
+  document.getElementById('reschedule-reason').value = '';
+  showModal('reschedule-modal');
+}
+
+function confirmReschedule() {
+  const date = document.getElementById('reschedule-date').value;
+  if (!date) { showNotification('Please select a new date.', 'warning'); return; }
+  hideModal('reschedule-modal');
+  showNotification('✅ Meeting rescheduled. User has been notified.', 'success');
+}
+
+// ── Meeting Notes Modal ───────────────────────────────────────────
+function openNotesModal(id, name, slot) {
+  document.getElementById('notes-name').textContent = name;
+  document.getElementById('notes-slot').textContent = slot;
+  document.getElementById('notes-content').value = '';
+  document.getElementById('notes-actions').value = '';
+  document.getElementById('notes-outcome').value = 'successful';
+  document.getElementById('notes-followup').checked = false;
+  document.getElementById('followup-fields').classList.add('hidden');
+  showModal('notes-modal');
+}
+
+function toggleFollowupFields() {
+  const checked = document.getElementById('notes-followup').checked;
+  document.getElementById('followup-fields').classList.toggle('hidden', !checked);
+}
+
+function saveMeetingNotes() {
+  hideModal('notes-modal');
+  showNotification('📝 Meeting notes saved successfully.', 'success');
+}
+
+// ── Mark Complete ─────────────────────────────────────────────────
+function markComplete(id) {
+  if (!confirm('Mark this consultation as completed?')) return;
+  showNotification('✅ Consultation marked as completed.', 'success');
+}
+
+// ── Restore Rejected to Pending ───────────────────────────────────
+function restoreToPending(id) {
+  showNotification(`↩ Request ${id} restored to Pending Approval.`, 'info');
+}
+
+// ── CSV Export ────────────────────────────────────────────────────
+function exportConsultationsCSV() {
+  exportToCSV(pendingRows.map(r => ({
+    ID: r.id, Name: r.fullName, Email: r.email, Department: r.department,
+    'Preferred Date': r.preferredDisplay, Purpose: r.purpose, Urgency: r.urgency, Submitted: r.submittedAgo
+  })), 'consultation-requests.csv');
+}
+
+// ── Supabase load ─────────────────────────────────────────────────
+async function loadSupabaseConsultations() {
+  if (!supabaseClient) return;
+  try {
+    const { data, error } = await supabaseClient.from('consultation_requests').select('*').eq('status', 'pending').order('submitted_at', { ascending: false });
+    if (data && data.length > 0) {
+      pendingRows = data.map(r => ({ id: `CONSULT-REQ-${String(r.id).padStart(3,'0')}`, fullName: r.full_name, email: r.email, department: r.department, preferredDate: r.preferred_date, preferredTime: r.preferred_time, preferredDisplay: `${r.preferred_date} at ${r.preferred_time}`, altDisplay: r.alt_date ? `${r.alt_date} at ${r.alt_time}` : 'Not provided', purpose: r.meeting_purpose, description: r.description, urgency: r.urgency, submittedAgo: new Date(r.submitted_at).toLocaleDateString() }));
+      renderPendingTable();
+    }
+    // Subscribe to real-time new requests
+    subscribeToRealtime('consultation_requests', payload => {
+      if (payload.eventType === 'INSERT') {
+        const r = payload.new;
+        pendingRows.unshift({ id: `CONSULT-REQ-${String(r.id).padStart(3,'0')}`, fullName: r.full_name, email: r.email, department: r.department, preferredDate: r.preferred_date, preferredTime: r.preferred_time, preferredDisplay: `${r.preferred_date} at ${r.preferred_time}`, altDisplay: 'See details', purpose: r.meeting_purpose, description: r.description, urgency: r.urgency, submittedAgo: 'Just now' });
+        renderPendingTable();
+        showNotification(`📅 New consultation request from ${r.full_name}!`, 'info', 6000);
+      }
+    });
+  } catch (e) { /* silent fail - demo data shown */ }
+}
+</script>
+
+<!-- FullCalendar (lazy-loaded only when calendar view selected) -->
+<script>
+function loadFullCalendar() {
+  if (typeof FullCalendar !== 'undefined') return;
+  const s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js';
+  document.head.appendChild(s);
+}
+document.getElementById('view-cal-btn').addEventListener('click', loadFullCalendar);
+</script>
+
+</body>
+</html>

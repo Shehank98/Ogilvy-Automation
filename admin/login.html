@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Ogilvy Automation Admin Portal — Authorized access only." />
+  <title>Admin Login — Ogilvy Automation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .input-focus:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+    }
+    .btn-loading {
+      position: relative;
+      pointer-events: none;
+    }
+    .btn-loading::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 50%;
+      right: 16px;
+      transform: translateY(-50%);
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: translateY(-50%) rotate(360deg); } }
+    .modal-backdrop { backdrop-filter: blur(4px); }
+  </style>
+</head>
+<body class="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4">
+
+  <!-- ============================================================
+       LOGIN CARD
+  ============================================================ -->
+  <div class="w-full max-w-md">
+    <div class="bg-white rounded-2xl shadow-xl p-8">
+
+      <!-- Header -->
+      <div class="flex flex-col items-center mb-8">
+        <div class="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg shadow-red-200 mb-4">
+          <span class="text-2xl">⚙️</span>
+        </div>
+        <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Ogilvy Automation</h1>
+        <p class="text-gray-500 text-sm mt-1 font-medium">Admin Portal</p>
+      </div>
+
+      <!-- Error Alert (hidden by default) -->
+      <div id="error-alert"
+           class="hidden mb-5 flex items-start gap-3 bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3"
+           role="alert">
+        <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span id="error-message">Invalid email or password.</span>
+      </div>
+
+      <!-- Success Alert (hidden by default) -->
+      <div id="success-alert"
+           class="hidden mb-5 flex items-start gap-3 bg-green-50 border border-green-200 text-green-700 text-sm rounded-xl px-4 py-3"
+           role="alert">
+        <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span id="success-message">Success.</span>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" novalidate>
+
+        <!-- Email -->
+        <div class="mb-4">
+          <label for="email" class="block text-sm font-semibold text-gray-700 mb-1.5">Email Address</label>
+          <input
+            id="email"
+            type="email"
+            required
+            autocomplete="email"
+            placeholder="admin@ogilvy.com"
+            class="input-focus w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:border-red-500"
+          />
+        </div>
+
+        <!-- Password -->
+        <div class="mb-4">
+          <div class="flex items-center justify-between mb-1.5">
+            <label for="password" class="block text-sm font-semibold text-gray-700">Password</label>
+            <button
+              type="button"
+              id="forgot-password-btn"
+              class="text-xs text-red-600 hover:text-red-700 font-medium transition-colors">
+              Forgot password?
+            </button>
+          </div>
+          <div class="relative">
+            <input
+              id="password"
+              type="password"
+              required
+              autocomplete="current-password"
+              placeholder="••••••••"
+              class="input-focus w-full border border-gray-300 rounded-xl px-4 py-2.5 pr-11 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:border-red-500"
+            />
+            <!-- Show/hide toggle -->
+            <button
+              type="button"
+              id="toggle-password"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Toggle password visibility">
+              <!-- Eye icon (shown when password is hidden) -->
+              <svg id="eye-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+              <!-- Eye-off icon (shown when password is visible) -->
+              <svg id="eye-off-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Remember me -->
+        <div class="flex items-center gap-2 mb-6">
+          <input
+            id="remember-me"
+            type="checkbox"
+            class="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500 cursor-pointer"
+          />
+          <label for="remember-me" class="text-sm text-gray-600 cursor-pointer select-none">Remember me</label>
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          id="sign-in-btn"
+          type="submit"
+          class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition-colors shadow-md shadow-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+          Sign In
+        </button>
+
+      </form>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-6 space-y-1">
+      <p class="text-xs text-gray-500">© 2025 Ogilvy Automation Team</p>
+      <p class="text-xs text-gray-400 font-medium uppercase tracking-wider">Authorized access only</p>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       PASSWORD RESET MODAL
+  ============================================================ -->
+  <div id="reset-modal"
+       class="hidden fixed inset-0 z-50 flex items-center justify-center px-4 modal-backdrop bg-black/40">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-7 relative animate-fade-in">
+
+      <!-- Close button -->
+      <button id="close-reset-modal"
+              class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              aria-label="Close modal">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+
+      <div class="mb-6">
+        <div class="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center mb-4">
+          <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+          </svg>
+        </div>
+        <h2 class="text-lg font-bold text-gray-900">Reset Password</h2>
+        <p class="text-sm text-gray-500 mt-1">Enter your email address and we'll send you a link to reset your password.</p>
+      </div>
+
+      <!-- Reset Error/Success -->
+      <div id="reset-alert" class="hidden mb-4 text-sm rounded-xl px-4 py-3 border"></div>
+
+      <div class="mb-5">
+        <label for="reset-email" class="block text-sm font-semibold text-gray-700 mb-1.5">Email Address</label>
+        <input
+          id="reset-email"
+          type="email"
+          placeholder="admin@ogilvy.com"
+          class="input-focus w-full border border-gray-300 rounded-xl px-4 py-2.5 text-sm text-gray-900 placeholder-gray-400 transition-colors focus:border-red-500"
+        />
+      </div>
+
+      <button
+        id="send-reset-btn"
+        type="button"
+        class="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition-colors shadow-md shadow-red-100 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+        Send Reset Email
+      </button>
+
+      <button
+        type="button"
+        id="cancel-reset-btn"
+        class="w-full mt-3 text-gray-500 hover:text-gray-700 text-sm font-medium py-2 transition-colors">
+        Cancel
+      </button>
+
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCRIPTS
+  ============================================================ -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/admin.js"></script>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // ── Helpers ──────────────────────────────────────────────
+
+      function showError(msg) {
+        var el = document.getElementById('error-alert');
+        document.getElementById('error-message').textContent = msg;
+        el.classList.remove('hidden');
+        document.getElementById('success-alert').classList.add('hidden');
+      }
+
+      function showSuccess(msg) {
+        var el = document.getElementById('success-alert');
+        document.getElementById('success-message').textContent = msg;
+        el.classList.remove('hidden');
+        document.getElementById('error-alert').classList.add('hidden');
+      }
+
+      function clearAlerts() {
+        document.getElementById('error-alert').classList.add('hidden');
+        document.getElementById('success-alert').classList.add('hidden');
+      }
+
+      function setLoading(loading) {
+        var btn = document.getElementById('sign-in-btn');
+        if (loading) {
+          btn.classList.add('btn-loading', 'opacity-80');
+          btn.textContent = 'Signing In…';
+          btn.disabled = true;
+        } else {
+          btn.classList.remove('btn-loading', 'opacity-80');
+          btn.textContent = 'Sign In';
+          btn.disabled = false;
+        }
+      }
+
+      function getSupabase() {
+        return window.supabaseClient || null;
+      }
+
+      // ── Redirect if already logged in ────────────────────────
+      (async function checkExistingSession() {
+        var client = getSupabase();
+        if (!client) return;
+        try {
+          var result = await client.auth.getSession();
+          if (result.data && result.data.session) {
+            window.location.href = 'dashboard.html';
+          }
+        } catch (e) {
+          // No session — stay on login page
+        }
+      })();
+
+      // ── Password visibility toggle ────────────────────────────
+      document.getElementById('toggle-password').addEventListener('click', function () {
+        var input = document.getElementById('password');
+        var isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        document.getElementById('eye-icon').classList.toggle('hidden', isPassword);
+        document.getElementById('eye-off-icon').classList.toggle('hidden', !isPassword);
+      });
+
+      // ── Login form submit ─────────────────────────────────────
+      document.getElementById('login-form').addEventListener('submit', async function (e) {
+        e.preventDefault();
+        clearAlerts();
+
+        var email    = document.getElementById('email').value.trim();
+        var password = document.getElementById('password').value;
+
+        if (!email || !password) {
+          showError('Please enter your email and password.');
+          return;
+        }
+
+        setLoading(true);
+
+        var client = getSupabase();
+
+        // ── Demo mode fallback ──────────────────────────────────
+        if (!client) {
+          setTimeout(function () {
+            setLoading(false);
+            if (email === 'admin@ogilvy.com' && password === 'admin123') {
+              sessionStorage.setItem('admin_demo', 'true');
+              sessionStorage.setItem('admin_email', email);
+              window.location.href = 'dashboard.html';
+            } else {
+              showError('Invalid credentials. Demo: admin@ogilvy.com / admin123');
+            }
+          }, 800);
+          return;
+        }
+
+        // ── Supabase auth ───────────────────────────────────────
+        try {
+          var result = await client.auth.signInWithPassword({ email: email, password: password });
+          setLoading(false);
+
+          if (result.error) {
+            if (result.error.message.toLowerCase().includes('invalid')) {
+              showError('Invalid email or password. Please try again.');
+            } else {
+              showError(result.error.message || 'Sign-in failed. Please try again.');
+            }
+            return;
+          }
+
+          // Persist session preference
+          if (document.getElementById('remember-me').checked) {
+            localStorage.setItem('admin_remember', 'true');
+          }
+
+          window.location.href = 'dashboard.html';
+        } catch (err) {
+          setLoading(false);
+          showError('An unexpected error occurred. Please try again.');
+          console.error('Login error:', err);
+        }
+      });
+
+      // ── Password reset modal ──────────────────────────────────
+      var resetModal = document.getElementById('reset-modal');
+
+      function openResetModal() {
+        // Pre-fill email if already typed
+        var loginEmail = document.getElementById('email').value.trim();
+        if (loginEmail) document.getElementById('reset-email').value = loginEmail;
+        document.getElementById('reset-alert').classList.add('hidden');
+        resetModal.classList.remove('hidden');
+        document.getElementById('reset-email').focus();
+      }
+
+      function closeResetModal() {
+        resetModal.classList.add('hidden');
+      }
+
+      document.getElementById('forgot-password-btn').addEventListener('click', openResetModal);
+      document.getElementById('close-reset-modal').addEventListener('click', closeResetModal);
+      document.getElementById('cancel-reset-btn').addEventListener('click', closeResetModal);
+
+      // Close on backdrop click
+      resetModal.addEventListener('click', function (e) {
+        if (e.target === resetModal) closeResetModal();
+      });
+
+      // Close on Escape key
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !resetModal.classList.contains('hidden')) {
+          closeResetModal();
+        }
+      });
+
+      document.getElementById('send-reset-btn').addEventListener('click', async function () {
+        var alertEl = document.getElementById('reset-alert');
+        var email   = document.getElementById('reset-email').value.trim();
+        var btn     = this;
+
+        alertEl.classList.add('hidden');
+
+        if (!email) {
+          alertEl.className = 'mb-4 text-sm rounded-xl px-4 py-3 border bg-red-50 border-red-200 text-red-700';
+          alertEl.textContent = 'Please enter your email address.';
+          alertEl.classList.remove('hidden');
+          return;
+        }
+
+        btn.textContent = 'Sending…';
+        btn.disabled = true;
+
+        var client = getSupabase();
+
+        if (!client) {
+          // Demo mode
+          setTimeout(function () {
+            btn.textContent = 'Send Reset Email';
+            btn.disabled = false;
+            alertEl.className = 'mb-4 text-sm rounded-xl px-4 py-3 border bg-green-50 border-green-200 text-green-700';
+            alertEl.textContent = 'Demo mode: Reset email would be sent to ' + email;
+            alertEl.classList.remove('hidden');
+          }, 700);
+          return;
+        }
+
+        try {
+          var redirectUrl = window.location.origin + '/admin/dashboard.html';
+          var result = await client.auth.resetPasswordForEmail(email, { redirectTo: redirectUrl });
+          btn.textContent = 'Send Reset Email';
+          btn.disabled = false;
+
+          if (result.error) {
+            alertEl.className = 'mb-4 text-sm rounded-xl px-4 py-3 border bg-red-50 border-red-200 text-red-700';
+            alertEl.textContent = result.error.message || 'Could not send reset email. Try again.';
+          } else {
+            alertEl.className = 'mb-4 text-sm rounded-xl px-4 py-3 border bg-green-50 border-green-200 text-green-700';
+            alertEl.textContent = 'Reset link sent! Check your inbox at ' + email;
+          }
+          alertEl.classList.remove('hidden');
+        } catch (err) {
+          btn.textContent = 'Send Reset Email';
+          btn.disabled = false;
+          alertEl.className = 'mb-4 text-sm rounded-xl px-4 py-3 border bg-red-50 border-red-200 text-red-700';
+          alertEl.textContent = 'An error occurred. Please try again.';
+          alertEl.classList.remove('hidden');
+        }
+      });
+
+    })();
+  </script>
+
+</body>
+</html>

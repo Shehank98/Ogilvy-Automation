@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Request an Automation System – Tell the Ogilvy Automation Team what you need automated and we'll build it for you." />
+  <title>Request an Automation System | Ogilvy Automation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#DC2626',
+              'red-dark': '#B91C1C',
+              amber: '#F59E0B',
+              'amber-dark': '#D97706',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 2px;
+      background: #DC2626;
+      transition: width 0.25s ease;
+    }
+    .nav-link:hover::after { width: 100%; }
+    .glow-amber {
+      box-shadow: 0 0 20px rgba(245,158,11,0.4), 0 0 40px rgba(245,158,11,0.15);
+    }
+    .glow-amber:hover {
+      box-shadow: 0 0 28px rgba(245,158,11,0.6), 0 0 56px rgba(245,158,11,0.25);
+    }
+    .step-fade { animation: fadeSlide 0.35s ease-out; }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateX(16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .form-input {
+      width: 100%;
+      border: 1px solid #D1D5DB;
+      border-radius: 0.5rem;
+      padding: 0.625rem 0.875rem;
+      font-size: 0.9375rem;
+      color: #111827;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus {
+      border-color: #DC2626;
+      box-shadow: 0 0 0 3px rgba(220,38,38,0.12);
+    }
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.375rem;
+    }
+    .priority-radio:checked + label { ring: 2px; }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+
+  <!-- ============================================================
+       NAVIGATION
+  ============================================================ -->
+  <nav class="bg-gray-900 sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="index.html" class="flex items-center gap-2 flex-shrink-0">
+          <span class="text-xl">⚙️</span>
+          <span class="text-white font-bold text-lg tracking-tight">
+            Ogilvy <span class="text-red-500">Automation</span>
+          </span>
+        </a>
+        <div class="hidden md:flex items-center gap-6">
+          <a href="index.html"            class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">Home</a>
+          <a href="systems.html"          class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">Systems</a>
+          <a href="what-we-automate.html" class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">What We Automate</a>
+          <a href="about.html"            class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">About</a>
+        </div>
+        <div class="hidden md:flex items-center gap-3">
+          <a href="book-consultation.html"
+             class="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-black text-sm font-semibold px-4 py-2 rounded-lg transition-colors glow-amber">
+            📅 Request Consultation
+          </a>
+        </div>
+        <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-white p-2 rounded-md" aria-label="Toggle menu" aria-expanded="false">
+          <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+          <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden bg-gray-800 border-t border-gray-700">
+      <div class="px-4 pt-3 pb-4 space-y-1">
+        <a href="index.html"            class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+        <a href="systems.html"          class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Systems</a>
+        <a href="what-we-automate.html" class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">What We Automate</a>
+        <a href="about.html"            class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">About</a>
+        <div class="pt-2 border-t border-gray-700">
+          <a href="book-consultation.html"
+             class="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-black px-3 py-2.5 rounded-md text-sm font-semibold">
+            📅 Request Consultation
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section class="bg-gradient-to-br from-red-700 to-red-900 text-white py-16 px-4">
+    <div class="max-w-3xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-medium mb-5">
+        ⚙️ System Request
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        Request an Automation System
+      </h1>
+      <p class="text-red-100 text-lg max-w-xl mx-auto">
+        Tell us what you need automated and we'll build it for you.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MAIN CONTENT
+  ============================================================ -->
+  <main class="max-w-3xl mx-auto px-4 py-10 space-y-8">
+
+    <!-- CONSULTATION CALLOUT -->
+    <div class="bg-amber-50 border-l-4 border-amber-500 rounded-r-xl p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+      <div class="flex-1">
+        <p class="font-bold text-gray-900 mb-1">💡 Not sure what to request?</p>
+        <p class="text-gray-700 text-sm leading-relaxed">
+          If you're unsure about requirements, consider requesting a free 30-min consultation first.
+          Our team can help you define exactly what you need.
+        </p>
+      </div>
+      <a href="book-consultation.html"
+         class="flex-shrink-0 inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-black font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors whitespace-nowrap">
+        📅 Request Consultation First →
+      </a>
+    </div>
+
+    <!-- MULTI-STEP FORM CARD -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+
+      <!-- Progress Indicator -->
+      <div class="bg-gray-50 border-b border-gray-200 px-6 py-4">
+        <div class="flex items-center justify-between max-w-sm mx-auto">
+          <!-- Step 1 -->
+          <div class="flex flex-col items-center" id="prog-1">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold bg-red-600 text-white transition-all" id="prog-circle-1">1</div>
+            <span class="text-xs mt-1 font-medium text-red-600" id="prog-label-1">Your Info</span>
+          </div>
+          <div class="flex-1 h-1 mx-2 rounded bg-gray-200" id="prog-bar-1-2">
+            <div class="h-full rounded bg-red-600 transition-all duration-500 w-0" id="prog-fill-1-2"></div>
+          </div>
+          <!-- Step 2 -->
+          <div class="flex flex-col items-center" id="prog-2">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold bg-gray-200 text-gray-500 transition-all" id="prog-circle-2">2</div>
+            <span class="text-xs mt-1 font-medium text-gray-400" id="prog-label-2">Task Details</span>
+          </div>
+          <div class="flex-1 h-1 mx-2 rounded bg-gray-200" id="prog-bar-2-3">
+            <div class="h-full rounded bg-red-600 transition-all duration-500 w-0" id="prog-fill-2-3"></div>
+          </div>
+          <!-- Step 3 -->
+          <div class="flex flex-col items-center" id="prog-3">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold bg-gray-200 text-gray-500 transition-all" id="prog-circle-3">3</div>
+            <span class="text-xs mt-1 font-medium text-gray-400" id="prog-label-3">Final Details</span>
+          </div>
+        </div>
+      </div>
+
+      <form id="request-form" novalidate class="px-6 py-8">
+
+        <!-- ======= STEP 1: Your Information ======= -->
+        <div id="step-1" class="step-fade">
+          <h2 class="text-xl font-bold text-gray-900 mb-6">Step 1 — Your Information</h2>
+          <div class="space-y-5">
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label class="form-label" for="full-name">Full Name <span class="text-red-600">*</span></label>
+                <input id="full-name" name="full_name" type="text" required placeholder="Jane Smith" class="form-input" />
+              </div>
+              <div>
+                <label class="form-label" for="email">Email Address <span class="text-red-600">*</span></label>
+                <input id="email" name="email" type="email" required placeholder="jane@ogilvy.com" class="form-input" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label class="form-label" for="department">Department <span class="text-red-600">*</span></label>
+                <select id="department" name="department" required class="form-input bg-white">
+                  <option value="">Select your department…</option>
+                  <option>Marketing</option>
+                  <option>Finance</option>
+                  <option>HR</option>
+                  <option>Operations</option>
+                  <option>IT</option>
+                  <option>Legal</option>
+                  <option>Creative</option>
+                  <option>Strategy</option>
+                  <option>Other</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label" for="phone">Phone <span class="text-gray-400 font-normal">(optional)</span></label>
+                <input id="phone" name="phone" type="tel" placeholder="+1 (555) 000-0000" class="form-input" />
+              </div>
+            </div>
+
+          </div>
+
+          <div class="mt-8 flex justify-end">
+            <button type="button" onclick="goToStep(2)"
+               class="bg-red-600 hover:bg-red-700 text-white font-semibold px-7 py-2.5 rounded-lg transition-colors">
+              Next →
+            </button>
+          </div>
+        </div>
+
+        <!-- ======= STEP 2: Task Details ======= -->
+        <div id="step-2" class="step-fade hidden">
+          <h2 class="text-xl font-bold text-gray-900 mb-6">Step 2 — Task Details</h2>
+          <div class="space-y-5">
+
+            <div>
+              <label class="form-label" for="system-name">System Name / Title <span class="text-red-600">*</span></label>
+              <input id="system-name" name="system_name" type="text" required
+                     placeholder="e.g. Invoice Approval Automation" class="form-input" />
+            </div>
+
+            <div>
+              <label class="form-label" for="current-process">Current Process Description <span class="text-red-600">*</span></label>
+              <textarea id="current-process" name="current_process" required rows="4"
+                        placeholder="Describe what you currently do manually…"
+                        class="form-input resize-y"></textarea>
+            </div>
+
+            <div>
+              <label class="form-label" for="automation-goal">Automation Goal <span class="text-red-600">*</span></label>
+              <textarea id="automation-goal" name="automation_goal" required rows="4"
+                        placeholder="What should the automated system do?"
+                        class="form-input resize-y"></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label class="form-label" for="task-frequency">Task Frequency <span class="text-red-600">*</span></label>
+                <select id="task-frequency" name="task_frequency" required class="form-input bg-white">
+                  <option value="">Select frequency…</option>
+                  <option>Daily</option>
+                  <option>Weekly</option>
+                  <option>Monthly</option>
+                  <option>Ad-hoc</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label" for="time-spent">Current Time Spent <span class="text-red-600">*</span></label>
+                <select id="time-spent" name="time_spent" required class="form-input bg-white">
+                  <option value="">Per occurrence…</option>
+                  <option>Less than 1 hour</option>
+                  <option>1–4 hours</option>
+                  <option>4–8 hours</option>
+                  <option>More than 8 hours</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="form-label" for="num-people">Number of People Doing This</label>
+              <input id="num-people" name="num_people" type="number" min="1" placeholder="e.g. 5" class="form-input" />
+            </div>
+
+            <!-- Priority Level -->
+            <div>
+              <label class="form-label">Priority Level <span class="text-red-600">*</span></label>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-1">
+
+                <label class="cursor-pointer">
+                  <input type="radio" name="priority" value="low" class="sr-only peer" />
+                  <div class="peer-checked:ring-2 peer-checked:ring-green-500 peer-checked:bg-green-50 border border-gray-200 rounded-xl p-3 text-center transition-all hover:border-green-300">
+                    <span class="block text-lg">🟢</span>
+                    <span class="block font-semibold text-sm text-green-700 mt-1">Low</span>
+                    <span class="block text-xs text-gray-500 mt-0.5">Nice to have</span>
+                  </div>
+                </label>
+
+                <label class="cursor-pointer">
+                  <input type="radio" name="priority" value="medium" class="sr-only peer" />
+                  <div class="peer-checked:ring-2 peer-checked:ring-yellow-500 peer-checked:bg-yellow-50 border border-gray-200 rounded-xl p-3 text-center transition-all hover:border-yellow-300">
+                    <span class="block text-lg">🟡</span>
+                    <span class="block font-semibold text-sm text-yellow-700 mt-1">Medium</span>
+                    <span class="block text-xs text-gray-500 mt-0.5">Moderately urgent</span>
+                  </div>
+                </label>
+
+                <label class="cursor-pointer">
+                  <input type="radio" name="priority" value="high" class="sr-only peer" />
+                  <div class="peer-checked:ring-2 peer-checked:ring-orange-500 peer-checked:bg-orange-50 border border-gray-200 rounded-xl p-3 text-center transition-all hover:border-orange-300">
+                    <span class="block text-lg">🟠</span>
+                    <span class="block font-semibold text-sm text-orange-700 mt-1">High</span>
+                    <span class="block text-xs text-gray-500 mt-0.5">Urgent need</span>
+                  </div>
+                </label>
+
+                <label class="cursor-pointer">
+                  <input type="radio" name="priority" value="critical" class="sr-only peer" />
+                  <div class="peer-checked:ring-2 peer-checked:ring-red-500 peer-checked:bg-red-50 border border-gray-200 rounded-xl p-3 text-center transition-all hover:border-red-300">
+                    <span class="block text-lg">🔴</span>
+                    <span class="block font-semibold text-sm text-red-700 mt-1">Critical</span>
+                    <span class="block text-xs text-gray-500 mt-0.5">Business blocker</span>
+                  </div>
+                </label>
+
+              </div>
+            </div>
+
+          </div>
+
+          <div class="mt-8 flex items-center justify-between">
+            <button type="button" onclick="goToStep(1)"
+               class="border border-gray-300 hover:border-gray-400 text-gray-700 font-semibold px-6 py-2.5 rounded-lg transition-colors">
+              ← Back
+            </button>
+            <button type="button" onclick="goToStep(3)"
+               class="bg-red-600 hover:bg-red-700 text-white font-semibold px-7 py-2.5 rounded-lg transition-colors">
+              Next →
+            </button>
+          </div>
+        </div>
+
+        <!-- ======= STEP 3: Additional Details ======= -->
+        <div id="step-3" class="step-fade hidden">
+          <h2 class="text-xl font-bold text-gray-900 mb-6">Step 3 — Additional Details</h2>
+          <div class="space-y-5">
+
+            <div>
+              <label class="form-label" for="expected-outcomes">Expected Outcomes</label>
+              <textarea id="expected-outcomes" name="expected_outcomes" rows="3"
+                        placeholder="What results do you expect from this automation?"
+                        class="form-input resize-y"></textarea>
+            </div>
+
+            <div>
+              <label class="form-label" for="integrations">Existing Systems to Integrate <span class="text-gray-400 font-normal">(optional)</span></label>
+              <textarea id="integrations" name="integrations" rows="3"
+                        placeholder="List any software/systems this should connect with (e.g. Salesforce, SAP, SharePoint)…"
+                        class="form-input resize-y"></textarea>
+            </div>
+
+            <!-- File Upload -->
+            <div>
+              <label class="form-label">Attach Files <span class="text-gray-400 font-normal">(optional — max 5 files, 10 MB each)</span></label>
+              <div id="drop-zone"
+                   class="border-2 border-dashed border-gray-300 hover:border-red-400 rounded-xl p-6 text-center cursor-pointer transition-colors"
+                   onclick="document.getElementById('file-upload').click()">
+                <div class="text-3xl mb-2">📎</div>
+                <p class="text-sm text-gray-600">Drag & drop files here or <span class="text-red-600 font-semibold">click to browse</span></p>
+                <p class="text-xs text-gray-400 mt-1">Accepts documents, flowcharts, examples (PDF, DOCX, XLSX, PNG, JPG)</p>
+                <input id="file-upload" name="attachments" type="file" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.gif" class="hidden" onchange="handleFileSelect(this)" />
+              </div>
+              <ul id="file-list" class="mt-2 space-y-1"></ul>
+            </div>
+
+            <!-- Consultation Checkbox -->
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+              <label class="flex items-start gap-3 cursor-pointer">
+                <input id="also-consultation" type="checkbox" class="mt-0.5 w-4 h-4 accent-amber-500" onchange="toggleConsultationNote()" />
+                <div>
+                  <span class="font-semibold text-gray-900 text-sm">✅ Also request a free 30-min consultation to discuss this request</span>
+                  <p class="text-xs text-gray-600 mt-0.5">We'll reach out to schedule a session after reviewing your request.</p>
+                </div>
+              </label>
+              <div id="consultation-note" class="hidden mt-3 bg-amber-100 rounded-lg px-3 py-2 text-xs text-amber-800">
+                Your name and email from Step 1 will be used to set up the consultation. No extra info needed.
+              </div>
+            </div>
+
+            <!-- Deadline -->
+            <div>
+              <label class="form-label" for="deadline">Deadline / Target Date <span class="text-gray-400 font-normal">(optional)</span></label>
+              <input id="deadline" name="deadline" type="date" class="form-input" />
+            </div>
+
+          </div>
+
+          <div class="mt-8 flex items-center justify-between">
+            <button type="button" onclick="goToStep(2)"
+               class="border border-gray-300 hover:border-gray-400 text-gray-700 font-semibold px-6 py-2.5 rounded-lg transition-colors">
+              ← Back
+            </button>
+            <button type="submit"
+               class="bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-2.5 rounded-lg transition-colors shadow-sm">
+              Submit Request →
+            </button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- ============================================================
+         TIME SAVINGS CALCULATOR
+    ============================================================ -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+      <button id="calc-toggle" onclick="toggleCalc()"
+              class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🧮</span>
+          <span class="font-bold text-gray-900">Time Savings Calculator</span>
+          <span class="text-xs bg-green-100 text-green-700 font-semibold px-2 py-0.5 rounded-full ml-1">Free tool</span>
+        </div>
+        <svg id="calc-chevron" class="w-5 h-5 text-gray-400 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+        </svg>
+      </button>
+
+      <div id="calc-body" class="hidden border-t border-gray-100 px-6 py-6">
+        <p class="text-sm text-gray-600 mb-5">Estimate the value this automation could deliver for your team.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-6">
+          <div>
+            <label class="form-label" for="calc-people">Number of People</label>
+            <input id="calc-people" type="number" min="1" value="3" class="form-input" oninput="runCalc()" />
+          </div>
+          <div>
+            <label class="form-label" for="calc-hours">Hours Spent Per Person / Week</label>
+            <input id="calc-hours" type="number" min="0.5" step="0.5" value="5" class="form-input" oninput="runCalc()" />
+          </div>
+        </div>
+
+        <div id="calc-result" class="bg-green-50 border border-green-200 rounded-xl p-5 text-center">
+          <p class="text-gray-700 text-sm mb-1">Your team currently spends</p>
+          <p class="text-3xl font-extrabold text-green-700" id="calc-weekly">15 hrs/week</p>
+          <p class="text-gray-500 text-sm mt-1">= <span id="calc-annual" class="font-semibold text-gray-800">780 hours/year</span>
+             = approx. <span id="calc-cost" class="font-semibold text-gray-800">$31,200</span> in labor costs</p>
+          <div class="mt-3 bg-green-100 rounded-lg px-4 py-2 inline-block">
+            <p class="text-green-800 font-bold text-sm">Automation could save up to 80% of this time!</p>
+            <p class="text-green-700 text-xs mt-0.5">That's up to <span id="calc-saved" class="font-bold">624 hrs/year</span> and <span id="calc-saved-cost" class="font-bold">$24,960</span> returned to your team.</p>
+          </div>
+        </div>
+        <p class="text-xs text-gray-400 mt-3 text-center">* Labor cost estimate assumes $40/hr average fully-loaded cost.</p>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         SUCCESS STATE (hidden by default)
+    ============================================================ -->
+    <div id="success-state" class="hidden bg-white rounded-2xl shadow-sm border border-green-200 overflow-hidden">
+      <div class="bg-green-600 px-6 py-4 flex items-center gap-3">
+        <span class="text-2xl">✅</span>
+        <div>
+          <h2 class="text-white font-bold text-lg">Request Submitted Successfully!</h2>
+          <p class="text-green-100 text-sm">Ticket ID: <strong id="ticket-id">SYS-REQ-2025-001</strong></p>
+        </div>
+      </div>
+      <div class="px-6 py-6 space-y-3">
+        <p class="text-gray-700">Your request has been submitted! Our team will review it within <strong>2–3 business days</strong> and reach out with next steps.</p>
+        <p class="text-gray-600 text-sm">You can check back at this portal for status updates using your ticket ID.</p>
+        <div id="consultation-success-note" class="hidden bg-amber-50 border-l-4 border-amber-500 rounded-r-lg p-4 mt-2">
+          <p class="font-semibold text-gray-900 text-sm mb-1">📅 Consultation Request Also Submitted</p>
+          <p class="text-gray-700 text-sm">Your consultation request has also been submitted. Check your email for updates on scheduling a session.</p>
+        </div>
+        <div class="pt-2">
+          <a href="index.html" class="text-red-600 hover:text-red-700 font-semibold text-sm">← Back to Home</a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="bg-gray-900 text-gray-400 py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="text-sm">© 2025 Ogilvy Automation Team · <a href="mailto:automation@ogilvy.com" class="text-gray-300 hover:text-white transition-colors">automation@ogilvy.com</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    /* ---- Mobile menu ---- */
+    const mobileBtn  = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const hamIcon    = document.getElementById('hamburger-icon');
+    const closeIcon  = document.getElementById('close-icon');
+    mobileBtn.addEventListener('click', () => {
+      const open = mobileMenu.classList.toggle('hidden');
+      hamIcon.classList.toggle('hidden', !open);
+      closeIcon.classList.toggle('hidden', open);
+      mobileBtn.setAttribute('aria-expanded', String(!open));
+    });
+
+    /* ---- Multi-step form ---- */
+    let currentStep = 1;
+
+    function goToStep(n) {
+      document.getElementById('step-' + currentStep).classList.add('hidden');
+      document.getElementById('step-' + n).classList.remove('hidden');
+      document.getElementById('step-' + n).classList.add('step-fade');
+      currentStep = n;
+      updateProgress(n);
+      window.scrollTo({ top: document.querySelector('#request-form').offsetTop - 80, behavior: 'smooth' });
+    }
+
+    function updateProgress(step) {
+      [1, 2, 3].forEach(i => {
+        const circle = document.getElementById('prog-circle-' + i);
+        const label  = document.getElementById('prog-label-' + i);
+        if (i < step) {
+          circle.className = 'w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold bg-green-500 text-white transition-all';
+          circle.textContent = '✓';
+          label.className = 'text-xs mt-1 font-medium text-green-600';
+        } else if (i === step) {
+          circle.className = 'w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold bg-red-600 text-white transition-all';
+          circle.textContent = i;
+          label.className = 'text-xs mt-1 font-medium text-red-600';
+        } else {
+          circle.className = 'w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold bg-gray-200 text-gray-500 transition-all';
+          circle.textContent = i;
+          label.className = 'text-xs mt-1 font-medium text-gray-400';
+        }
+      });
+      if (step >= 2) document.getElementById('prog-fill-1-2').style.width = '100%';
+      else document.getElementById('prog-fill-1-2').style.width = '0%';
+      if (step >= 3) document.getElementById('prog-fill-2-3').style.width = '100%';
+      else document.getElementById('prog-fill-2-3').style.width = '0%';
+    }
+
+    /* ---- Consultation checkbox ---- */
+    function toggleConsultationNote() {
+      const note = document.getElementById('consultation-note');
+      note.classList.toggle('hidden', !document.getElementById('also-consultation').checked);
+    }
+
+    /* ---- File upload ---- */
+    function handleFileSelect(input) {
+      const list = document.getElementById('file-list');
+      list.innerHTML = '';
+      const files = Array.from(input.files).slice(0, 5);
+      files.forEach(f => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center gap-2 text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5';
+        li.innerHTML = `<span>📄</span><span class="flex-1 truncate">${f.name}</span><span class="text-gray-400 text-xs">${(f.size/1024/1024).toFixed(1)} MB</span>`;
+        list.appendChild(li);
+      });
+    }
+    // Drag-and-drop
+    const dz = document.getElementById('drop-zone');
+    dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('border-red-400','bg-red-50'); });
+    dz.addEventListener('dragleave', () => dz.classList.remove('border-red-400','bg-red-50'));
+    dz.addEventListener('drop', e => {
+      e.preventDefault();
+      dz.classList.remove('border-red-400','bg-red-50');
+      const fu = document.getElementById('file-upload');
+      fu.files = e.dataTransfer.files;
+      handleFileSelect(fu);
+    });
+
+    /* ---- Form submission ---- */
+    document.getElementById('request-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const wantsConsult = document.getElementById('also-consultation').checked;
+      // Generate ticket ID
+      const year  = new Date().getFullYear();
+      const num   = String(Math.floor(Math.random() * 900) + 100).padStart(3, '0');
+      document.getElementById('ticket-id').textContent = `SYS-REQ-${year}-${num}`;
+      if (wantsConsult) document.getElementById('consultation-success-note').classList.remove('hidden');
+      // Hide form card, show success
+      document.querySelector('.bg-white.rounded-2xl.shadow-sm.border.border-gray-200.overflow-hidden').classList.add('hidden');
+      document.getElementById('success-state').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    /* ---- Time savings calculator ---- */
+    function toggleCalc() {
+      const body    = document.getElementById('calc-body');
+      const chevron = document.getElementById('calc-chevron');
+      const open    = body.classList.toggle('hidden');
+      chevron.style.transform = open ? '' : 'rotate(180deg)';
+      if (!open) runCalc();
+    }
+
+    function runCalc() {
+      const people  = parseFloat(document.getElementById('calc-people').value)  || 0;
+      const hours   = parseFloat(document.getElementById('calc-hours').value)   || 0;
+      const weekly  = people * hours;
+      const annual  = weekly * 52;
+      const cost    = annual * 40;
+      const saved   = annual * 0.8;
+      const savedCost = cost * 0.8;
+      document.getElementById('calc-weekly').textContent   = weekly.toFixed(1) + ' hrs/week';
+      document.getElementById('calc-annual').textContent   = annual.toFixed(0) + ' hours/year';
+      document.getElementById('calc-cost').textContent     = '$' + cost.toLocaleString();
+      document.getElementById('calc-saved').textContent    = saved.toFixed(0) + ' hrs/year';
+      document.getElementById('calc-saved-cost').textContent = '$' + savedCost.toLocaleString();
+    }
+  </script>
+</body>
+</html>

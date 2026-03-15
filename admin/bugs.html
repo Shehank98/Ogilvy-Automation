@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bug Reports – Ogilvy Automation Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#DC2626',
+              'red-dark': '#B91C1C',
+              amber: '#F59E0B',
+              'amber-dark': '#D97706',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #1f2937; }
+    ::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+
+    .modal-backdrop { transition: opacity 0.2s ease; }
+    .modal-panel    { transition: transform 0.25s ease, opacity 0.25s ease; }
+    .modal-hidden .modal-backdrop { opacity: 0; pointer-events: none; }
+    .modal-hidden .modal-panel    { transform: translateY(16px); opacity: 0; }
+
+    tbody tr { transition: background-color 0.1s ease; }
+
+    .sidebar-active {
+      background-color: rgba(220, 38, 38, 0.15);
+      border-right: 3px solid #DC2626;
+      color: #fff;
+    }
+
+    /* Severity row tints */
+    .row-critical { background-color: #fef2f2; }
+    .row-high     { background-color: #fff7ed; }
+    .row-medium   { background-color: #fefce8; }
+    .row-low      { background-color: #ffffff; }
+
+    .row-critical:hover { background-color: #fee2e2; }
+    .row-high:hover     { background-color: #ffedd5; }
+    .row-medium:hover   { background-color: #fef9c3; }
+    .row-low:hover      { background-color: #f9fafb; }
+
+    /* Lightbox fade */
+    #lightbox { transition: opacity 0.2s ease; }
+    #lightbox.hidden { opacity: 0; pointer-events: none; }
+
+    /* SLA pulse for critical overdue */
+    .sla-overdue { animation: slaPulse 2s ease-in-out infinite; }
+    @keyframes slaPulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-900 antialiased font-sans">
+
+<div class="flex h-screen overflow-hidden">
+
+  <!-- =========================================================
+       SIDEBAR
+  ========================================================= -->
+  <aside class="w-64 bg-gray-900 flex flex-col flex-shrink-0 fixed inset-y-0 left-0 z-30">
+    <div class="px-6 py-5 border-b border-gray-700/60">
+      <a href="dashboard.html" class="flex items-center gap-2.5">
+        <span class="text-xl">⚙️</span>
+        <span class="text-white font-bold text-base leading-tight">
+          Ogilvy <span class="text-red-500">Automation</span>
+          <span class="block text-gray-400 text-xs font-normal">Admin Portal</span>
+        </span>
+      </a>
+    </div>
+
+    <nav class="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
+      <a href="dashboard.html"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-700/60 hover:text-white text-sm font-medium transition-colors">
+        <span class="text-base">📊</span> Dashboard
+      </a>
+      <a href="consultations.html"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-700/60 hover:text-white text-sm font-medium transition-colors">
+        <span class="text-base">📅</span>
+        <span class="flex-1">Consultations</span>
+        <span class="bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">5</span>
+      </a>
+      <a href="requests.html"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-700/60 hover:text-white text-sm font-medium transition-colors">
+        <span class="text-base">📋</span> System Requests
+      </a>
+      <a href="bugs.html"
+         class="sidebar-active flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors">
+        <span class="text-base">🐛</span> Bug Reports
+      </a>
+      <a href="systems.html"
+         class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-300 hover:bg-gray-700/60 hover:text-white text-sm font-medium transition-colors">
+        <span class="text-base">⚙️</span> Systems
+      </a>
+    </nav>
+
+    <div class="px-4 py-4 border-t border-gray-700/60">
+      <p class="text-gray-400 text-xs mb-3 truncate" id="admin-email">admin@ogilvy.com</p>
+      <button onclick="handleSignOut()"
+              class="w-full flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-gray-200 hover:text-white text-sm font-medium px-3 py-2 rounded-lg transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+        </svg>
+        Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- =========================================================
+       MAIN CONTENT
+  ========================================================= -->
+  <main class="flex-1 ml-64 flex flex-col overflow-y-auto">
+
+    <!-- Top bar -->
+    <header class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between sticky top-0 z-20 shadow-sm">
+      <div>
+        <h1 class="text-xl font-bold text-gray-900">Bug Reports</h1>
+        <p class="text-xs text-gray-500 mt-0.5">Track, triage, and resolve system bugs</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button onclick="exportCSV()"
+                class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors border border-gray-200">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          Export CSV
+        </button>
+      </div>
+    </header>
+
+    <div class="p-6 flex flex-col gap-6">
+
+      <!-- =====================================================
+           SLA TRACKER BAR
+      ===================================================== -->
+      <div id="sla-banner" class="bg-red-50 border border-red-200 rounded-xl px-5 py-3 flex items-center gap-3">
+        <span class="text-lg sla-overdue">⚠️</span>
+        <div class="flex-1 text-sm text-red-800">
+          <strong>2 Critical bugs open</strong> —
+          <span id="sla-summary">1 High severity bug past SLA (&gt;24hrs)</span>
+        </div>
+        <button onclick="document.getElementById('filter-severity').value='Critical'; applyFilters();"
+                class="text-xs font-semibold text-red-700 hover:text-red-900 bg-red-100 hover:bg-red-200 px-3 py-1.5 rounded-lg transition-colors border border-red-200">
+          View Critical
+        </button>
+      </div>
+
+      <!-- =====================================================
+           STATS ROW
+      ===================================================== -->
+      <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+        <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Open</p>
+          <p class="text-3xl font-extrabold text-gray-900 mt-1" id="stat-total-open">12</p>
+        </div>
+        <div class="bg-white rounded-xl border border-red-200 shadow-sm p-4">
+          <p class="text-xs font-semibold text-red-600 uppercase tracking-wider">Critical</p>
+          <p class="text-3xl font-extrabold text-red-600 mt-1" id="stat-critical">2</p>
+        </div>
+        <div class="bg-white rounded-xl border border-orange-200 shadow-sm p-4">
+          <p class="text-xs font-semibold text-orange-500 uppercase tracking-wider">High</p>
+          <p class="text-3xl font-extrabold text-orange-500 mt-1" id="stat-high">3</p>
+        </div>
+        <div class="bg-white rounded-xl border border-green-200 shadow-sm p-4">
+          <p class="text-xs font-semibold text-green-600 uppercase tracking-wider">Resolved Today</p>
+          <p class="text-3xl font-extrabold text-green-600 mt-1">4</p>
+        </div>
+        <div class="bg-white rounded-xl border border-blue-200 shadow-sm p-4">
+          <p class="text-xs font-semibold text-blue-600 uppercase tracking-wider">Avg Resolution</p>
+          <p class="text-2xl font-extrabold text-blue-600 mt-1">18<span class="text-sm font-semibold ml-0.5">hrs</span></p>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           FILTER BAR
+      ===================================================== -->
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mb-3">
+          <!-- Search -->
+          <div class="xl:col-span-2 relative">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0"/>
+            </svg>
+            <input id="filter-search" type="text" placeholder="Search system, reporter, description..."
+                   class="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50"/>
+          </div>
+
+          <!-- Status -->
+          <select id="filter-status"
+                  class="text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50">
+            <option value="">All Statuses</option>
+            <option value="Open">Open</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+            <option value="Closed">Closed</option>
+          </select>
+
+          <!-- Severity -->
+          <select id="filter-severity"
+                  class="text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50">
+            <option value="">All Severities</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
+          </select>
+
+          <!-- Department -->
+          <select id="filter-department"
+                  class="text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50">
+            <option value="">All Departments</option>
+            <option value="Finance">Finance</option>
+            <option value="Marketing">Marketing</option>
+            <option value="HR">HR</option>
+            <option value="Legal">Legal</option>
+            <option value="Operations">Operations</option>
+          </select>
+
+          <!-- Date from -->
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-gray-500 whitespace-nowrap">From</label>
+            <input id="filter-date-from" type="date"
+                   class="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50"/>
+          </div>
+
+          <!-- Date to -->
+          <div class="flex items-center gap-2">
+            <label class="text-xs text-gray-500 whitespace-nowrap">To</label>
+            <input id="filter-date-to" type="date"
+                   class="flex-1 text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 bg-gray-50"/>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 pt-3 border-t border-gray-100">
+          <button onclick="applyFilters()"
+                  class="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-5 py-2 rounded-lg transition-colors">
+            Apply Filters
+          </button>
+          <button onclick="clearFilters()"
+                  class="bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-medium px-5 py-2 rounded-lg transition-colors border border-gray-200">
+            Clear
+          </button>
+          <span id="filter-count" class="text-xs text-gray-400 ml-2 hidden">
+            Showing <span id="visible-count">8</span> of 8 results
+          </span>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           BUGS TABLE
+      ===================================================== -->
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead class="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable('ticket')">
+                  Ticket <span class="text-gray-300 ml-1">↕</span>
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable('system')">
+                  System <span class="text-gray-300 ml-1">↕</span>
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable('severity')">
+                  Severity <span class="text-gray-300 ml-1">↕</span>
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Type
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Reporter
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Dept
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable('status')">
+                  Status <span class="text-gray-300 ml-1">↕</span>
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider cursor-pointer hover:text-gray-700" onclick="sortTable('reported')">
+                  Reported <span class="text-gray-300 ml-1">↕</span>
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  SLA
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Assigned
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody id="bugs-table-body" class="divide-y divide-gray-100">
+              <!-- Rows injected by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <div id="empty-state" class="hidden py-16 text-center">
+          <div class="text-4xl mb-3">🐛</div>
+          <p class="text-gray-500 font-medium">No bug reports match your filters.</p>
+          <button onclick="clearFilters()" class="mt-3 text-red-600 hover:text-red-700 text-sm font-semibold">Clear filters</button>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           PAGINATION
+      ===================================================== -->
+      <div class="flex items-center justify-between bg-white rounded-xl border border-gray-200 shadow-sm px-5 py-3">
+        <p class="text-sm text-gray-500">
+          Showing <span class="font-semibold text-gray-700">1–8</span> of <span class="font-semibold text-gray-700">20</span> results
+        </p>
+        <div class="flex items-center gap-1">
+          <button class="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200 disabled:opacity-40" disabled>
+            ← Prev
+          </button>
+          <button class="px-3 py-1.5 text-sm font-semibold bg-red-600 text-white rounded-lg">1</button>
+          <button class="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">2</button>
+          <button class="px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">3</button>
+          <button class="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors border border-gray-200">
+            Next →
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+
+<!-- ============================================================
+     BUG DETAIL MODAL
+============================================================ -->
+<div id="detail-modal" class="fixed inset-0 z-50 modal-hidden" role="dialog" aria-modal="true">
+  <div class="modal-backdrop absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeModal()"></div>
+
+  <div class="modal-panel relative z-10 flex items-start justify-center min-h-screen pt-10 pb-10 px-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <div>
+          <h2 class="text-lg font-bold text-gray-900" id="modal-ticket-id">BUG-2025-012</h2>
+          <p class="text-xs text-gray-500 mt-0.5" id="modal-system-name">Invoice Processor</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span id="modal-severity-badge-header" class="text-sm"></span>
+          <button onclick="closeModal()"
+                  class="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-gray-100 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="overflow-y-auto max-h-[72vh]">
+        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+          <!-- Left: Details -->
+          <div class="space-y-4">
+            <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wider pb-1 border-b border-gray-100">Bug Details</h3>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Reporter</label>
+                <p class="text-sm text-gray-900 mt-0.5" id="modal-reporter">Emma Clarke</p>
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Department</label>
+                <p class="text-sm text-gray-900 mt-0.5" id="modal-department">Finance</p>
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Bug Type</label>
+                <p class="text-sm text-gray-900 mt-0.5" id="modal-type">System Down</p>
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Reported</label>
+                <p class="text-sm text-gray-900 mt-0.5" id="modal-reported">2 hours ago</p>
+              </div>
+            </div>
+
+            <!-- SLA -->
+            <div class="bg-gray-50 rounded-lg px-4 py-3 border border-gray-200">
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">SLA Information</label>
+              <div class="flex items-center justify-between">
+                <p class="text-sm font-medium" id="modal-sla-text">4hr SLA</p>
+                <span id="modal-sla-badge" class="text-xs font-bold px-2.5 py-1 rounded-full"></span>
+              </div>
+              <p class="text-xs text-gray-400 mt-1" id="modal-sla-detail">Target resolution by: today</p>
+              <p class="text-xs text-gray-500 mt-1">
+                Time to resolution: <span id="modal-resolution-time" class="font-semibold text-gray-700">—</span>
+              </p>
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Description</label>
+              <p class="text-sm text-gray-600 mt-1 leading-relaxed" id="modal-description">
+                The invoice processing system is completely down. Users are unable to submit or view invoices.
+              </p>
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Steps to Reproduce</label>
+              <p class="text-sm text-gray-600 mt-1 leading-relaxed" id="modal-steps">
+                1. Navigate to Invoice Portal<br/>
+                2. Attempt to submit any invoice<br/>
+                3. System returns 500 error
+              </p>
+            </div>
+
+            <!-- Screenshots -->
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-2">Screenshots</label>
+              <div id="modal-screenshots" class="flex flex-wrap gap-2">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Admin Controls -->
+          <div class="space-y-4">
+            <h3 class="text-sm font-bold text-gray-700 uppercase tracking-wider pb-1 border-b border-gray-100">Admin Controls</h3>
+
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Status</label>
+              <select id="modal-status-select"
+                      class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500">
+                <option value="Open">Open</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Resolved">Resolved</option>
+                <option value="Closed">Closed</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Severity</label>
+              <select id="modal-severity-select"
+                      class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500">
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+                <option value="Critical">Critical</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Assign To</label>
+              <select id="modal-assign-select"
+                      class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500">
+                <option value="Unassigned">Unassigned</option>
+                <option value="Alex J.">Alex J.</option>
+                <option value="Sarah C.">Sarah C.</option>
+                <option value="Marcus W.">Marcus W.</option>
+                <option value="Priya P.">Priya P.</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Resolution Notes</label>
+              <textarea id="modal-resolution-notes" rows="4"
+                        placeholder="Describe the fix or investigation findings..."
+                        class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"></textarea>
+            </div>
+
+            <!-- Escalate to Consultation -->
+            <button onclick="openEscalationModal()"
+                    class="w-full flex items-center justify-center gap-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-700 font-semibold text-sm px-4 py-2.5 rounded-lg transition-colors">
+              📅 Escalate to Consultation
+              <span class="text-xs text-amber-500 font-normal">Schedule a discussion session</span>
+            </button>
+
+            <!-- Activity log -->
+            <div>
+              <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Activity Log</h4>
+              <div class="space-y-2 text-xs text-gray-600 max-h-36 overflow-y-auto pr-1" id="modal-activity-log">
+                <!-- Populated by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50 gap-3">
+        <button onclick="sendEmailToReporter()"
+                class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors border border-gray-200">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+          Email Reporter
+        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="closeModal()"
+                  class="bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-medium px-5 py-2 rounded-lg transition-colors border border-gray-200">
+            Cancel
+          </button>
+          <button onclick="saveChanges()"
+                  class="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-6 py-2 rounded-lg transition-colors">
+            Save Changes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     ESCALATION TO CONSULTATION MODAL
+============================================================ -->
+<div id="escalation-modal" class="fixed inset-0 z-[60] modal-hidden" role="dialog" aria-modal="true">
+  <div class="modal-backdrop absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeEscalationModal()"></div>
+
+  <div class="modal-panel relative z-10 flex items-center justify-center min-h-screen px-4 py-8">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+
+      <!-- Header -->
+      <div class="flex items-center justify-between px-6 py-4 border-b border-amber-100 bg-amber-50">
+        <div>
+          <h2 class="text-base font-bold text-gray-900">📅 Escalate to Consultation</h2>
+          <p class="text-xs text-amber-700 mt-0.5">Pre-filled from bug report — review and submit</p>
+        </div>
+        <button onclick="closeEscalationModal()" class="text-gray-400 hover:text-gray-600 p-2 rounded-lg hover:bg-amber-100 transition-colors">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="p-6 space-y-4 overflow-y-auto max-h-[60vh]">
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Name</label>
+            <input id="esc-name" type="text"
+                   class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400"/>
+          </div>
+          <div>
+            <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Email</label>
+            <input id="esc-email" type="email"
+                   class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400"/>
+          </div>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Department</label>
+          <input id="esc-department" type="text"
+                 class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400"/>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Purpose</label>
+          <input id="esc-purpose" type="text" value="Troubleshoot Existing System"
+                 class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400 bg-gray-50"/>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Description (pre-filled from bug)</label>
+          <textarea id="esc-description" rows="4"
+                    class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"></textarea>
+        </div>
+
+        <div>
+          <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider block mb-1">Preferred Date/Time</label>
+          <input id="esc-datetime" type="datetime-local"
+                 class="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400"/>
+        </div>
+
+        <div class="bg-amber-50 border border-amber-100 rounded-lg p-3">
+          <p class="text-xs text-amber-700">
+            <strong>Note:</strong> This will create a consultation request on behalf of the user.
+            You can also send them an email to request one themselves.
+          </p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="flex items-center justify-between px-6 py-4 border-t border-gray-100 bg-gray-50 gap-3">
+        <button onclick="sendEscalationEmail()"
+                class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors border border-gray-200">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+          </svg>
+          Email User Instead
+        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="closeEscalationModal()"
+                  class="bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-medium px-5 py-2 rounded-lg transition-colors border border-gray-200">
+            Cancel
+          </button>
+          <button onclick="submitEscalation()"
+                  class="bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-6 py-2 rounded-lg transition-colors">
+            Submit Consultation
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     LIGHTBOX (screenshot viewer)
+============================================================ -->
+<div id="lightbox" class="fixed inset-0 z-[70] hidden flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+     onclick="closeLightbox()">
+  <button onclick="closeLightbox()" class="absolute top-4 right-4 text-white/80 hover:text-white p-2">
+    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+    </svg>
+  </button>
+  <img id="lightbox-img" src="" alt="Screenshot" class="max-w-full max-h-full rounded-xl shadow-2xl"/>
+</div>
+
+
+<!-- ============================================================
+     TOAST
+============================================================ -->
+<div id="toast" class="fixed bottom-5 right-5 z-[100] hidden">
+  <div class="flex items-center gap-3 bg-gray-900 text-white text-sm font-medium px-5 py-3 rounded-xl shadow-xl border border-gray-700">
+    <span id="toast-icon">✓</span>
+    <span id="toast-msg">Changes saved</span>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     SCRIPTS
+============================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/admin.js"></script>
+
+<script>
+// ============================================================
+// SLA THRESHOLDS (hours)
+// ============================================================
+const SLA_HOURS = { Critical: 4, High: 24, Medium: 72, Low: null };
+
+// ============================================================
+// DATA
+// ============================================================
+const BUGS_DATA = [
+  {
+    id: 1,
+    ticket: 'BUG-2025-012',
+    system: 'Invoice Processor',
+    severity: 'Critical',
+    type: 'System Down',
+    reporter: 'Emma Clarke',
+    reporterEmail: 'emma.clarke@ogilvy.com',
+    department: 'Finance',
+    status: 'Open',
+    reported: '2 hours ago',
+    reportedHoursAgo: 2,
+    assigned: 'Unassigned',
+    description: 'The invoice processing system is completely down. Users are unable to submit or view invoices. Affecting entire Finance department.',
+    steps: '1. Navigate to Invoice Portal\n2. Attempt to submit any invoice\n3. System returns 500 error',
+    resolutionNotes: '',
+    screenshots: [
+      { name: 'error_screenshot_1.png', url: 'https://placehold.co/800x500/fee2e2/dc2626?text=500+Internal+Server+Error' },
+      { name: 'console_log.png',        url: 'https://placehold.co/800x500/1f2937/ffffff?text=Console+Error+Log' }
+    ],
+    activityLog: [
+      { action: 'Bug reported — Status set to Open', by: 'Emma Clarke', time: '2 hours ago 07:30' }
+    ]
+  },
+  {
+    id: 2,
+    ticket: 'BUG-2025-011',
+    system: 'Marketing Dashboard',
+    severity: 'High',
+    type: 'Data Error',
+    reporter: 'James Wilson',
+    reporterEmail: 'james.wilson@ogilvy.com',
+    department: 'Marketing',
+    status: 'In Progress',
+    reported: '5 hours ago',
+    reportedHoursAgo: 5,
+    assigned: 'Alex J.',
+    description: 'Dashboard showing incorrect campaign metrics. Click-through rates appear inflated by approximately 300%. Affecting reporting accuracy.',
+    steps: '1. Open Marketing Dashboard\n2. Navigate to Campaign Metrics\n3. Compare with raw platform data — discrepancy visible',
+    resolutionNotes: 'Investigating data pipeline. Suspect ETL job issue.',
+    screenshots: [
+      { name: 'dashboard_metrics.png', url: 'https://placehold.co/800x500/fff7ed/ea580c?text=Incorrect+Metrics+Screenshot' }
+    ],
+    activityLog: [
+      { action: 'Assigned to Alex J.', by: 'Admin', time: '4 hours ago 09:00' },
+      { action: 'Status changed to In Progress', by: 'Alex J.', time: '4 hours ago 09:15' },
+      { action: 'Bug reported', by: 'James Wilson', time: '5 hours ago 08:00' }
+    ]
+  },
+  {
+    id: 3,
+    ticket: 'BUG-2025-010',
+    system: 'HR Onboarding',
+    severity: 'Medium',
+    type: 'Slow Performance',
+    reporter: 'Sarah Ahmed',
+    reporterEmail: 'sarah.ahmed@ogilvy.com',
+    department: 'HR',
+    status: 'In Progress',
+    reported: 'Yesterday',
+    reportedHoursAgo: 26,
+    assigned: 'Marcus W.',
+    description: 'The onboarding workflow is taking 3–5 minutes to generate welcome email packs. Previously took under 10 seconds. Affecting new hire onboarding experience.',
+    steps: '1. Trigger new hire onboarding workflow\n2. Wait for welcome email pack generation\n3. Observe 3–5 minute delay',
+    resolutionNotes: 'Profiling the email generation service. Memory leak suspected.',
+    screenshots: [],
+    activityLog: [
+      { action: 'Assigned to Marcus W.', by: 'Admin', time: 'Yesterday 14:00' },
+      { action: 'Status changed to In Progress', by: 'Marcus W.', time: 'Yesterday 14:30' },
+      { action: 'Bug reported', by: 'Sarah Ahmed', time: 'Yesterday 11:00' }
+    ]
+  },
+  {
+    id: 4,
+    ticket: 'BUG-2025-009',
+    system: 'Report Generator',
+    severity: 'High',
+    type: 'Integration Error',
+    reporter: 'Tom Bradley',
+    reporterEmail: 'tom.bradley@ogilvy.com',
+    department: 'Finance',
+    status: 'Open',
+    reported: 'Yesterday',
+    reportedHoursAgo: 30,
+    assigned: 'Unassigned',
+    description: 'Report Generator failing to pull data from the Finance ERP system. All scheduled reports are empty. Affecting monthly closing process.',
+    steps: '1. Trigger any scheduled report\n2. Open generated report\n3. All data fields blank — no error displayed to user',
+    resolutionNotes: '',
+    screenshots: [
+      { name: 'blank_report.png', url: 'https://placehold.co/800x500/fff7ed/ea580c?text=Blank+Report+Output' }
+    ],
+    activityLog: [
+      { action: 'Bug reported', by: 'Tom Bradley', time: 'Yesterday 08:00' }
+    ]
+  },
+  {
+    id: 5,
+    ticket: 'BUG-2025-008',
+    system: 'Leave Manager',
+    severity: 'Low',
+    type: 'Minor UI Issue',
+    reporter: 'Lisa Thompson',
+    reporterEmail: 'lisa.thompson@ogilvy.com',
+    department: 'HR',
+    status: 'Resolved',
+    reported: '3 days ago',
+    reportedHoursAgo: 72,
+    assigned: 'Sarah C.',
+    description: 'Calendar widget on leave request form not displaying weekend dates in correct colour. Cosmetic issue only — functionality unaffected.',
+    steps: '1. Open Leave Request form\n2. View calendar widget\n3. Saturday/Sunday shown in weekday colour',
+    resolutionNotes: 'Fixed CSS class conditional for weekend day detection. Deployed to production.',
+    screenshots: [],
+    activityLog: [
+      { action: 'Status changed to Resolved', by: 'Sarah C.', time: '2 days ago 16:00' },
+      { action: 'Fix deployed', by: 'Sarah C.', time: '2 days ago 15:45' },
+      { action: 'Assigned to Sarah C.', by: 'Admin', time: '3 days ago 12:00' },
+      { action: 'Bug reported', by: 'Lisa Thompson', time: '3 days ago 09:00' }
+    ]
+  },
+  {
+    id: 6,
+    ticket: 'BUG-2025-007',
+    system: 'Contract Tracker',
+    severity: 'Medium',
+    type: 'Access Error',
+    reporter: 'David Park',
+    reporterEmail: 'david.park@ogilvy.com',
+    department: 'Legal',
+    status: 'Resolved',
+    reported: '1 week ago',
+    reportedHoursAgo: 168,
+    assigned: 'Priya P.',
+    description: 'Certain users receiving "Access Denied" when trying to view contracts they should have read permissions for. Role-based access control issue.',
+    steps: '1. Login as affected user\n2. Navigate to Contract Tracker\n3. Click any contract — Access Denied error displayed',
+    resolutionNotes: 'Fixed permissions migration script. Role mappings were incorrectly assigned during last deployment.',
+    screenshots: [],
+    activityLog: [
+      { action: 'Status changed to Resolved', by: 'Priya P.', time: '5 days ago 11:00' },
+      { action: 'Root cause identified', by: 'Priya P.', time: '6 days ago 14:00' },
+      { action: 'Assigned to Priya P.', by: 'Admin', time: '1 week ago 10:00' },
+      { action: 'Bug reported', by: 'David Park', time: '1 week ago 09:00' }
+    ]
+  },
+  {
+    id: 7,
+    ticket: 'BUG-2025-006',
+    system: 'Email Automation',
+    severity: 'Low',
+    type: 'Minor Bug',
+    reporter: 'Maria Garcia',
+    reporterEmail: 'maria.garcia@ogilvy.com',
+    department: 'Marketing',
+    status: 'Closed',
+    reported: '2 weeks ago',
+    reportedHoursAgo: 336,
+    assigned: 'Alex J.',
+    description: 'Email template preview showing extra blank line at bottom of HTML emails in Outlook. Does not affect email delivery or content.',
+    steps: '1. Open email template builder\n2. Preview email in Outlook mode\n3. Extra blank line visible at bottom',
+    resolutionNotes: 'Resolved by removing trailing whitespace in email template footer. Verified across all clients.',
+    screenshots: [],
+    activityLog: [
+      { action: 'Status changed to Closed', by: 'Admin', time: '1 week ago 17:00' },
+      { action: 'Status changed to Resolved', by: 'Alex J.', time: '2 weeks ago 15:00' },
+      { action: 'Bug reported', by: 'Maria Garcia', time: '2 weeks ago 10:00' }
+    ]
+  },
+  {
+    id: 8,
+    ticket: 'BUG-2025-005',
+    system: 'Budget Reporter',
+    severity: 'High',
+    type: 'Output Error',
+    reporter: 'Robert Chen',
+    reporterEmail: 'robert.chen@ogilvy.com',
+    department: 'Finance',
+    status: 'Closed',
+    reported: '2 weeks ago',
+    reportedHoursAgo: 350,
+    assigned: 'Marcus W.',
+    description: 'Budget reports exported to Excel showing incorrect currency formatting for GBP values. Pounds being displayed as USD in exported files.',
+    steps: '1. Generate any budget report\n2. Export as Excel (.xlsx)\n3. Open in Excel — GBP values show $ symbol',
+    resolutionNotes: 'Fixed locale settings in Excel export module. Currency symbol now correctly uses system locale from user profile.',
+    screenshots: [
+      { name: 'currency_bug.png', url: 'https://placehold.co/800x500/fef9c3/854d0e?text=Currency+Formatting+Bug' }
+    ],
+    activityLog: [
+      { action: 'Status changed to Closed', by: 'Admin', time: '1 week ago 10:00' },
+      { action: 'Status changed to Resolved', by: 'Marcus W.', time: '2 weeks ago 16:00' },
+      { action: 'Fix verified by Robert Chen', by: 'Robert Chen', time: '2 weeks ago 15:00' },
+      { action: 'Bug reported', by: 'Robert Chen', time: '2 weeks ago 09:00' }
+    ]
+  }
+];
+
+let filteredData = [...BUGS_DATA];
+let currentBugId = null;
+
+// ============================================================
+// SLA HELPERS
+// ============================================================
+function getSLAStatus(bug) {
+  const threshold = SLA_HOURS[bug.severity];
+  if (!threshold) return { label: '—', overdue: false, text: 'No SLA' };
+  const overdue = (bug.status === 'Open' || bug.status === 'In Progress') && bug.reportedHoursAgo > threshold;
+  const label = `${threshold}hr SLA`;
+  return { label, overdue, text: overdue ? `${label} ⚠️ OVERDUE` : `${label} ✓` };
+}
+
+function slaCell(bug) {
+  if (bug.status === 'Resolved' || bug.status === 'Closed') return '<span class="text-xs text-gray-400">—</span>';
+  const sla = getSLAStatus(bug);
+  if (!SLA_HOURS[bug.severity]) return '<span class="text-xs text-gray-400">—</span>';
+  if (sla.overdue) {
+    return `<span class="text-xs font-bold text-red-600 sla-overdue whitespace-nowrap">${sla.label} ⚠️ OVERDUE</span>`;
+  }
+  return `<span class="text-xs font-semibold text-green-600 whitespace-nowrap">${sla.label} ✓</span>`;
+}
+
+// ============================================================
+// BADGE HELPERS
+// ============================================================
+function severityBadge(severity) {
+  const map = {
+    Critical: { cls: 'bg-red-100 text-red-700',    icon: '🚨' },
+    High:     { cls: 'bg-orange-100 text-orange-700', icon: '🔴' },
+    Medium:   { cls: 'bg-yellow-100 text-yellow-700', icon: '🟡' },
+    Low:      { cls: 'bg-green-100 text-green-700',   icon: '🟢' }
+  };
+  const m = map[severity] || { cls: 'bg-gray-100 text-gray-600', icon: '⚪' };
+  return `<span class="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${m.cls}">${m.icon} ${severity}</span>`;
+}
+
+function statusBadge(status) {
+  const map = {
+    Open:         'bg-red-100 text-red-700',
+    'In Progress':'bg-yellow-100 text-yellow-700',
+    Resolved:     'bg-green-100 text-green-700',
+    Closed:       'bg-gray-100 text-gray-500'
+  };
+  return `<span class="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full ${map[status] || 'bg-gray-100 text-gray-600'}">${status}</span>`;
+}
+
+function rowClass(severity) {
+  const map = { Critical: 'row-critical', High: 'row-high', Medium: 'row-medium', Low: 'row-low' };
+  return map[severity] || '';
+}
+
+// ============================================================
+// RENDER TABLE
+// ============================================================
+function renderTable(data) {
+  const tbody = document.getElementById('bugs-table-body');
+  const empty = document.getElementById('empty-state');
+
+  if (!data.length) {
+    tbody.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  tbody.innerHTML = data.map(bug => {
+    const actionBtns = (bug.status === 'Resolved' || bug.status === 'Closed')
+      ? `<button onclick="openModal(${bug.id})" class="text-xs text-blue-600 hover:text-blue-800 font-semibold px-2 py-1 rounded hover:bg-blue-50 transition-colors">View</button>`
+      : `<button onclick="openModal(${bug.id})" class="text-xs text-blue-600 hover:text-blue-800 font-semibold px-2 py-1 rounded hover:bg-blue-50 transition-colors">View</button>
+         <button onclick="openModal(${bug.id})" class="text-xs text-gray-600 hover:text-gray-800 font-semibold px-2 py-1 rounded hover:bg-gray-100 transition-colors ml-1">${bug.assigned === 'Unassigned' ? 'Assign' : 'Update'}</button>`;
+
+    return `
+    <tr class="${rowClass(bug.severity)}" data-id="${bug.id}">
+      <td class="px-4 py-3.5">
+        <span class="text-xs font-mono font-semibold text-gray-700">${bug.ticket}</span>
+      </td>
+      <td class="px-4 py-3.5">
+        <span class="text-sm font-medium text-gray-900">${bug.system}</span>
+      </td>
+      <td class="px-4 py-3.5">${severityBadge(bug.severity)}</td>
+      <td class="px-4 py-3.5">
+        <span class="text-xs text-gray-600">${bug.type}</span>
+      </td>
+      <td class="px-4 py-3.5">
+        <div class="text-sm text-gray-900">${bug.reporter}</div>
+        <div class="text-xs text-gray-400">${bug.reporterEmail}</div>
+      </td>
+      <td class="px-4 py-3.5">
+        <span class="text-xs text-gray-600">${bug.department}</span>
+      </td>
+      <td class="px-4 py-3.5">${statusBadge(bug.status)}</td>
+      <td class="px-4 py-3.5">
+        <span class="text-xs text-gray-500">${bug.reported}</span>
+      </td>
+      <td class="px-4 py-3.5">${slaCell(bug)}</td>
+      <td class="px-4 py-3.5">
+        <span class="text-xs ${bug.assigned === 'Unassigned' ? 'text-gray-400 italic' : 'text-gray-700'}">${bug.assigned}</span>
+      </td>
+      <td class="px-4 py-3.5 whitespace-nowrap">${actionBtns}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ============================================================
+// FILTERS
+// ============================================================
+function applyFilters() {
+  const search   = document.getElementById('filter-search').value.toLowerCase();
+  const status   = document.getElementById('filter-status').value;
+  const severity = document.getElementById('filter-severity').value;
+  const dept     = document.getElementById('filter-department').value;
+
+  filteredData = BUGS_DATA.filter(b => {
+    const matchSearch   = !search || b.system.toLowerCase().includes(search) || b.reporter.toLowerCase().includes(search) || b.description.toLowerCase().includes(search) || b.ticket.toLowerCase().includes(search);
+    const matchStatus   = !status   || b.status === status;
+    const matchSeverity = !severity || b.severity === severity;
+    const matchDept     = !dept     || b.department === dept;
+    return matchSearch && matchStatus && matchSeverity && matchDept;
+  });
+
+  renderTable(filteredData);
+
+  const countEl = document.getElementById('filter-count');
+  const visEl   = document.getElementById('visible-count');
+  if (filteredData.length !== BUGS_DATA.length) {
+    countEl.classList.remove('hidden');
+    visEl.textContent = filteredData.length;
+  } else {
+    countEl.classList.add('hidden');
+  }
+}
+
+function clearFilters() {
+  ['filter-search','filter-status','filter-severity','filter-department','filter-date-from','filter-date-to']
+    .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+  filteredData = [...BUGS_DATA];
+  renderTable(filteredData);
+  document.getElementById('filter-count').classList.add('hidden');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('filter-search').addEventListener('input', applyFilters);
+  document.getElementById('filter-status').addEventListener('change', applyFilters);
+  document.getElementById('filter-severity').addEventListener('change', applyFilters);
+  document.getElementById('filter-department').addEventListener('change', applyFilters);
+  renderTable(BUGS_DATA);
+  updateSLABanner();
+});
+
+// ============================================================
+// SLA BANNER
+// ============================================================
+function updateSLABanner() {
+  const openCritical = BUGS_DATA.filter(b => b.severity === 'Critical' && (b.status === 'Open' || b.status === 'In Progress')).length;
+  const overdueHigh  = BUGS_DATA.filter(b => b.severity === 'High' && (b.status === 'Open' || b.status === 'In Progress') && b.reportedHoursAgo > 24).length;
+  const banner = document.getElementById('sla-banner');
+  const summary = document.getElementById('sla-summary');
+
+  if (openCritical === 0 && overdueHigh === 0) {
+    banner.classList.add('hidden');
+    return;
+  }
+
+  summary.textContent = `${overdueHigh} High severity bug(s) past SLA (>24hrs)`;
+}
+
+// ============================================================
+// SORT
+// ============================================================
+let sortState = { col: null, asc: true };
+function sortTable(col) {
+  if (sortState.col === col) { sortState.asc = !sortState.asc; }
+  else { sortState.col = col; sortState.asc = true; }
+
+  const sevOrder    = { Low: 1, Medium: 2, High: 3, Critical: 4 };
+  const statusOrder = { Open: 1, 'In Progress': 2, Resolved: 3, Closed: 4 };
+
+  filteredData.sort((a, b) => {
+    let va, vb;
+    if (col === 'ticket')   { va = a.ticket;   vb = b.ticket; }
+    if (col === 'system')   { va = a.system;   vb = b.system; }
+    if (col === 'severity') { va = sevOrder[a.severity] || 0; vb = sevOrder[b.severity] || 0; }
+    if (col === 'status')   { va = statusOrder[a.status] || 0; vb = statusOrder[b.status] || 0; }
+    if (col === 'reported') { va = a.reportedHoursAgo; vb = b.reportedHoursAgo; }
+
+    if (va < vb) return sortState.asc ? -1 : 1;
+    if (va > vb) return sortState.asc ? 1 : -1;
+    return 0;
+  });
+  renderTable(filteredData);
+}
+
+// ============================================================
+// MODAL
+// ============================================================
+function openModal(id) {
+  const bug = BUGS_DATA.find(b => b.id === id);
+  if (!bug) return;
+  currentBugId = id;
+
+  document.getElementById('modal-ticket-id').textContent   = bug.ticket;
+  document.getElementById('modal-system-name').textContent  = bug.system;
+  document.getElementById('modal-reporter').textContent     = bug.reporter;
+  document.getElementById('modal-department').textContent   = bug.department;
+  document.getElementById('modal-type').textContent         = bug.type;
+  document.getElementById('modal-reported').textContent     = bug.reported;
+  document.getElementById('modal-description').textContent  = bug.description;
+  document.getElementById('modal-steps').innerHTML = bug.steps.replace(/\n/g, '<br/>');
+  document.getElementById('modal-resolution-notes').value   = bug.resolutionNotes || '';
+  document.getElementById('modal-severity-badge-header').innerHTML = severityBadge(bug.severity);
+
+  document.getElementById('modal-status-select').value   = bug.status;
+  document.getElementById('modal-severity-select').value = bug.severity;
+  document.getElementById('modal-assign-select').value   = bug.assigned || 'Unassigned';
+
+  // SLA
+  const sla = getSLAStatus(bug);
+  const slaText   = document.getElementById('modal-sla-text');
+  const slaBadge  = document.getElementById('modal-sla-badge');
+  const slaDetail = document.getElementById('modal-sla-detail');
+  const resTime   = document.getElementById('modal-resolution-time');
+
+  if (!SLA_HOURS[bug.severity]) {
+    slaText.textContent  = 'No SLA';
+    slaBadge.textContent = '';
+    slaDetail.textContent = 'No SLA threshold for this severity';
+  } else {
+    slaText.textContent = `${SLA_HOURS[bug.severity]}hr SLA`;
+    if (bug.status === 'Resolved' || bug.status === 'Closed') {
+      slaBadge.className = 'text-xs font-bold px-2.5 py-1 rounded-full bg-green-100 text-green-700';
+      slaBadge.textContent = 'Met';
+      slaDetail.textContent = 'Bug resolved successfully';
+    } else if (sla.overdue) {
+      slaBadge.className = 'text-xs font-bold px-2.5 py-1 rounded-full bg-red-100 text-red-700 sla-overdue';
+      slaBadge.textContent = 'OVERDUE';
+      slaDetail.textContent = `Exceeded ${SLA_HOURS[bug.severity]}hr threshold by ${bug.reportedHoursAgo - SLA_HOURS[bug.severity]}hrs`;
+    } else {
+      slaBadge.className = 'text-xs font-bold px-2.5 py-1 rounded-full bg-green-100 text-green-700';
+      slaBadge.textContent = 'Within SLA';
+      const remaining = SLA_HOURS[bug.severity] - bug.reportedHoursAgo;
+      slaDetail.textContent = `${remaining}hr(s) remaining`;
+    }
+  }
+  resTime.textContent = (bug.status === 'Resolved' || bug.status === 'Closed') ? `~${bug.reportedHoursAgo}hrs` : 'Ongoing';
+
+  // Activity log
+  const logEl = document.getElementById('modal-activity-log');
+  logEl.innerHTML = (bug.activityLog || []).map(entry =>
+    `<div class="flex items-start gap-2">
+       <span class="w-1.5 h-1.5 rounded-full bg-blue-400 mt-1 flex-shrink-0"></span>
+       <span><strong>${entry.action}</strong> — ${entry.time}</span>
+     </div>`
+  ).join('');
+
+  // Screenshots
+  const screenshotsEl = document.getElementById('modal-screenshots');
+  if (bug.screenshots && bug.screenshots.length > 0) {
+    screenshotsEl.innerHTML = bug.screenshots.map(s =>
+      `<button onclick="openLightbox('${s.url}', '${s.name}')" class="group relative w-20 h-16 rounded-lg overflow-hidden border-2 border-gray-200 hover:border-blue-400 transition-colors flex-shrink-0">
+         <img src="${s.url}" alt="${s.name}" class="w-full h-full object-cover"/>
+         <div class="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+           <svg class="w-5 h-5 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0M10 7v3m0 0v3m0-3h3m-3 0H7"/>
+           </svg>
+         </div>
+       </button>`
+    ).join('');
+  } else {
+    screenshotsEl.innerHTML = '<p class="text-xs text-gray-400 italic">No screenshots attached</p>';
+  }
+
+  const modal = document.getElementById('detail-modal');
+  modal.classList.remove('modal-hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('detail-modal').classList.add('modal-hidden');
+  document.body.style.overflow = '';
+  currentBugId = null;
+}
+
+function saveChanges() {
+  if (!currentBugId) return;
+  const bug = BUGS_DATA.find(b => b.id === currentBugId);
+  if (!bug) return;
+
+  const newStatus   = document.getElementById('modal-status-select').value;
+  const newSeverity = document.getElementById('modal-severity-select').value;
+  const newAssign   = document.getElementById('modal-assign-select').value;
+  const newNotes    = document.getElementById('modal-resolution-notes').value;
+
+  if (bug.status !== newStatus) {
+    bug.activityLog.unshift({ action: `Status changed to ${newStatus}`, by: 'Admin', time: 'Just now' });
+  }
+  if (bug.severity !== newSeverity) {
+    bug.activityLog.unshift({ action: `Severity changed to ${newSeverity}`, by: 'Admin', time: 'Just now' });
+  }
+
+  bug.status          = newStatus;
+  bug.severity        = newSeverity;
+  bug.assigned        = newAssign;
+  bug.resolutionNotes = newNotes;
+
+  applyFilters();
+  updateSLABanner();
+  closeModal();
+  showToast('Bug report updated');
+
+  // TODO: persist to Supabase
+  // if (window.supabaseClient) {
+  //   window.supabaseClient.from('bug_reports').update({ status: newStatus, severity: newSeverity, assigned_to: newAssign, resolution_notes: newNotes }).eq('id', currentBugId);
+  // }
+}
+
+function sendEmailToReporter() {
+  const bug = BUGS_DATA.find(b => b.id === currentBugId);
+  if (!bug) return;
+  window.location.href = `mailto:${bug.reporterEmail}?subject=Re: Bug Report ${bug.ticket} – ${bug.system}&body=Hi ${bug.reporter.split(' ')[0]},%0D%0A%0D%0AThank you for reporting ${bug.ticket}. `;
+}
+
+// ============================================================
+// ESCALATION MODAL
+// ============================================================
+function openEscalationModal() {
+  const bug = BUGS_DATA.find(b => b.id === currentBugId);
+  if (!bug) return;
+
+  document.getElementById('esc-name').value        = bug.reporter;
+  document.getElementById('esc-email').value       = bug.reporterEmail;
+  document.getElementById('esc-department').value  = bug.department;
+  document.getElementById('esc-description').value =
+    `Escalation from Bug Report ${bug.ticket}\n\nSystem: ${bug.system}\nSeverity: ${bug.severity}\nType: ${bug.type}\n\nDescription:\n${bug.description}`;
+
+  document.getElementById('escalation-modal').classList.remove('modal-hidden');
+}
+
+function closeEscalationModal() {
+  document.getElementById('escalation-modal').classList.add('modal-hidden');
+}
+
+function submitEscalation() {
+  const name  = document.getElementById('esc-name').value;
+  const email = document.getElementById('esc-email').value;
+  if (!name || !email) { showToast('Please fill in name and email', '⚠️'); return; }
+
+  // TODO: submit to Supabase consultations table
+  // if (window.supabaseClient) {
+  //   window.supabaseClient.from('consultations').insert({ name, email, department: document.getElementById('esc-department').value, purpose: document.getElementById('esc-purpose').value, description: document.getElementById('esc-description').value });
+  // }
+
+  closeEscalationModal();
+  showToast(`Consultation request submitted for ${name}`, '📅');
+}
+
+function sendEscalationEmail() {
+  const email = document.getElementById('esc-email').value;
+  const name  = document.getElementById('esc-name').value;
+  const desc  = document.getElementById('esc-description').value;
+  window.location.href = `mailto:${email}?subject=Schedule a Consultation – Bug Escalation&body=Hi ${name.split(' ')[0]},%0D%0A%0D%0AWe would like to schedule a consultation to discuss the following bug in more depth:%0D%0A%0D%0A${encodeURIComponent(desc)}%0D%0A%0D%0APlease visit our portal to book a time: `;
+  closeEscalationModal();
+}
+
+// ============================================================
+// LIGHTBOX
+// ============================================================
+function openLightbox(url, alt) {
+  const lb = document.getElementById('lightbox');
+  document.getElementById('lightbox-img').src = url;
+  document.getElementById('lightbox-img').alt = alt;
+  lb.classList.remove('hidden');
+  lb.style.opacity = '1';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+  document.getElementById('lightbox').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+// ============================================================
+// EXPORT CSV
+// ============================================================
+function exportCSV() {
+  const headers = ['Ticket','System','Severity','Type','Reporter','Email','Department','Status','Reported','Assigned','SLA'];
+  const rows = filteredData.map(b => {
+    const sla = getSLAStatus(b);
+    return [b.ticket, b.system, b.severity, b.type, b.reporter, b.reporterEmail, b.department, b.status, b.reported, b.assigned, sla.overdue ? 'OVERDUE' : sla.label];
+  });
+
+  const csv = [headers, ...rows]
+    .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+    .join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href     = url;
+  link.download = `bug-reports-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  showToast('CSV exported successfully');
+}
+
+// ============================================================
+// TOAST
+// ============================================================
+let toastTimer;
+function showToast(msg, icon = '✓') {
+  clearTimeout(toastTimer);
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent  = msg;
+  document.getElementById('toast-icon').textContent = icon;
+  toast.classList.remove('hidden');
+  toastTimer = setTimeout(() => toast.classList.add('hidden'), 3500);
+}
+
+// ============================================================
+// AUTH
+// ============================================================
+function handleSignOut() {
+  if (window.supabaseClient) {
+    window.supabaseClient.auth.signOut().then(() => { window.location.href = '../index.html'; });
+  } else {
+    window.location.href = '../index.html';
+  }
+}
+
+window.addEventListener('load', () => {
+  if (window.supabaseClient) {
+    window.supabaseClient.auth.getUser().then(({ data }) => {
+      if (data?.user?.email) {
+        document.getElementById('admin-email').textContent = data.user.email;
+      }
+    });
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeLightbox();
+    closeEscalationModal();
+    closeModal();
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Request a free 30-minute automation consultation with the Ogilvy Automation Team. Tell us your preferred time and we'll confirm within 24 hours with a Teams meeting link." />
+  <meta name="theme-color" content="#111827" />
+  <title>Request Consultation – Ogilvy Automation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#DC2626',
+              'red-dark': '#B91C1C',
+              amber: '#F59E0B',
+              'amber-dark': '#D97706',
+            }
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.6s ease-out forwards',
+            'slide-up': 'slideUp 0.5s ease-out forwards',
+          },
+          keyframes: {
+            fadeIn: { from: { opacity: '0' }, to: { opacity: '1' } },
+            slideUp: { from: { opacity: '0', transform: 'translateY(20px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .glow-amber {
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.4), 0 0 40px rgba(245, 158, 11, 0.15);
+    }
+    .glow-amber:hover {
+      box-shadow: 0 0 28px rgba(245, 158, 11, 0.6), 0 0 56px rgba(245, 158, 11, 0.25);
+    }
+    .nav-link {
+      position: relative;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #DC2626;
+      transition: width 0.25s ease;
+    }
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    .form-input {
+      width: 100%;
+      padding: 0.625rem 0.875rem;
+      border: 1px solid #D1D5DB;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      color: #111827;
+      background: #fff;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      outline: none;
+    }
+    .form-input:focus {
+      border-color: #F59E0B;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+    }
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.375rem;
+    }
+    .urgency-option {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      border: 2px solid #E5E7EB;
+      border-radius: 0.625rem;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .urgency-option:has(input:checked) {
+      border-color: #F59E0B;
+      background: #FFFBEB;
+    }
+    .urgency-option input[type="radio"] {
+      accent-color: #F59E0B;
+      width: 1rem;
+      height: 1rem;
+      flex-shrink: 0;
+    }
+    .faq-item summary {
+      list-style: none;
+      cursor: pointer;
+    }
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+    .faq-chevron {
+      transition: transform 0.2s ease;
+    }
+    .faq-item[open] .faq-chevron {
+      transform: rotate(180deg);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+
+  <!-- ========================================================
+       NAVIGATION
+  ======================================================== -->
+  <nav class="bg-gray-900 sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+
+        <!-- Logo -->
+        <a href="index.html" class="flex items-center gap-2 flex-shrink-0">
+          <span class="text-xl">⚙️</span>
+          <span class="text-white font-bold text-lg tracking-tight">
+            Ogilvy <span class="text-red-600">Automation</span>
+          </span>
+        </a>
+
+        <!-- Desktop Links -->
+        <div class="hidden md:flex items-center gap-6">
+          <a href="index.html"            class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">Home</a>
+          <a href="systems.html"          class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">Systems</a>
+          <a href="what-we-automate.html" class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">What We Automate</a>
+          <a href="about.html"            class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">About</a>
+        </div>
+
+        <!-- Desktop CTA -->
+        <div class="hidden md:flex items-center gap-3">
+          <a href="request.html"
+             class="text-sm text-gray-300 hover:text-white border border-gray-600 hover:border-gray-400 px-4 py-2 rounded-lg transition-colors">
+            Request a System
+          </a>
+          <a href="book-consultation.html"
+             class="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors glow-amber">
+            📅 Request Consultation
+          </a>
+        </div>
+
+        <!-- Mobile hamburger -->
+        <button id="mobile-menu-btn"
+                class="md:hidden text-gray-300 hover:text-white p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600"
+                aria-label="Toggle navigation menu"
+                aria-expanded="false">
+          <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+          <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-gray-800 border-t border-gray-700">
+      <div class="px-4 pt-3 pb-4 space-y-1">
+        <a href="index.html"            class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
+        <a href="systems.html"          class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Systems</a>
+        <a href="what-we-automate.html" class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">What We Automate</a>
+        <a href="about.html"            class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
+        <div class="pt-2 border-t border-gray-700 space-y-2">
+          <a href="request.html"
+             class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">
+            Request a System
+          </a>
+          <a href="book-consultation.html"
+             class="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-3 py-2.5 rounded-md text-sm font-semibold transition-colors">
+            📅 Request Consultation
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========================================================
+       HERO
+  ======================================================== -->
+  <section class="relative bg-gradient-to-br from-amber-700 via-amber-600 to-amber-500 text-white overflow-hidden">
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute -top-24 -right-24 w-96 h-96 bg-amber-400 opacity-20 rounded-full blur-3xl"></div>
+      <div class="absolute -bottom-16 -left-16 w-80 h-80 bg-amber-800 opacity-25 rounded-full blur-3xl"></div>
+    </div>
+    <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+
+      <!-- Badge -->
+      <div class="inline-flex items-center gap-2 bg-white/20 border border-white/30 text-white text-xs font-semibold px-4 py-1.5 rounded-full mb-6 uppercase tracking-wider">
+        <span class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
+        Free 30-Minute Session
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight tracking-tight mb-5">
+        Request Your Free<br/>
+        <span class="text-white drop-shadow-lg">30-Minute Consultation</span>
+      </h1>
+
+      <p class="text-amber-100 text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed mb-7">
+        Tell us your preferred time and what you'd like to discuss. We'll confirm your appointment within 24 hours with a Microsoft Teams meeting link.
+      </p>
+
+      <!-- Important Notice -->
+      <div class="inline-flex items-start gap-3 bg-white/20 border border-white/30 rounded-xl px-5 py-4 text-left max-w-xl mx-auto">
+        <span class="text-xl flex-shrink-0 mt-0.5">📋</span>
+        <p class="text-white text-sm leading-relaxed">
+          <strong>This is a REQUEST — not instant booking.</strong> Our team will review and confirm within 24 hours.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       BENEFITS GRID
+  ======================================================== -->
+  <section class="bg-white border-b border-gray-100 py-12">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-5">
+
+        <div class="flex flex-col items-center text-center bg-amber-50 border border-amber-100 rounded-xl p-5">
+          <span class="text-3xl mb-3">💡</span>
+          <h3 class="text-sm font-bold text-gray-900 mb-1">Personalized Advice</h3>
+          <p class="text-xs text-gray-500 leading-relaxed">Get tailored automation recommendations for your team</p>
+        </div>
+
+        <div class="flex flex-col items-center text-center bg-amber-50 border border-amber-100 rounded-xl p-5">
+          <span class="text-3xl mb-3">⚡</span>
+          <h3 class="text-sm font-bold text-gray-900 mb-1">Quick Solutions</h3>
+          <p class="text-xs text-gray-500 leading-relaxed">Identify quick wins and impactful changes in 30 minutes</p>
+        </div>
+
+        <div class="flex flex-col items-center text-center bg-amber-50 border border-amber-100 rounded-xl p-5">
+          <span class="text-3xl mb-3">📋</span>
+          <h3 class="text-sm font-bold text-gray-900 mb-1">Actionable Plan</h3>
+          <p class="text-xs text-gray-500 leading-relaxed">Leave every session with a clear, concrete next step</p>
+        </div>
+
+        <div class="flex flex-col items-center text-center bg-amber-50 border border-amber-100 rounded-xl p-5">
+          <span class="text-3xl mb-3">🆓</span>
+          <h3 class="text-sm font-bold text-gray-900 mb-1">Completely Free</h3>
+          <p class="text-xs text-gray-500 leading-relaxed">No cost, no commitment — just expert guidance</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       MAIN FORM + SUCCESS STATE
+  ======================================================== -->
+  <section class="py-14">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <!-- ── SUCCESS STATE (hidden by default) ────────────────── -->
+      <div id="success-state" class="hidden animate-slide-up">
+        <div class="bg-white rounded-2xl border border-green-200 shadow-xl p-8 sm:p-12 text-center">
+
+          <!-- Green checkmark -->
+          <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5">
+            <svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+            </svg>
+          </div>
+
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">🎉 Request Submitted Successfully!</h2>
+
+          <!-- Request ID -->
+          <div class="inline-flex items-center gap-2 bg-gray-100 border border-gray-200 rounded-lg px-4 py-2 mb-5">
+            <span class="text-xs text-gray-500 font-medium">Request ID:</span>
+            <span id="success-request-id" class="text-sm font-bold text-amber-600 font-mono">CONSULT-REQ-001</span>
+          </div>
+
+          <p class="text-gray-600 text-base leading-relaxed mb-8 max-w-lg mx-auto">
+            We've received your consultation request and will review it within 24 hours. You'll receive a confirmation email with your Microsoft Teams meeting link.
+          </p>
+
+          <!-- Timeline -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+            <div class="flex flex-col items-center gap-2 bg-green-50 border border-green-200 rounded-xl p-4">
+              <span class="text-xl">✅</span>
+              <p class="text-xs font-bold text-green-700">Request Submitted</p>
+              <p class="text-xs text-gray-500">Now</p>
+            </div>
+            <div class="flex flex-col items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl p-4">
+              <span class="text-xl">⏳</span>
+              <p class="text-xs font-bold text-amber-700">Under Review</p>
+              <p class="text-xs text-gray-500">Within 24hrs</p>
+            </div>
+            <div class="flex flex-col items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl p-4">
+              <span class="text-xl">📧</span>
+              <p class="text-xs font-bold text-gray-600">Confirmation Email</p>
+              <p class="text-xs text-gray-500">Sent to you</p>
+            </div>
+            <div class="flex flex-col items-center gap-2 bg-gray-50 border border-gray-200 rounded-xl p-4">
+              <span class="text-xl">💻</span>
+              <p class="text-xs font-bold text-gray-600">Your Teams Meeting</p>
+              <p class="text-xs text-gray-500">Confirmed slot</p>
+            </div>
+          </div>
+
+          <!-- CTA Buttons -->
+          <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <a id="check-status-link" href="consultation-status.html?id=CONSULT-REQ-001"
+               class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold px-7 py-3 rounded-xl text-sm transition-all glow-amber shadow-lg">
+              Check Request Status →
+            </a>
+            <button onclick="window.location.reload()"
+                    class="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-7 py-3 rounded-xl text-sm transition-colors">
+              Submit Another Request
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── FORM CARD (shown by default) ─────────────────────── -->
+      <div id="form-container">
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-xl overflow-hidden">
+
+          <!-- Card header -->
+          <div class="bg-gradient-to-r from-amber-600 to-amber-500 px-8 py-6">
+            <h2 class="text-xl font-bold text-white">Consultation Request Form</h2>
+            <p class="text-amber-100 text-sm mt-1">Fill in the details below. All fields marked * are required.</p>
+          </div>
+
+          <form id="consultation-form" novalidate class="px-6 sm:px-8 py-8 space-y-10">
+
+            <!-- ── SECTION 1: Your Details ──────────────────────── -->
+            <fieldset>
+              <legend class="flex items-center gap-2 text-base font-bold text-gray-900 mb-5 pb-3 border-b border-gray-100 w-full">
+                <span class="w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center text-xs font-extrabold flex-shrink-0">1</span>
+                Your Details
+              </legend>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+                <div>
+                  <label for="full-name" class="form-label">Full Name <span class="text-red-500">*</span></label>
+                  <input type="text" id="full-name" name="full_name" required autocomplete="name"
+                         class="form-input" placeholder="e.g. Jane Smith" />
+                  <p class="hidden mt-1 text-xs text-red-500" id="full-name-error">Please enter your full name.</p>
+                </div>
+
+                <div>
+                  <label for="email" class="form-label">Email Address <span class="text-red-500">*</span></label>
+                  <input type="email" id="email" name="email" required autocomplete="email"
+                         class="form-input" placeholder="jane.smith@ogilvy.com" />
+                  <p class="hidden mt-1 text-xs text-red-500" id="email-error">Please enter a valid email address.</p>
+                </div>
+
+                <div>
+                  <label for="department" class="form-label">Department <span class="text-red-500">*</span></label>
+                  <select id="department" name="department" required class="form-input">
+                    <option value="" disabled selected>Select your department…</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Finance">Finance</option>
+                    <option value="HR">HR</option>
+                    <option value="Operations">Operations</option>
+                    <option value="IT">IT</option>
+                    <option value="Legal">Legal</option>
+                    <option value="Creative">Creative</option>
+                    <option value="Strategy">Strategy</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <p class="hidden mt-1 text-xs text-red-500" id="department-error">Please select your department.</p>
+                </div>
+
+                <div>
+                  <label for="phone" class="form-label">
+                    Phone Number
+                    <span class="text-gray-400 font-normal">(optional)</span>
+                  </label>
+                  <input type="tel" id="phone" name="phone" autocomplete="tel"
+                         class="form-input" placeholder="+44 7700 900000" />
+                </div>
+
+              </div>
+            </fieldset>
+
+            <!-- ── SECTION 2: Preferred Date & Time ───────────────── -->
+            <fieldset>
+              <legend class="flex items-center gap-2 text-base font-bold text-gray-900 mb-5 pb-3 border-b border-gray-100 w-full">
+                <span class="w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center text-xs font-extrabold flex-shrink-0">2</span>
+                Preferred Date &amp; Time
+              </legend>
+
+              <!-- Timezone badge -->
+              <div class="mb-5">
+                <div class="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+                  🌍 Your timezone: <span id="timezone-display">Detecting…</span>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+                <div>
+                  <label for="preferred-date" class="form-label">
+                    Preferred Date <span class="text-red-500">*</span>
+                  </label>
+                  <input type="date" id="preferred-date" name="preferred_date" required
+                         class="form-input" />
+                  <p class="mt-1 text-xs text-gray-400">Weekdays only please</p>
+                  <p class="hidden mt-1 text-xs text-red-500" id="preferred-date-error">Please select a preferred date.</p>
+                </div>
+
+                <div>
+                  <label for="preferred-time" class="form-label">
+                    Preferred Time Slot <span class="text-red-500">*</span>
+                  </label>
+                  <select id="preferred-time" name="preferred_time" required class="form-input">
+                    <option value="" disabled selected>Select a time…</option>
+                  </select>
+                  <p class="hidden mt-1 text-xs text-red-500" id="preferred-time-error">Please select a time slot.</p>
+                </div>
+
+                <div>
+                  <label for="alt-date" class="form-label">
+                    Alternative Date
+                    <span class="text-gray-400 font-normal">(if preferred time isn't available)</span>
+                  </label>
+                  <input type="date" id="alt-date" name="alt_date" class="form-input" />
+                </div>
+
+                <div>
+                  <label for="alt-time" class="form-label">
+                    Alternative Time Slot
+                    <span class="text-gray-400 font-normal">(optional)</span>
+                  </label>
+                  <select id="alt-time" name="alt_time" class="form-input">
+                    <option value="" disabled selected>Select a time…</option>
+                  </select>
+                </div>
+
+              </div>
+            </fieldset>
+
+            <!-- ── SECTION 3: Meeting Details ─────────────────────── -->
+            <fieldset>
+              <legend class="flex items-center gap-2 text-base font-bold text-gray-900 mb-5 pb-3 border-b border-gray-100 w-full">
+                <span class="w-7 h-7 bg-amber-500 text-white rounded-full flex items-center justify-center text-xs font-extrabold flex-shrink-0">3</span>
+                Meeting Details
+              </legend>
+              <div class="space-y-5">
+
+                <div>
+                  <label for="meeting-purpose" class="form-label">Meeting Purpose <span class="text-red-500">*</span></label>
+                  <select id="meeting-purpose" name="meeting_purpose" required class="form-input">
+                    <option value="" disabled selected>What would you like to discuss?</option>
+                    <option value="Discuss New Automation System">Discuss New Automation System</option>
+                    <option value="Troubleshoot Existing System">Troubleshoot Existing System</option>
+                    <option value="Explore Automation Opportunities">Explore Automation Opportunities</option>
+                    <option value="General Consultation">General Consultation</option>
+                  </select>
+                  <p class="hidden mt-1 text-xs text-red-500" id="meeting-purpose-error">Please select a meeting purpose.</p>
+                </div>
+
+                <div>
+                  <label for="description" class="form-label">Brief Description <span class="text-red-500">*</span></label>
+                  <textarea id="description" name="description" required rows="4"
+                            class="form-input resize-none"
+                            placeholder="What would you like to discuss? The more detail you provide, the better we can prepare for your session."></textarea>
+                  <p class="hidden mt-1 text-xs text-red-500" id="description-error">Please provide a brief description.</p>
+                </div>
+
+                <div>
+                  <label for="attachment" class="form-label">
+                    Attach Relevant Documents
+                    <span class="text-gray-400 font-normal">(optional)</span>
+                  </label>
+                  <div class="relative">
+                    <input type="file" id="attachment" name="attachment"
+                           accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg"
+                           class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100 file:transition-colors border border-gray-200 rounded-lg p-2 bg-white" />
+                  </div>
+                  <p class="mt-1 text-xs text-gray-400">Accepted: PDF, Word, Excel, PowerPoint, images</p>
+                </div>
+
+                <!-- Urgency Level -->
+                <div>
+                  <label class="form-label">Urgency Level <span class="text-red-500">*</span></label>
+                  <div class="space-y-2.5">
+
+                    <label class="urgency-option">
+                      <input type="radio" name="urgency" value="standard" checked />
+                      <div>
+                        <p class="text-sm font-semibold text-gray-800">Standard</p>
+                        <p class="text-xs text-gray-500">Within 1 week — best availability</p>
+                      </div>
+                      <span class="ml-auto text-xs bg-gray-100 text-gray-600 font-semibold px-2.5 py-1 rounded-full">Default</span>
+                    </label>
+
+                    <label class="urgency-option">
+                      <input type="radio" name="urgency" value="soon" />
+                      <div>
+                        <p class="text-sm font-semibold text-gray-800">Soon</p>
+                        <p class="text-xs text-gray-500">Within 3 days</p>
+                      </div>
+                      <span class="ml-auto text-xs bg-amber-100 text-amber-700 font-semibold px-2.5 py-1 rounded-full">Soon</span>
+                    </label>
+
+                    <label class="urgency-option">
+                      <input type="radio" name="urgency" value="urgent" />
+                      <div>
+                        <p class="text-sm font-semibold text-gray-800">Urgent</p>
+                        <p class="text-xs text-gray-500">Within 24 hours — subject to availability</p>
+                      </div>
+                      <span class="ml-auto text-xs bg-red-100 text-red-700 font-semibold px-2.5 py-1 rounded-full">Urgent</span>
+                    </label>
+
+                  </div>
+                </div>
+
+              </div>
+            </fieldset>
+
+            <!-- ── CONFIRMATION NOTICE ─────────────────────────────── -->
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-5 flex items-start gap-3">
+              <span class="text-xl flex-shrink-0">ℹ️</span>
+              <p class="text-sm text-amber-800 leading-relaxed">
+                <strong>Your request will be reviewed by our team.</strong> You'll receive a confirmation email with the Microsoft Teams meeting link within 24 hours.
+              </p>
+            </div>
+
+            <!-- Error banner -->
+            <div id="form-error-banner" class="hidden bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+              <span class="text-red-500 flex-shrink-0 mt-0.5">⚠️</span>
+              <p id="form-error-text" class="text-sm text-red-700">Please fix the errors above before submitting.</p>
+            </div>
+
+            <!-- Submit -->
+            <div>
+              <button type="submit" id="submit-btn"
+                      class="w-full flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-600 active:bg-amber-700 text-white font-bold px-8 py-4 rounded-xl text-base transition-all glow-amber shadow-lg disabled:opacity-60 disabled:cursor-not-allowed">
+                <span id="submit-btn-text">Submit Consultation Request →</span>
+                <svg id="submit-spinner" class="hidden w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                </svg>
+              </button>
+              <p class="text-center text-xs text-gray-400 mt-3">We'll confirm your appointment within 24 business hours</p>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       WHAT TO EXPECT
+  ======================================================== -->
+  <section class="py-14 bg-white border-t border-gray-100">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center">What to Expect</h2>
+      <div class="space-y-5">
+
+        <div class="flex items-start gap-4 bg-gray-50 rounded-xl p-5">
+          <div class="w-10 h-10 bg-amber-500 text-white rounded-full flex items-center justify-center text-sm font-extrabold flex-shrink-0">1</div>
+          <div>
+            <h3 class="text-sm font-bold text-gray-900 mb-1">Submit Your Request</h3>
+            <p class="text-sm text-gray-500 leading-relaxed">Fill in the form above with your preferred time, purpose, and a brief description of what you'd like to discuss.</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4 bg-gray-50 rounded-xl p-5">
+          <div class="w-10 h-10 bg-amber-500 text-white rounded-full flex items-center justify-center text-sm font-extrabold flex-shrink-0">2</div>
+          <div>
+            <h3 class="text-sm font-bold text-gray-900 mb-1">How Long Until Confirmation?</h3>
+            <p class="text-sm text-gray-500 leading-relaxed">Our team reviews requests within 24 business hours. You'll receive an email confirming your slot or proposing an alternative if your preferred time isn't available.</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4 bg-gray-50 rounded-xl p-5">
+          <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-extrabold flex-shrink-0">3</div>
+          <div>
+            <h3 class="text-sm font-bold text-gray-900 mb-1">Receive Your Teams Link</h3>
+            <p class="text-sm text-gray-500 leading-relaxed">Once confirmed, you'll get a Microsoft Teams meeting link with your confirmed date and time. Add it to your calendar and you're all set.</p>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-4 bg-gray-50 rounded-xl p-5">
+          <div class="w-10 h-10 bg-green-600 text-white rounded-full flex items-center justify-center text-sm font-extrabold flex-shrink-0">4</div>
+          <div>
+            <h3 class="text-sm font-bold text-gray-900 mb-1">Your 30-Minute Session</h3>
+            <p class="text-sm text-gray-500 leading-relaxed">Join the call and get expert, personalized automation advice. We'll help identify opportunities, quick wins, and build an action plan for your team.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       FAQ ACCORDION
+  ======================================================== -->
+  <section class="py-14 bg-gray-50 border-t border-gray-100">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center">Frequently Asked Questions</h2>
+      <div class="space-y-3">
+
+        <details class="faq-item bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <summary class="flex items-center justify-between gap-4 px-6 py-4 text-sm font-semibold text-gray-800 hover:bg-gray-50 transition-colors select-none">
+            How long until I get confirmed?
+            <svg class="faq-chevron w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="px-6 pb-5 pt-1 text-sm text-gray-600 leading-relaxed border-t border-gray-100">
+            Within 24 business hours of submission. Our team reviews all requests during working hours (Monday–Friday). You'll receive an email confirmation with your Teams meeting link.
+          </div>
+        </details>
+
+        <details class="faq-item bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <summary class="flex items-center justify-between gap-4 px-6 py-4 text-sm font-semibold text-gray-800 hover:bg-gray-50 transition-colors select-none">
+            Can I change my preferred time after submitting?
+            <svg class="faq-chevron w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="px-6 pb-5 pt-1 text-sm text-gray-600 leading-relaxed border-t border-gray-100">
+            Yes. You can check your request status on the <a href="consultation-status.html" class="text-amber-600 hover:underline font-medium">status page</a> and contact us from there, or reply to the confirmation email you receive.
+          </div>
+        </details>
+
+        <details class="faq-item bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <summary class="flex items-center justify-between gap-4 px-6 py-4 text-sm font-semibold text-gray-800 hover:bg-gray-50 transition-colors select-none">
+            What if my preferred slot isn't available?
+            <svg class="faq-chevron w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="px-6 pb-5 pt-1 text-sm text-gray-600 leading-relaxed border-t border-gray-100">
+            If your preferred time isn't available, our admin will propose an alternative that works for both sides. That's why we ask for an alternative date and time in the form — it speeds up the process.
+          </div>
+        </details>
+
+        <details class="faq-item bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <summary class="flex items-center justify-between gap-4 px-6 py-4 text-sm font-semibold text-gray-800 hover:bg-gray-50 transition-colors select-none">
+            Is this really free?
+            <svg class="faq-chevron w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="px-6 pb-5 pt-1 text-sm text-gray-600 leading-relaxed border-t border-gray-100">
+            Yes, completely free with no strings attached. The Ogilvy Automation Team is an internal service. Consultations are part of how we support colleagues across the business at no charge.
+          </div>
+        </details>
+
+        <details class="faq-item bg-white border border-gray-200 rounded-xl overflow-hidden">
+          <summary class="flex items-center justify-between gap-4 px-6 py-4 text-sm font-semibold text-gray-800 hover:bg-gray-50 transition-colors select-none">
+            What happens during the meeting?
+            <svg class="faq-chevron w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </summary>
+          <div class="px-6 pb-5 pt-1 text-sm text-gray-600 leading-relaxed border-t border-gray-100">
+            It's a relaxed 30-minute Teams call where we discuss your automation needs, identify opportunities, and explore solutions. You'll leave with a clear next step — whether that's a formal system request or a quick win you can implement immediately.
+          </div>
+        </details>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       FOOTER
+  ======================================================== -->
+  <footer class="bg-gray-900 text-gray-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
+        <div class="sm:col-span-2 lg:col-span-1">
+          <a href="index.html" class="flex items-center gap-2 mb-3">
+            <span class="text-xl">⚙️</span>
+            <span class="text-white font-bold text-lg tracking-tight">
+              Ogilvy <span class="text-red-500">Automation</span>
+            </span>
+          </a>
+          <p class="text-gray-400 text-sm leading-relaxed">
+            Transforming repetitive tasks into intelligent systems that amplify human creativity and impact.
+          </p>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Navigation</h4>
+          <ul class="space-y-2.5">
+            <li><a href="index.html"            class="text-gray-400 hover:text-white text-sm transition-colors">Home</a></li>
+            <li><a href="systems.html"          class="text-gray-400 hover:text-white text-sm transition-colors">Systems</a></li>
+            <li><a href="what-we-automate.html" class="text-gray-400 hover:text-white text-sm transition-colors">What We Automate</a></li>
+            <li><a href="about.html"            class="text-gray-400 hover:text-white text-sm transition-colors">About</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Services</h4>
+          <ul class="space-y-2.5">
+            <li><a href="request.html"           class="text-gray-400 hover:text-white text-sm transition-colors">Request a System</a></li>
+            <li><a href="report-issue.html"      class="text-gray-400 hover:text-white text-sm transition-colors">Report an Issue</a></li>
+            <li><a href="book-consultation.html" class="text-gray-400 hover:text-white text-sm transition-colors">Book Consultation</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Get Started</h4>
+          <p class="text-gray-400 text-sm mb-4 leading-relaxed">Not sure where to begin? Request a free 30-minute consultation.</p>
+          <a href="book-consultation.html"
+             class="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold px-5 py-2.5 rounded-lg transition-all glow-amber">
+            📅 Request Consultation
+          </a>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p class="text-gray-500 text-xs">© 2025 Ogilvy Automation Team. All rights reserved.</p>
+        <p class="text-gray-600 text-xs">Built by the Ogilvy Automation Team</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================================
+       SCRIPTS
+  ======================================================== -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../js/supabase-config.js"></script>
+  <script src="../js/main.js"></script>
+
+  <script>
+  (function () {
+    'use strict';
+
+    // ── Mobile nav toggle ────────────────────────────────────────
+    var btn       = document.getElementById('mobile-menu-btn');
+    var menu      = document.getElementById('mobile-menu');
+    var hamburger = document.getElementById('hamburger-icon');
+    var closeIcon = document.getElementById('close-icon');
+    var navOpen   = false;
+    btn.addEventListener('click', function () {
+      navOpen = !navOpen;
+      menu.classList.toggle('hidden', !navOpen);
+      hamburger.classList.toggle('hidden', navOpen);
+      closeIcon.classList.toggle('hidden', !navOpen);
+      btn.setAttribute('aria-expanded', String(navOpen));
+    });
+
+    // ── Detect timezone ──────────────────────────────────────────
+    (function detectTimezone() {
+      var tz = 'Unknown';
+      try {
+        tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        // Also show offset
+        var offsetMin = -new Date().getTimezoneOffset();
+        var sign  = offsetMin >= 0 ? '+' : '-';
+        var absH  = Math.floor(Math.abs(offsetMin) / 60);
+        var absM  = Math.abs(offsetMin) % 60;
+        var gmt   = 'GMT' + sign + absH + (absM ? ':' + String(absM).padStart(2, '0') : '');
+        tz = tz + ' (' + gmt + ')';
+      } catch (e) { /* ignore */ }
+      var el = document.getElementById('timezone-display');
+      if (el) el.textContent = tz;
+    })();
+
+    // ── Set min date to today ────────────────────────────────────
+    (function setMinDates() {
+      var today = new Date().toISOString().split('T')[0];
+      var prefDate = document.getElementById('preferred-date');
+      var altDate  = document.getElementById('alt-date');
+      if (prefDate) prefDate.setAttribute('min', today);
+      if (altDate)  altDate.setAttribute('min', today);
+    })();
+
+    // ── Generate time slot options ───────────────────────────────
+    function buildTimeSlots() {
+      var slots = [];
+      for (var h = 9; h <= 17; h++) {
+        var minutes = (h === 17) ? [0] : [0, 30];
+        minutes.forEach(function (m) {
+          if (h === 17 && m === 30) return;
+          var hDisplay = h > 12 ? h - 12 : h;
+          var period   = h < 12 ? 'AM' : 'PM';
+          if (h === 12) { hDisplay = 12; period = 'PM'; }
+          var mStr  = m === 0 ? '00' : '30';
+          var label = hDisplay + ':' + mStr + ' ' + period;
+          var value = String(h).padStart(2, '0') + ':' + mStr;
+          slots.push({ label: label, value: value });
+        });
+      }
+      return slots;
+    }
+
+    function populateSelect(selectEl, slots) {
+      slots.forEach(function (s) {
+        var opt = document.createElement('option');
+        opt.value = s.value;
+        opt.textContent = s.label;
+        selectEl.appendChild(opt);
+      });
+    }
+
+    var slots = buildTimeSlots();
+    var prefTimeEl = document.getElementById('preferred-time');
+    var altTimeEl  = document.getElementById('alt-time');
+    if (prefTimeEl) populateSelect(prefTimeEl, slots);
+    if (altTimeEl)  populateSelect(altTimeEl,  slots);
+
+    // ── Form validation helpers ──────────────────────────────────
+    function showError(id, show) {
+      var el = document.getElementById(id);
+      if (el) el.classList.toggle('hidden', !show);
+    }
+
+    function markInput(inputEl, valid) {
+      if (!inputEl) return;
+      inputEl.style.borderColor = valid ? '' : '#EF4444';
+      if (valid) inputEl.style.boxShadow = '';
+    }
+
+    function validateForm() {
+      var valid = true;
+
+      var name = document.getElementById('full-name');
+      var nameOk = name && name.value.trim().length >= 2;
+      showError('full-name-error', !nameOk);
+      markInput(name, nameOk);
+      if (!nameOk) valid = false;
+
+      var emailEl = document.getElementById('email');
+      var emailOk = emailEl && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim());
+      showError('email-error', !emailOk);
+      markInput(emailEl, emailOk);
+      if (!emailOk) valid = false;
+
+      var dept = document.getElementById('department');
+      var deptOk = dept && dept.value !== '';
+      showError('department-error', !deptOk);
+      markInput(dept, deptOk);
+      if (!deptOk) valid = false;
+
+      var prefDate = document.getElementById('preferred-date');
+      var prefDateOk = prefDate && prefDate.value !== '';
+      showError('preferred-date-error', !prefDateOk);
+      markInput(prefDate, prefDateOk);
+      if (!prefDateOk) valid = false;
+
+      var prefTime = document.getElementById('preferred-time');
+      var prefTimeOk = prefTime && prefTime.value !== '';
+      showError('preferred-time-error', !prefTimeOk);
+      markInput(prefTime, prefTimeOk);
+      if (!prefTimeOk) valid = false;
+
+      var purpose = document.getElementById('meeting-purpose');
+      var purposeOk = purpose && purpose.value !== '';
+      showError('meeting-purpose-error', !purposeOk);
+      markInput(purpose, purposeOk);
+      if (!purposeOk) valid = false;
+
+      var desc = document.getElementById('description');
+      var descOk = desc && desc.value.trim().length >= 10;
+      showError('description-error', !descOk);
+      markInput(desc, descOk);
+      if (!descOk) valid = false;
+
+      return valid;
+    }
+
+    // ── Show success state ────────────────────────────────────────
+    function showSuccess(requestId) {
+      var formContainer = document.getElementById('form-container');
+      var successState  = document.getElementById('success-state');
+      var requestIdEl   = document.getElementById('success-request-id');
+      var statusLink    = document.getElementById('check-status-link');
+
+      if (requestIdEl) requestIdEl.textContent = requestId;
+      if (statusLink)  statusLink.href = 'consultation-status.html?id=' + encodeURIComponent(requestId);
+
+      if (formContainer) formContainer.classList.add('hidden');
+      if (successState) {
+        successState.classList.remove('hidden');
+        successState.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    // ── Submit handler ────────────────────────────────────────────
+    var form = document.getElementById('consultation-form');
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      var errorBanner = document.getElementById('form-error-banner');
+      errorBanner.classList.add('hidden');
+
+      if (!validateForm()) {
+        errorBanner.classList.remove('hidden');
+        // Scroll to first visible error
+        var firstError = form.querySelector('[id$="-error"]:not(.hidden)');
+        if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      var submitBtn  = document.getElementById('submit-btn');
+      var btnText    = document.getElementById('submit-btn-text');
+      var spinner    = document.getElementById('submit-spinner');
+      submitBtn.disabled = true;
+      btnText.textContent = 'Submitting…';
+      spinner.classList.remove('hidden');
+
+      // Gather form data
+      var formData = {
+        full_name:        document.getElementById('full-name').value.trim(),
+        email:            document.getElementById('email').value.trim(),
+        department:       document.getElementById('department').value,
+        phone:            document.getElementById('phone').value.trim() || null,
+        preferred_date:   document.getElementById('preferred-date').value,
+        preferred_time:   document.getElementById('preferred-time').value,
+        alt_date:         document.getElementById('alt-date').value || null,
+        alt_time:         document.getElementById('alt-time').value || null,
+        meeting_purpose:  document.getElementById('meeting-purpose').value,
+        description:      document.getElementById('description').value.trim(),
+        urgency:          document.querySelector('input[name="urgency"]:checked').value,
+        status:           'pending_approval',
+        submitted_at:     new Date().toISOString(),
+      };
+
+      var requestId = null;
+
+      // Try Supabase first
+      if (typeof submitConsultationRequest === 'function') {
+        try {
+          var result = await submitConsultationRequest(formData);
+          if (result && result.id) {
+            requestId = 'CONSULT-REQ-' + String(result.id).padStart(3, '0');
+          } else if (result && result.request_id) {
+            requestId = result.request_id;
+          }
+        } catch (err) {
+          console.warn('Supabase submission failed, falling back to demo mode:', err);
+        }
+      }
+
+      // Demo mode fallback
+      if (!requestId) {
+        // Generate a demo ID based on timestamp
+        var demoNum = Math.floor(Date.now() / 1000) % 1000;
+        requestId = 'CONSULT-REQ-' + String(demoNum).padStart(3, '0');
+        console.info('Demo mode: Generated request ID', requestId);
+      }
+
+      // Small artificial delay so spinner is visible
+      await new Promise(function (res) { setTimeout(res, 600); });
+
+      submitBtn.disabled = false;
+      btnText.textContent = 'Submit Consultation Request →';
+      spinner.classList.add('hidden');
+
+      showSuccess(requestId);
+    });
+
+  })();
+  </script>
+
+</body>
+</html>

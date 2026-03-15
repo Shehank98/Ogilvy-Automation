@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Report an Issue – Found a problem with one of our automation systems? Let the Ogilvy Automation Team know." />
+  <title>Report an Issue | Ogilvy Automation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#DC2626',
+              'red-dark': '#B91C1C',
+              amber: '#F59E0B',
+              'amber-dark': '#D97706',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0;
+      width: 0; height: 2px;
+      background: #DC2626;
+      transition: width 0.25s ease;
+    }
+    .nav-link:hover::after { width: 100%; }
+    .glow-amber {
+      box-shadow: 0 0 20px rgba(245,158,11,0.4), 0 0 40px rgba(245,158,11,0.15);
+    }
+    .glow-amber:hover {
+      box-shadow: 0 0 28px rgba(245,158,11,0.6), 0 0 56px rgba(245,158,11,0.25);
+    }
+    .form-input {
+      width: 100%;
+      border: 1px solid #D1D5DB;
+      border-radius: 0.5rem;
+      padding: 0.625rem 0.875rem;
+      font-size: 0.9375rem;
+      color: #111827;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus {
+      border-color: #DC2626;
+      box-shadow: 0 0 0 3px rgba(220,38,38,0.12);
+    }
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.375rem;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+
+  <!-- ============================================================
+       NAVIGATION
+  ============================================================ -->
+  <nav class="bg-gray-900 sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="index.html" class="flex items-center gap-2 flex-shrink-0">
+          <span class="text-xl">⚙️</span>
+          <span class="text-white font-bold text-lg tracking-tight">
+            Ogilvy <span class="text-red-500">Automation</span>
+          </span>
+        </a>
+        <div class="hidden md:flex items-center gap-6">
+          <a href="index.html"            class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">Home</a>
+          <a href="systems.html"          class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">Systems</a>
+          <a href="what-we-automate.html" class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">What We Automate</a>
+          <a href="about.html"            class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">About</a>
+        </div>
+        <div class="hidden md:flex items-center gap-3">
+          <a href="book-consultation.html"
+             class="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-black text-sm font-semibold px-4 py-2 rounded-lg transition-colors glow-amber">
+            📅 Request Consultation
+          </a>
+        </div>
+        <button id="mobile-menu-btn" class="md:hidden text-gray-300 hover:text-white p-2 rounded-md" aria-label="Toggle menu" aria-expanded="false">
+          <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+          <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden bg-gray-800 border-t border-gray-700">
+      <div class="px-4 pt-3 pb-4 space-y-1">
+        <a href="index.html"            class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+        <a href="systems.html"          class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">Systems</a>
+        <a href="what-we-automate.html" class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">What We Automate</a>
+        <a href="about.html"            class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium">About</a>
+        <div class="pt-2 border-t border-gray-700">
+          <a href="book-consultation.html"
+             class="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-black px-3 py-2.5 rounded-md text-sm font-semibold">
+            📅 Request Consultation
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============================================================
+       HERO
+  ============================================================ -->
+  <section class="bg-gradient-to-br from-gray-700 to-gray-900 text-white py-16 px-4">
+    <div class="max-w-3xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 bg-white/10 border border-white/20 rounded-full px-4 py-1.5 text-sm font-medium mb-5">
+        🐛 Bug Report
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight mb-4">
+        Report an Issue
+      </h1>
+      <p class="text-gray-300 text-lg max-w-xl mx-auto">
+        Found a problem with one of our automation systems? Let us know and we'll get it fixed.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       MAIN CONTENT
+  ============================================================ -->
+  <main class="max-w-3xl mx-auto px-4 py-10 space-y-8">
+
+    <!-- CONSULTATION ESCALATION CALLOUT -->
+    <div class="bg-amber-50 border-l-4 border-amber-500 rounded-r-xl p-5 flex flex-col sm:flex-row sm:items-center gap-4">
+      <div class="flex-1">
+        <p class="font-bold text-gray-900 mb-1">🔄 Is this a complex issue?</p>
+        <p class="text-gray-700 text-sm leading-relaxed">
+          For complex problems that need investigation, request a consultation session to discuss it in detail with our team.
+        </p>
+      </div>
+      <a href="book-consultation.html?purpose=troubleshoot"
+         class="flex-shrink-0 inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-black font-semibold text-sm px-5 py-2.5 rounded-lg transition-colors whitespace-nowrap">
+        📅 Request Consultation to Discuss →
+      </a>
+    </div>
+
+    <!-- BUG REPORT FORM CARD -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+      <div class="bg-gray-50 border-b border-gray-200 px-6 py-4">
+        <h2 class="text-lg font-bold text-gray-900">Bug Report Form</h2>
+        <p class="text-sm text-gray-500 mt-0.5">All fields marked <span class="text-red-600 font-semibold">*</span> are required.</p>
+      </div>
+
+      <form id="bug-form" novalidate class="px-6 py-7 space-y-6">
+
+        <!-- System Name -->
+        <div>
+          <label class="form-label" for="system-name">Affected System Name <span class="text-red-600">*</span></label>
+          <input id="system-name" name="system_name" type="text" required
+                 placeholder="e.g. Invoice Processing Automation"
+                 class="form-input mb-2" />
+          <details class="text-sm">
+            <summary class="text-gray-500 cursor-pointer hover:text-gray-700 select-none">Or select from common systems…</summary>
+            <div class="mt-2">
+              <select id="system-preset" class="form-input bg-white" onchange="if(this.value) document.getElementById('system-name').value = this.value">
+                <option value="">Choose a system…</option>
+                <option>Invoice Processing Automation</option>
+                <option>Expense Report Automation</option>
+                <option>HR Onboarding Workflow</option>
+                <option>Marketing Campaign Tracker</option>
+                <option>Contract Review Pipeline</option>
+                <option>Data Sync – Salesforce to SharePoint</option>
+                <option>Weekly KPI Report Generator</option>
+                <option>Purchase Order Approval Flow</option>
+              </select>
+            </div>
+          </details>
+        </div>
+
+        <!-- Issue Type -->
+        <div>
+          <label class="form-label" for="issue-type">Issue Type <span class="text-red-600">*</span></label>
+          <select id="issue-type" name="issue_type" required class="form-input bg-white">
+            <option value="">Select issue type…</option>
+            <option>Data / Output Error</option>
+            <option>System Not Running</option>
+            <option>Slow Performance</option>
+            <option>Access / Permission Issue</option>
+            <option>Integration Error</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <!-- Severity Level -->
+        <div>
+          <label class="form-label">Severity Level <span class="text-red-600">*</span></label>
+          <div class="space-y-2 mt-1">
+
+            <label class="flex items-start gap-3 cursor-pointer group">
+              <input type="radio" name="severity" value="low" class="mt-1 accent-green-500" />
+              <div class="flex-1 border border-gray-200 group-hover:border-green-300 rounded-xl px-4 py-3 transition-colors">
+                <div class="flex items-center gap-2">
+                  <span class="status-badge bg-green-100 text-green-700">🟢 Low</span>
+                  <span class="text-sm font-medium text-gray-800">Minor inconvenience, has workaround</span>
+                </div>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3 cursor-pointer group">
+              <input type="radio" name="severity" value="medium" class="mt-1 accent-yellow-500" />
+              <div class="flex-1 border border-gray-200 group-hover:border-yellow-300 rounded-xl px-4 py-3 transition-colors">
+                <div class="flex items-center gap-2">
+                  <span class="status-badge bg-yellow-100 text-yellow-700">🟡 Medium</span>
+                  <span class="text-sm font-medium text-gray-800">Affecting work but has workaround</span>
+                </div>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3 cursor-pointer group">
+              <input type="radio" name="severity" value="high" class="mt-1 accent-red-500" />
+              <div class="flex-1 border border-gray-200 group-hover:border-red-300 rounded-xl px-4 py-3 transition-colors">
+                <div class="flex items-center gap-2">
+                  <span class="status-badge bg-red-100 text-red-700">🔴 High</span>
+                  <span class="text-sm font-medium text-gray-800">Significantly affecting work, no workaround</span>
+                </div>
+              </div>
+            </label>
+
+            <label class="flex items-start gap-3 cursor-pointer group">
+              <input type="radio" name="severity" value="critical" class="mt-1 accent-red-700" />
+              <div class="flex-1 border border-gray-200 group-hover:border-red-500 rounded-xl px-4 py-3 transition-colors">
+                <div class="flex items-center gap-2">
+                  <span class="status-badge bg-red-200 text-red-900">🚨 Critical</span>
+                  <span class="text-sm font-medium text-gray-800">System completely down, blocking all work</span>
+                </div>
+              </div>
+            </label>
+
+          </div>
+        </div>
+
+        <!-- Issue Description -->
+        <div>
+          <label class="form-label" for="issue-description">Issue Description <span class="text-red-600">*</span></label>
+          <textarea id="issue-description" name="issue_description" required rows="5"
+                    placeholder="Describe what's happening in detail.&#10;&#10;What were you trying to do?&#10;What happened?&#10;What did you expect to happen?"
+                    class="form-input resize-y"></textarea>
+        </div>
+
+        <!-- Steps to Reproduce -->
+        <div>
+          <label class="form-label" for="steps-to-reproduce">Steps to Reproduce <span class="text-gray-400 font-normal">(optional)</span></label>
+          <textarea id="steps-to-reproduce" name="steps_to_reproduce" rows="4"
+                    placeholder="Step 1: Open the system&#10;Step 2: Click on...&#10;Step 3: ..."
+                    class="form-input resize-y"></textarea>
+        </div>
+
+        <!-- When did this start -->
+        <div>
+          <label class="form-label" for="when-started">When Did This Start <span class="text-red-600">*</span></label>
+          <select id="when-started" name="when_started" required class="form-input bg-white">
+            <option value="">Select…</option>
+            <option>Just now</option>
+            <option>Today</option>
+            <option>This week</option>
+            <option>This month</option>
+            <option>Not sure</option>
+          </select>
+        </div>
+
+        <!-- Screenshot Upload -->
+        <div>
+          <label class="form-label">Screenshots / Attachments <span class="text-gray-400 font-normal">(optional — max 3 files, 5 MB each)</span></label>
+          <div id="ss-drop-zone"
+               class="border-2 border-dashed border-gray-300 hover:border-gray-500 rounded-xl p-5 text-center cursor-pointer transition-colors"
+               onclick="document.getElementById('ss-upload').click()">
+            <div class="text-3xl mb-1">🖼️</div>
+            <p class="text-sm text-gray-600">Drag & drop screenshots or <span class="text-red-600 font-semibold">click to browse</span></p>
+            <p class="text-xs text-gray-400 mt-1">Accepts PNG, JPG, GIF, WEBP</p>
+            <input id="ss-upload" name="screenshots" type="file" multiple accept=".png,.jpg,.jpeg,.gif,.webp" class="hidden" onchange="handleSSUpload(this)" />
+          </div>
+          <ul id="ss-file-list" class="mt-2 space-y-1"></ul>
+        </div>
+
+        <!-- Reporter Info -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          <div>
+            <label class="form-label" for="reporter-name">Your Name <span class="text-red-600">*</span></label>
+            <input id="reporter-name" name="reporter_name" type="text" required placeholder="Jane Smith" class="form-input" />
+          </div>
+          <div>
+            <label class="form-label" for="reporter-email">Your Email <span class="text-red-600">*</span></label>
+            <input id="reporter-email" name="reporter_email" type="email" required placeholder="jane@ogilvy.com" class="form-input" />
+          </div>
+        </div>
+
+        <div>
+          <label class="form-label" for="reporter-dept">Department <span class="text-red-600">*</span></label>
+          <select id="reporter-dept" name="reporter_dept" required class="form-input bg-white">
+            <option value="">Select your department…</option>
+            <option>Marketing</option>
+            <option>Finance</option>
+            <option>HR</option>
+            <option>Operations</option>
+            <option>IT</option>
+            <option>Legal</option>
+            <option>Creative</option>
+            <option>Strategy</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="pt-2">
+          <button type="submit"
+             class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold px-8 py-3 rounded-lg transition-colors shadow-sm text-base">
+            Submit Bug Report →
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- SUCCESS STATE (hidden by default) -->
+    <div id="success-state" class="hidden bg-white rounded-2xl shadow-sm border border-green-200 overflow-hidden">
+      <div class="bg-green-600 px-6 py-4 flex items-center gap-3">
+        <span class="text-2xl">✅</span>
+        <div>
+          <h2 class="text-white font-bold text-lg">Bug Report Submitted!</h2>
+          <p class="text-green-100 text-sm">Ticket ID: <strong id="bug-ticket-id">BUG-2025-001</strong></p>
+        </div>
+      </div>
+      <div class="px-6 py-6 space-y-3">
+        <p id="success-message" class="text-gray-700">Our team will investigate and respond within <strong>24–48 hours</strong>.</p>
+        <div id="critical-note" class="hidden bg-red-50 border-l-4 border-red-600 rounded-r-lg p-4">
+          <p class="font-semibold text-red-800 text-sm">🚨 Critical Issue — High Priority Response</p>
+          <p class="text-red-700 text-sm mt-1">We're treating this as high priority and will respond within <strong>4 hours</strong>. If it's during off-hours, check your email for an after-hours contact.</p>
+        </div>
+        <p class="text-gray-500 text-sm">A confirmation has been sent to your email address.</p>
+        <div class="pt-2 flex flex-wrap gap-3">
+          <a href="index.html" class="text-red-600 hover:text-red-700 font-semibold text-sm">← Back to Home</a>
+          <button onclick="resetBugForm()" class="text-gray-500 hover:text-gray-700 font-semibold text-sm">Report another issue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================
+         STATUS LOOKUP CARD
+    ============================================================ -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+      <div class="bg-gray-50 border-b border-gray-200 px-6 py-4">
+        <h2 class="text-lg font-bold text-gray-900">Check Existing Bug Report Status</h2>
+        <p class="text-sm text-gray-500 mt-0.5">Enter your ticket ID and email to look up the current status.</p>
+      </div>
+      <div class="px-6 py-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="form-label" for="lookup-id">Bug Ticket ID</label>
+            <input id="lookup-id" type="text" placeholder="BUG-2025-001" class="form-input" />
+          </div>
+          <div>
+            <label class="form-label" for="lookup-email">Your Email</label>
+            <input id="lookup-email" type="email" placeholder="jane@ogilvy.com" class="form-input" />
+          </div>
+        </div>
+        <button onclick="checkStatus()"
+           class="bg-gray-800 hover:bg-gray-900 text-white font-semibold px-6 py-2.5 rounded-lg transition-colors text-sm">
+          Check Status
+        </button>
+
+        <!-- Status result area -->
+        <div id="status-result" class="hidden mt-5 border border-gray-200 rounded-xl p-4">
+          <div class="flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <p class="text-sm text-gray-500 mb-0.5">Ticket</p>
+              <p class="font-bold text-gray-900" id="status-ticket-id">BUG-2025-001</p>
+            </div>
+            <span id="status-badge" class="status-badge bg-blue-100 text-blue-700">🔵 In Progress</span>
+          </div>
+          <hr class="my-3 border-gray-100" />
+          <p class="text-sm text-gray-700" id="status-detail">Our team is currently investigating this issue. We'll update you by email when there's progress.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <footer class="bg-gray-900 text-gray-400 py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="text-sm">© 2025 Ogilvy Automation Team · <a href="mailto:automation@ogilvy.com" class="text-gray-300 hover:text-white transition-colors">automation@ogilvy.com</a></p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/main.js"></script>
+  <script>
+    /* ---- Mobile menu ---- */
+    const mobileBtn  = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const hamIcon    = document.getElementById('hamburger-icon');
+    const closeIcon  = document.getElementById('close-icon');
+    mobileBtn.addEventListener('click', () => {
+      const open = mobileMenu.classList.toggle('hidden');
+      hamIcon.classList.toggle('hidden', !open);
+      closeIcon.classList.toggle('hidden', open);
+      mobileBtn.setAttribute('aria-expanded', String(!open));
+    });
+
+    /* ---- Screenshot upload ---- */
+    function handleSSUpload(input) {
+      const list  = document.getElementById('ss-file-list');
+      list.innerHTML = '';
+      const files = Array.from(input.files).slice(0, 3);
+      files.forEach(f => {
+        const li = document.createElement('li');
+        li.className = 'flex items-center gap-2 text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5';
+        li.innerHTML = `<span>🖼️</span><span class="flex-1 truncate">${f.name}</span><span class="text-gray-400 text-xs">${(f.size/1024/1024).toFixed(1)} MB</span>`;
+        list.appendChild(li);
+      });
+    }
+    const ssDz = document.getElementById('ss-drop-zone');
+    ssDz.addEventListener('dragover',  e => { e.preventDefault(); ssDz.classList.add('border-gray-500','bg-gray-50'); });
+    ssDz.addEventListener('dragleave', () => ssDz.classList.remove('border-gray-500','bg-gray-50'));
+    ssDz.addEventListener('drop', e => {
+      e.preventDefault();
+      ssDz.classList.remove('border-gray-500','bg-gray-50');
+      const su = document.getElementById('ss-upload');
+      su.files = e.dataTransfer.files;
+      handleSSUpload(su);
+    });
+
+    /* ---- Form submission ---- */
+    document.getElementById('bug-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const severity = document.querySelector('input[name="severity"]:checked');
+      const year     = new Date().getFullYear();
+      const num      = String(Math.floor(Math.random() * 900) + 100).padStart(3, '0');
+      const ticketId = `BUG-${year}-${num}`;
+      document.getElementById('bug-ticket-id').textContent = ticketId;
+
+      const isCritical = severity && severity.value === 'critical';
+      if (isCritical) {
+        document.getElementById('success-message').textContent = 'Our team will investigate this issue immediately.';
+        document.getElementById('critical-note').classList.remove('hidden');
+      } else {
+        document.getElementById('success-message').innerHTML = 'Our team will investigate and respond within <strong>24–48 hours</strong>.';
+        document.getElementById('critical-note').classList.add('hidden');
+      }
+
+      document.getElementById('bug-form').closest('.bg-white').classList.add('hidden');
+      document.getElementById('success-state').classList.remove('hidden');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    function resetBugForm() {
+      document.getElementById('bug-form').reset();
+      document.getElementById('ss-file-list').innerHTML = '';
+      document.getElementById('bug-form').closest('.bg-white').classList.remove('hidden');
+      document.getElementById('success-state').classList.add('hidden');
+    }
+
+    /* ---- Status lookup ---- */
+    // Simulated statuses for demo
+    const demoStatuses = {
+      open:        { badge: 'bg-blue-100 text-blue-700',   icon: '🔵', label: 'Open',        detail: 'Your report has been received and is in our queue for review.' },
+      in_progress: { badge: 'bg-yellow-100 text-yellow-800', icon: '🟡', label: 'In Progress', detail: 'Our team is currently investigating this issue. We\'ll update you by email when there\'s progress.' },
+      resolved:    { badge: 'bg-green-100 text-green-700', icon: '✅', label: 'Resolved',     detail: 'This issue has been resolved. Please re-submit if the problem persists.' },
+      closed:      { badge: 'bg-gray-100 text-gray-600',   icon: '⬜', label: 'Closed',       detail: 'This ticket has been closed. If the issue recurs, please submit a new report.' },
+    };
+
+    function checkStatus() {
+      const id    = document.getElementById('lookup-id').value.trim();
+      const email = document.getElementById('lookup-email').value.trim();
+      if (!id || !email) {
+        alert('Please enter both a ticket ID and your email address.');
+        return;
+      }
+      // Demo: pick a random status for illustration
+      const keys   = Object.keys(demoStatuses);
+      const status = demoStatuses[keys[Math.floor(Math.random() * keys.length)]];
+      document.getElementById('status-ticket-id').textContent = id;
+      const badge = document.getElementById('status-badge');
+      badge.className = `status-badge ${status.badge}`;
+      badge.textContent = `${status.icon} ${status.label}`;
+      document.getElementById('status-detail').textContent = status.detail;
+      document.getElementById('status-result').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Ogilvy Automation Admin Dashboard" />
+  <title>Admin Dashboard — Ogilvy Automation</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Sidebar always 256px wide */
+    #sidebar { width: 256px; }
+    .main-content { margin-left: 256px; }
+    .nav-item { transition: background-color 0.15s ease; }
+    .nav-item:hover { background-color: rgba(255,255,255,0.06); }
+    .nav-item.active { background-color: #DC2626; }
+    .metric-card { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .metric-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,0,0,0.12); }
+    .btn-approve {
+      background: #16a34a; color: #fff; font-size: 0.7rem; font-weight: 700;
+      padding: 4px 10px; border-radius: 6px; transition: background 0.15s;
+    }
+    .btn-approve:hover { background: #15803d; }
+    .btn-reject {
+      background: #dc2626; color: #fff; font-size: 0.7rem; font-weight: 700;
+      padding: 4px 10px; border-radius: 6px; transition: background 0.15s;
+    }
+    .btn-reject:hover { background: #b91c1c; }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-slide-in { animation: slideIn 0.3s ease forwards; }
+    /* Confirmation overlay */
+    .confirm-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+      z-index: 200; display: flex; align-items: center; justify-content: center;
+      padding: 1rem; backdrop-filter: blur(3px);
+    }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      z-index: 300; min-width: 260px; max-width: 380px;
+      padding: 14px 18px; border-radius: 12px; font-size: 0.875rem; font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+      animation: slideIn 0.3s ease;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 font-sans antialiased">
+
+<!-- ================================================================
+     TOAST NOTIFICATION (injected by JS)
+================================================================ -->
+<div id="toast-container"></div>
+
+<!-- ================================================================
+     CONFIRMATION MODAL
+================================================================ -->
+<div id="confirm-modal" class="confirm-overlay hidden">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-7">
+    <div id="confirm-icon" class="w-12 h-12 rounded-full flex items-center justify-center mb-4 mx-auto text-2xl">✅</div>
+    <h3 id="confirm-title" class="text-lg font-bold text-gray-900 text-center mb-2">Confirm Action</h3>
+    <p id="confirm-body" class="text-sm text-gray-500 text-center mb-6">Are you sure?</p>
+    <div class="flex gap-3">
+      <button id="confirm-cancel-btn"
+              class="flex-1 border border-gray-300 text-gray-700 font-semibold py-2.5 rounded-xl text-sm hover:bg-gray-50 transition-colors">
+        Cancel
+      </button>
+      <button id="confirm-ok-btn"
+              class="flex-1 font-semibold py-2.5 rounded-xl text-sm text-white transition-colors">
+        Confirm
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================================
+     SIDEBAR
+================================================================ -->
+<aside id="sidebar" class="fixed inset-y-0 left-0 bg-gray-900 flex flex-col z-40 overflow-y-auto">
+
+  <!-- Logo -->
+  <div class="px-5 py-6 border-b border-gray-800 flex-shrink-0">
+    <div class="flex items-center gap-2.5">
+      <span class="text-xl">⚙️</span>
+      <div>
+        <span class="text-white font-extrabold text-base tracking-tight">Ogilvy <span class="text-red-500">Automation</span></span>
+        <p class="text-gray-500 text-xs mt-0.5 font-medium uppercase tracking-wider">Admin Panel</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation -->
+  <nav class="flex-1 px-3 py-5 space-y-1">
+
+    <a href="dashboard.html"
+       class="nav-item active flex items-center gap-3 px-3 py-2.5 rounded-xl text-white text-sm font-semibold">
+      <span class="text-base">📊</span> Dashboard
+    </a>
+
+    <a href="consultations.html"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-300 hover:text-white text-sm font-medium">
+      <span class="text-base">📅</span>
+      <span class="flex-1">Consultations</span>
+      <span id="sidebar-pending-badge"
+            class="bg-amber-500 text-white text-xs font-extrabold px-2 py-0.5 rounded-full min-w-[20px] text-center">3</span>
+    </a>
+
+    <a href="requests.html"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-300 hover:text-white text-sm font-medium">
+      <span class="text-base">📋</span> System Requests
+    </a>
+
+    <a href="bugs.html"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-300 hover:text-white text-sm font-medium">
+      <span class="text-base">🐛</span> Bug Reports
+    </a>
+
+    <a href="systems.html"
+       class="nav-item flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-300 hover:text-white text-sm font-medium">
+      <span class="text-base">⚙️</span> Systems
+    </a>
+
+  </nav>
+
+  <!-- Admin user + sign out -->
+  <div class="px-4 py-5 border-t border-gray-800 flex-shrink-0">
+    <div class="flex items-center gap-3 mb-3">
+      <div class="w-9 h-9 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0"
+           id="sidebar-avatar">A</div>
+      <div class="min-w-0">
+        <p class="text-white text-xs font-semibold truncate" id="sidebar-email">admin@ogilvy.com</p>
+        <p class="text-gray-500 text-xs">Administrator</p>
+      </div>
+    </div>
+    <button id="sign-out-btn"
+            class="w-full flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 hover:text-white text-xs font-semibold py-2 px-3 rounded-lg transition-colors">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+      </svg>
+      Sign Out
+    </button>
+  </div>
+
+</aside>
+
+<!-- ================================================================
+     MAIN CONTENT
+================================================================ -->
+<div class="main-content min-h-screen">
+
+  <!-- ── Top Bar ────────────────────────────────────────────── -->
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-30">
+    <div class="flex items-center justify-between px-6 py-3.5">
+      <div>
+        <h1 class="text-xl font-extrabold text-gray-900">Dashboard</h1>
+        <p class="text-xs text-gray-500 mt-0.5" id="current-date-display">Loading date…</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <!-- Notification bell -->
+        <button class="relative p-2 text-gray-500 hover:text-gray-700 transition-colors" aria-label="Notifications">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+          </svg>
+          <span id="notif-badge"
+                class="absolute top-1 right-1 w-4 h-4 bg-red-600 text-white text-[10px] font-extrabold rounded-full flex items-center justify-center">3</span>
+        </button>
+        <!-- Admin name -->
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-xs"
+               id="topbar-avatar">A</div>
+          <span class="text-sm font-semibold text-gray-700" id="topbar-name">Admin</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="px-6 py-6 space-y-7">
+
+    <!-- ── Metric Cards Row 1 (4 cards) ─────────────────────── -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+
+      <!-- Pending Consultations (AMBER - most prominent) -->
+      <a href="consultations.html"
+         class="metric-card col-span-1 sm:col-span-2 xl:col-span-1 bg-amber-500 text-white rounded-2xl p-6 shadow-lg shadow-amber-100 cursor-pointer block">
+        <div class="flex items-start justify-between mb-4">
+          <div class="w-11 h-11 bg-white/20 rounded-xl flex items-center justify-center text-2xl">📅</div>
+          <span class="text-xs font-bold bg-white/20 px-2.5 py-1 rounded-full uppercase tracking-wide">Action Required</span>
+        </div>
+        <p class="text-4xl font-extrabold mb-1" id="metric-pending-consultations">3</p>
+        <p class="text-amber-100 text-sm font-semibold">Pending Consultation Requests</p>
+        <p class="text-amber-200 text-xs mt-1">📅 Awaiting your approval</p>
+        <p class="mt-4 text-xs font-bold text-white/80 hover:text-white transition-colors inline-flex items-center gap-1">
+          Manage Requests →
+        </p>
+      </a>
+
+      <!-- Total System Requests -->
+      <div class="metric-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div class="flex items-start justify-between mb-4">
+          <div class="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center text-2xl">📋</div>
+          <span class="text-xs font-bold text-red-600 bg-red-50 px-2.5 py-1 rounded-full">Total</span>
+        </div>
+        <p class="text-4xl font-extrabold text-gray-900 mb-1" id="metric-total-requests">12</p>
+        <p class="text-gray-500 text-sm font-semibold">System Requests</p>
+        <p class="text-gray-400 text-xs mt-1">All time submissions</p>
+      </div>
+
+      <!-- Open Bug Reports -->
+      <div class="metric-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div class="flex items-start justify-between mb-4">
+          <div class="w-11 h-11 bg-orange-50 rounded-xl flex items-center justify-center text-2xl">🐛</div>
+          <span class="text-xs font-bold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-full">Open</span>
+        </div>
+        <p class="text-4xl font-extrabold text-gray-900 mb-1" id="metric-bug-reports">5</p>
+        <p class="text-gray-500 text-sm font-semibold">Bug Reports</p>
+        <p class="text-gray-400 text-xs mt-1">Awaiting resolution</p>
+      </div>
+
+      <!-- Active Systems -->
+      <div class="metric-card bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+        <div class="flex items-start justify-between mb-4">
+          <div class="w-11 h-11 bg-green-50 rounded-xl flex items-center justify-center text-2xl">⚙️</div>
+          <span class="text-xs font-bold text-green-600 bg-green-50 px-2.5 py-1 rounded-full">Live</span>
+        </div>
+        <p class="text-4xl font-extrabold text-gray-900 mb-1" id="metric-active-systems">47</p>
+        <p class="text-gray-500 text-sm font-semibold">Active Systems</p>
+        <p class="text-gray-400 text-xs mt-1">Currently running</p>
+      </div>
+
+    </section>
+
+    <!-- ── Metric Cards Row 2 ────────────────────────────────── -->
+    <section class="grid grid-cols-1 sm:grid-cols-3 gap-5">
+
+      <div class="metric-card bg-blue-600 text-white rounded-2xl p-5 shadow-sm">
+        <p class="text-blue-200 text-xs font-semibold uppercase tracking-wider mb-2">Consultations This Month</p>
+        <p class="text-3xl font-extrabold" id="metric-consultations-month">8</p>
+        <p class="text-blue-200 text-xs mt-1">↑ 2 from last month</p>
+      </div>
+
+      <div class="metric-card bg-teal-600 text-white rounded-2xl p-5 shadow-sm">
+        <p class="text-teal-200 text-xs font-semibold uppercase tracking-wider mb-2">Requests Completed This Week</p>
+        <p class="text-3xl font-extrabold" id="metric-completed-week">4</p>
+        <p class="text-teal-200 text-xs mt-1">↑ 1 from last week</p>
+      </div>
+
+      <div class="metric-card bg-purple-600 text-white rounded-2xl p-5 shadow-sm">
+        <p class="text-purple-200 text-xs font-semibold uppercase tracking-wider mb-2">Avg Response Time</p>
+        <p class="text-3xl font-extrabold">18 <span class="text-xl font-semibold">hrs</span></p>
+        <p class="text-purple-200 text-xs mt-1">↓ 3hrs from last week</p>
+      </div>
+
+    </section>
+
+    <!-- ── Pending Consultation Requests Widget ─────────────── -->
+    <section class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-6 shadow-sm animate-slide-in">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+        <div>
+          <h2 class="text-lg font-extrabold text-gray-900">📅 Pending Consultation Requests</h2>
+          <p class="text-sm text-amber-700 font-medium mt-0.5">— Require Your Action</p>
+        </div>
+        <a href="consultations.html"
+           class="self-start sm:self-auto inline-flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold px-4 py-2 rounded-lg transition-colors shadow-sm">
+          View All Consultation Requests →
+        </a>
+      </div>
+
+      <!-- Table -->
+      <div class="overflow-x-auto rounded-xl border border-amber-200">
+        <table class="min-w-full text-sm">
+          <thead>
+            <tr class="bg-amber-100 border-b border-amber-200">
+              <th class="text-left px-4 py-3 text-xs font-extrabold text-amber-900 uppercase tracking-wider whitespace-nowrap">Request ID</th>
+              <th class="text-left px-4 py-3 text-xs font-extrabold text-amber-900 uppercase tracking-wider whitespace-nowrap">Name</th>
+              <th class="text-left px-4 py-3 text-xs font-extrabold text-amber-900 uppercase tracking-wider whitespace-nowrap">Department</th>
+              <th class="text-left px-4 py-3 text-xs font-extrabold text-amber-900 uppercase tracking-wider whitespace-nowrap">Preferred Date</th>
+              <th class="text-left px-4 py-3 text-xs font-extrabold text-amber-900 uppercase tracking-wider whitespace-nowrap">Urgency</th>
+              <th class="text-left px-4 py-3 text-xs font-extrabold text-amber-900 uppercase tracking-wider whitespace-nowrap">Submitted</th>
+              <th class="text-left px-4 py-3 text-xs font-extrabold text-amber-900 uppercase tracking-wider whitespace-nowrap">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="pending-consultations-tbody" class="bg-white divide-y divide-gray-100">
+            <!-- Row 1 -->
+            <tr class="hover:bg-amber-50/40 transition-colors" data-id="CONSULT-REQ-003">
+              <td class="px-4 py-3 font-mono text-xs font-semibold text-gray-700 whitespace-nowrap">CONSULT-REQ-003</td>
+              <td class="px-4 py-3 font-semibold text-gray-900 whitespace-nowrap">James Wilson</td>
+              <td class="px-4 py-3">
+                <span class="bg-purple-50 text-purple-700 text-xs font-semibold px-2.5 py-1 rounded-full">Marketing</span>
+              </td>
+              <td class="px-4 py-3 text-gray-600 whitespace-nowrap text-xs">March 20, 2025</td>
+              <td class="px-4 py-3 whitespace-nowrap">
+                <span class="inline-flex items-center gap-1 text-xs font-bold text-red-700 bg-red-50 px-2.5 py-1 rounded-full">
+                  🔴 Urgent
+                </span>
+              </td>
+              <td class="px-4 py-3 text-gray-400 text-xs whitespace-nowrap">2 hours ago</td>
+              <td class="px-4 py-3 whitespace-nowrap">
+                <div class="flex items-center gap-2">
+                  <button class="btn-approve" data-action="approve" data-id="CONSULT-REQ-003" data-name="James Wilson">Approve</button>
+                  <button class="btn-reject"  data-action="reject"  data-id="CONSULT-REQ-003" data-name="James Wilson">Reject</button>
+                </div>
+              </td>
+            </tr>
+            <!-- Row 2 -->
+            <tr class="hover:bg-amber-50/40 transition-colors" data-id="CONSULT-REQ-002">
+              <td class="px-4 py-3 font-mono text-xs font-semibold text-gray-700 whitespace-nowrap">CONSULT-REQ-002</td>
+              <td class="px-4 py-3 font-semibold text-gray-900 whitespace-nowrap">Sarah Ahmed</td>
+              <td class="px-4 py-3">
+                <span class="bg-blue-50 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full">Finance</span>
+              </td>
+              <td class="px-4 py-3 text-gray-600 whitespace-nowrap text-xs">March 22, 2025</td>
+              <td class="px-4 py-3 whitespace-nowrap">
+                <span class="inline-flex items-center gap-1 text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full">
+                  🟡 Soon
+                </span>
+              </td>
+              <td class="px-4 py-3 text-gray-400 text-xs whitespace-nowrap">5 hours ago</td>
+              <td class="px-4 py-3 whitespace-nowrap">
+                <div class="flex items-center gap-2">
+                  <button class="btn-approve" data-action="approve" data-id="CONSULT-REQ-002" data-name="Sarah Ahmed">Approve</button>
+                  <button class="btn-reject"  data-action="reject"  data-id="CONSULT-REQ-002" data-name="Sarah Ahmed">Reject</button>
+                </div>
+              </td>
+            </tr>
+            <!-- Row 3 -->
+            <tr class="hover:bg-amber-50/40 transition-colors" data-id="CONSULT-REQ-001">
+              <td class="px-4 py-3 font-mono text-xs font-semibold text-gray-700 whitespace-nowrap">CONSULT-REQ-001</td>
+              <td class="px-4 py-3 font-semibold text-gray-900 whitespace-nowrap">Tom Bradley</td>
+              <td class="px-4 py-3">
+                <span class="bg-orange-50 text-orange-700 text-xs font-semibold px-2.5 py-1 rounded-full">HR</span>
+              </td>
+              <td class="px-4 py-3 text-gray-600 whitespace-nowrap text-xs">March 25, 2025</td>
+              <td class="px-4 py-3 whitespace-nowrap">
+                <span class="inline-flex items-center gap-1 text-xs font-bold text-green-700 bg-green-50 px-2.5 py-1 rounded-full">
+                  🟢 Standard
+                </span>
+              </td>
+              <td class="px-4 py-3 text-gray-400 text-xs whitespace-nowrap">Yesterday</td>
+              <td class="px-4 py-3 whitespace-nowrap">
+                <div class="flex items-center gap-2">
+                  <button class="btn-approve" data-action="approve" data-id="CONSULT-REQ-001" data-name="Tom Bradley">Approve</button>
+                  <button class="btn-reject"  data-action="reject"  data-id="CONSULT-REQ-001" data-name="Tom Bradley">Reject</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ── Two-column: Upcoming Consultations + Activity Feed ── -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- Upcoming Confirmed Consultations -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="text-base font-extrabold text-gray-900">📅 Upcoming Confirmed Consultations</h2>
+        </div>
+        <ul class="space-y-3">
+
+          <li class="flex items-center justify-between p-3.5 bg-green-50 rounded-xl border border-green-100">
+            <div>
+              <p class="text-sm font-bold text-gray-900">Emma Clarke</p>
+              <p class="text-xs text-gray-500 mt-0.5">Marketing &nbsp;·&nbsp; Today 2:00 PM</p>
+            </div>
+            <a href="#"
+               class="text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+              Teams →
+            </a>
+          </li>
+
+          <li class="flex items-center justify-between p-3.5 bg-gray-50 rounded-xl border border-gray-100">
+            <div>
+              <p class="text-sm font-bold text-gray-900">David Park</p>
+              <p class="text-xs text-gray-500 mt-0.5">Finance &nbsp;·&nbsp; Tomorrow 10:30 AM</p>
+            </div>
+            <a href="#"
+               class="text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+              Teams →
+            </a>
+          </li>
+
+          <li class="flex items-center justify-between p-3.5 bg-gray-50 rounded-xl border border-gray-100">
+            <div>
+              <p class="text-sm font-bold text-gray-900">Lisa Thompson</p>
+              <p class="text-xs text-gray-500 mt-0.5">HR &nbsp;·&nbsp; March 18, 9:00 AM</p>
+            </div>
+            <a href="#"
+               class="text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+              Teams →
+            </a>
+          </li>
+
+        </ul>
+        <div class="mt-4 pt-4 border-t border-gray-100">
+          <a href="consultations.html" class="text-sm font-semibold text-amber-600 hover:text-amber-700 transition-colors">
+            View Full Calendar →
+          </a>
+        </div>
+      </div>
+
+      <!-- Recent Activity Feed -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="text-base font-extrabold text-gray-900">Recent Activity</h2>
+          <span class="text-xs text-gray-400 font-medium">Live updates</span>
+        </div>
+        <ul id="activity-feed" class="space-y-3">
+
+          <li class="flex items-start gap-3">
+            <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-sm flex-shrink-0 mt-0.5">📅</div>
+            <div>
+              <p class="text-sm font-semibold text-gray-800">New consultation request from <span class="text-amber-600">James Wilson</span></p>
+              <p class="text-xs text-gray-400 mt-0.5">2 hours ago</p>
+            </div>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center text-sm flex-shrink-0 mt-0.5">✅</div>
+            <div>
+              <p class="text-sm font-semibold text-gray-800">Bug report resolved: <span class="text-green-600">Invoice System</span></p>
+              <p class="text-xs text-gray-400 mt-0.5">3 hours ago</p>
+            </div>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-sm flex-shrink-0 mt-0.5">📋</div>
+            <div>
+              <p class="text-sm font-semibold text-gray-800">System request approved: <span class="text-blue-600">Data Pipeline</span></p>
+              <p class="text-xs text-gray-400 mt-0.5">Yesterday</p>
+            </div>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <div class="w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center text-sm flex-shrink-0 mt-0.5">📅</div>
+            <div>
+              <p class="text-sm font-semibold text-gray-800">New consultation request from <span class="text-amber-600">Sarah Ahmed</span></p>
+              <p class="text-xs text-gray-400 mt-0.5">5 hours ago</p>
+            </div>
+          </li>
+
+          <li class="flex items-start gap-3">
+            <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center text-sm flex-shrink-0 mt-0.5">🐛</div>
+            <div>
+              <p class="text-sm font-semibold text-gray-800">Bug report: <span class="text-red-600">High severity</span> — Marketing Dashboard</p>
+              <p class="text-xs text-gray-400 mt-0.5">Yesterday</p>
+            </div>
+          </li>
+
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- ── Charts Section ────────────────────────────────────── -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+      <!-- Line Chart: Requests Over Time -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="text-base font-extrabold text-gray-900">Requests Over Time</h2>
+          <span class="text-xs text-gray-400 font-medium">Last 7 days</span>
+        </div>
+        <div class="relative h-56">
+          <canvas id="requests-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Doughnut Chart: Consultations by Department -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="text-base font-extrabold text-gray-900">Consultations by Department</h2>
+          <span class="text-xs text-gray-400 font-medium">This month</span>
+        </div>
+        <div class="relative h-56 flex items-center justify-center">
+          <canvas id="departments-chart"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── Quick Actions ─────────────────────────────────────── -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      <h2 class="text-base font-extrabold text-gray-900 mb-5">Quick Actions</h2>
+      <div class="flex flex-wrap gap-3">
+
+        <a href="requests.html"
+           class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors">
+          📋 View All Requests
+        </a>
+
+        <a href="bugs.html"
+           class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors">
+          🐛 View Bug Reports
+        </a>
+
+        <a href="consultations.html"
+           class="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors shadow-sm shadow-amber-100">
+          📅 Manage Consultations
+        </a>
+
+        <button id="add-system-btn"
+                class="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-colors shadow-sm shadow-red-100">
+          ⚙️ Add New System
+        </button>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ================================================================
+     SCRIPTS
+================================================================ -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/supabase-config.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/admin.js"></script>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Helpers ──────────────────────────────────────────────────
+
+  function getSupabase() { return window.supabaseClient || null; }
+
+  function showToast(msg, type) {
+    // type: 'success' | 'error' | 'info'
+    var colors = {
+      success: 'bg-green-600 text-white',
+      error:   'bg-red-600 text-white',
+      info:    'bg-gray-800 text-white',
+    };
+    var container = document.getElementById('toast-container');
+    var el = document.createElement('div');
+    el.className = 'toast ' + (colors[type] || colors.info);
+    el.textContent = msg;
+    container.appendChild(el);
+    setTimeout(function () {
+      el.style.opacity = '0';
+      el.style.transition = 'opacity 0.4s ease';
+      setTimeout(function () { el.remove(); }, 400);
+    }, 3500);
+  }
+
+  // ── Date display ──────────────────────────────────────────────
+  (function () {
+    var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('current-date-display').textContent =
+      new Date().toLocaleDateString('en-GB', options);
+  })();
+
+  // ── Auth check ───────────────────────────────────────────────
+  async function checkAdminAuth() {
+    var client = getSupabase();
+
+    // Demo mode fallback
+    if (!client) {
+      var demoSession = sessionStorage.getItem('admin_demo');
+      if (!demoSession) {
+        window.location.href = 'login.html';
+        return false;
+      }
+      var email = sessionStorage.getItem('admin_email') || 'admin@ogilvy.com';
+      setAdminEmail(email);
+      return true;
+    }
+
+    try {
+      var result = await client.auth.getSession();
+      if (!result.data || !result.data.session) {
+        window.location.href = 'login.html';
+        return false;
+      }
+      var email = result.data.session.user.email || 'admin@ogilvy.com';
+      setAdminEmail(email);
+      return true;
+    } catch (e) {
+      window.location.href = 'login.html';
+      return false;
+    }
+  }
+
+  function setAdminEmail(email) {
+    var initial = email.charAt(0).toUpperCase();
+    var elEmail    = document.getElementById('sidebar-email');
+    var elAvatar1  = document.getElementById('sidebar-avatar');
+    var elAvatar2  = document.getElementById('topbar-avatar');
+    var elName     = document.getElementById('topbar-name');
+
+    if (elEmail)   elEmail.textContent   = email;
+    if (elAvatar1) elAvatar1.textContent = initial;
+    if (elAvatar2) elAvatar2.textContent = initial;
+    if (elName)    elName.textContent    = email.split('@')[0];
+  }
+
+  // ── Load metrics from Supabase ────────────────────────────────
+  async function loadMetrics() {
+    var client = getSupabase();
+    if (!client) return; // Keep default hardcoded values
+
+    try {
+      // Pending consultation requests
+      var r1 = await client
+        .from('consultation_requests')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'pending');
+      if (!r1.error && typeof r1.count === 'number') {
+        var pendingCount = r1.count;
+        document.getElementById('metric-pending-consultations').textContent = pendingCount;
+        document.getElementById('sidebar-pending-badge').textContent = pendingCount;
+        document.getElementById('notif-badge').textContent = pendingCount;
+      }
+    } catch (e) { /* silent */ }
+
+    try {
+      // Total system requests
+      var r2 = await client
+        .from('system_requests')
+        .select('id', { count: 'exact', head: true });
+      if (!r2.error && typeof r2.count === 'number') {
+        document.getElementById('metric-total-requests').textContent = r2.count;
+      }
+    } catch (e) { /* silent */ }
+
+    try {
+      // Open bug reports
+      var r3 = await client
+        .from('bug_reports')
+        .select('id', { count: 'exact', head: true })
+        .in('status', ['open', 'in_progress']);
+      if (!r3.error && typeof r3.count === 'number') {
+        document.getElementById('metric-bug-reports').textContent = r3.count;
+      }
+    } catch (e) { /* silent */ }
+
+    try {
+      // Active systems
+      var r4 = await client
+        .from('systems')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'Active');
+      if (!r4.error && typeof r4.count === 'number') {
+        document.getElementById('metric-active-systems').textContent = r4.count;
+      }
+    } catch (e) { /* silent */ }
+  }
+
+  // ── Real-time subscription for pending consultations ──────────
+  function subscribeToConsultations() {
+    var client = getSupabase();
+    if (!client) return;
+
+    try {
+      client
+        .channel('dashboard-consultations')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'consultation_requests',
+        }, function () {
+          // Refresh the pending count on any change
+          loadMetrics();
+        })
+        .subscribe();
+    } catch (e) { /* silent */ }
+  }
+
+  // ── Approve / Reject logic ────────────────────────────────────
+  var confirmModal   = document.getElementById('confirm-modal');
+  var confirmTitle   = document.getElementById('confirm-title');
+  var confirmBody    = document.getElementById('confirm-body');
+  var confirmIcon    = document.getElementById('confirm-icon');
+  var confirmOkBtn   = document.getElementById('confirm-ok-btn');
+  var confirmCancelBtn = document.getElementById('confirm-cancel-btn');
+
+  var pendingConfirmCallback = null;
+
+  function openConfirm(title, body, icon, okColor, callback) {
+    confirmTitle.textContent = title;
+    confirmBody.textContent  = body;
+    confirmIcon.textContent  = icon;
+    confirmOkBtn.className   = 'flex-1 font-semibold py-2.5 rounded-xl text-sm text-white transition-colors ' + okColor;
+    pendingConfirmCallback   = callback;
+    confirmModal.classList.remove('hidden');
+  }
+
+  function closeConfirm() {
+    confirmModal.classList.add('hidden');
+    pendingConfirmCallback = null;
+  }
+
+  confirmCancelBtn.addEventListener('click', closeConfirm);
+  confirmModal.addEventListener('click', function (e) {
+    if (e.target === confirmModal) closeConfirm();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeConfirm();
+  });
+
+  confirmOkBtn.addEventListener('click', function () {
+    if (pendingConfirmCallback) pendingConfirmCallback();
+    closeConfirm();
+  });
+
+  async function handleConsultationAction(action, id, name) {
+    var newStatus = action === 'approve' ? 'approved' : 'rejected';
+    var client    = getSupabase();
+
+    if (client) {
+      try {
+        var result = await client
+          .from('consultation_requests')
+          .update({ status: newStatus, updated_at: new Date().toISOString() })
+          .eq('id', id);
+
+        if (result.error) {
+          showToast('Error updating request: ' + (result.error.message || 'Unknown error'), 'error');
+          return;
+        }
+      } catch (e) {
+        showToast('Unexpected error. Please try again.', 'error');
+        return;
+      }
+    }
+
+    // Remove row from table
+    var row = document.querySelector('tr[data-id="' + id + '"]');
+    if (row) {
+      row.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+      row.style.opacity    = '0';
+      row.style.transform  = 'translateX(-10px)';
+      setTimeout(function () { row.remove(); }, 300);
+    }
+
+    var actionLabel = action === 'approve' ? 'approved' : 'rejected';
+    showToast(id + ' — ' + name + ' has been ' + actionLabel + '.', action === 'approve' ? 'success' : 'info');
+
+    // Update pending count
+    var badge   = document.getElementById('sidebar-pending-badge');
+    var metric  = document.getElementById('metric-pending-consultations');
+    var notif   = document.getElementById('notif-badge');
+    var current = parseInt(badge.textContent, 10) || 0;
+    var newCount = Math.max(0, current - 1);
+    badge.textContent  = newCount;
+    metric.textContent = newCount;
+    notif.textContent  = newCount;
+  }
+
+  // Delegate click events on approve/reject buttons
+  document.getElementById('pending-consultations-tbody').addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-action]');
+    if (!btn) return;
+
+    var action = btn.dataset.action;
+    var id     = btn.dataset.id;
+    var name   = btn.dataset.name;
+
+    if (action === 'approve') {
+      openConfirm(
+        'Approve Request',
+        'Approve consultation request ' + id + ' for ' + name + '? They will be notified.',
+        '✅',
+        'bg-green-600 hover:bg-green-700',
+        function () { handleConsultationAction('approve', id, name); }
+      );
+    } else {
+      openConfirm(
+        'Reject Request',
+        'Reject consultation request ' + id + ' for ' + name + '? This action cannot be undone.',
+        '❌',
+        'bg-red-600 hover:bg-red-700',
+        function () { handleConsultationAction('reject', id, name); }
+      );
+    }
+  });
+
+  // ── Sign out ──────────────────────────────────────────────────
+  document.getElementById('sign-out-btn').addEventListener('click', async function () {
+    var client = getSupabase();
+    if (client) {
+      try { await client.auth.signOut(); } catch (e) { /* silent */ }
+    }
+    sessionStorage.removeItem('admin_demo');
+    sessionStorage.removeItem('admin_email');
+    localStorage.removeItem('admin_remember');
+    window.location.href = 'login.html';
+  });
+
+  // ── Add New System button (placeholder) ──────────────────────
+  document.getElementById('add-system-btn').addEventListener('click', function () {
+    showToast('Add New System — feature coming soon!', 'info');
+  });
+
+  // ── Chart.js ──────────────────────────────────────────────────
+  function initCharts() {
+    // Line chart: Requests Over Time (last 7 days)
+    var ctxLine = document.getElementById('requests-chart').getContext('2d');
+    new Chart(ctxLine, {
+      type: 'line',
+      data: {
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        datasets: [
+          {
+            label: 'System Requests',
+            data: [3, 5, 2, 7, 4, 1, 6],
+            borderColor: '#DC2626',
+            backgroundColor: 'rgba(220,38,38,0.08)',
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: '#DC2626',
+            pointRadius: 4,
+            pointHoverRadius: 6,
+          },
+          {
+            label: 'Consultations',
+            data: [1, 2, 1, 3, 2, 0, 2],
+            borderColor: '#F59E0B',
+            backgroundColor: 'rgba(245,158,11,0.08)',
+            tension: 0.4,
+            fill: true,
+            pointBackgroundColor: '#F59E0B',
+            pointRadius: 4,
+            pointHoverRadius: 6,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { font: { size: 11 }, padding: 16 }
+          },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { stepSize: 1, font: { size: 11 } },
+            grid: { color: 'rgba(0,0,0,0.05)' }
+          },
+          x: {
+            ticks: { font: { size: 11 } },
+            grid: { display: false }
+          }
+        }
+      }
+    });
+
+    // Doughnut chart: Consultations by Department
+    var ctxDoughnut = document.getElementById('departments-chart').getContext('2d');
+    new Chart(ctxDoughnut, {
+      type: 'doughnut',
+      data: {
+        labels: ['Marketing', 'Finance', 'HR', 'Operations', 'IT', 'Legal'],
+        datasets: [{
+          data: [8, 6, 5, 4, 3, 2],
+          backgroundColor: [
+            '#DC2626',
+            '#F59E0B',
+            '#3B82F6',
+            '#10B981',
+            '#8B5CF6',
+            '#EC4899',
+          ],
+          borderWidth: 2,
+          borderColor: '#fff',
+          hoverBorderWidth: 3,
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '62%',
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              font: { size: 11 },
+              padding: 12,
+              usePointStyle: true,
+              pointStyleWidth: 8,
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                return ' ' + context.label + ': ' + context.parsed + ' sessions';
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // ── Boot sequence ─────────────────────────────────────────────
+  (async function init() {
+    var authed = await checkAdminAuth();
+    if (!authed) return;
+
+    await loadMetrics();
+    subscribeToConsultations();
+    initCharts();
+  })();
+
+})();
+</script>
+
+</body>
+</html>
