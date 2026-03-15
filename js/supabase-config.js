@@ -6,8 +6,8 @@
  * https://supabase.com/dashboard/project/_/settings/api
  */
 
-const SUPABASE_URL = 'https://your-project.supabase.co';
-const SUPABASE_ANON_KEY = 'your-anon-key-here';
+const SUPABASE_URL = 'https://rtnqeqejigoneietnpro.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJ0bnFlcWVqaWdvbmVpZXRucHJvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM1ODk5ODksImV4cCI6MjA4OTE2NTk4OX0.kqSISWhJQSna08J8iIp5qiJVfMaiFpfPrrZZQL6yRF0';
 
 // Initialize Supabase client
 let supabaseClient = null;
