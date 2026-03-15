@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Ogilvy Automation Team Portal – Transform repetitive tasks into intelligent systems. Explore automation systems, request a new system, or book a free consultation." />
-  <meta name="theme-color" content="#111827" />
+  <meta name="description" content="Ogilvy Automation Team Portal - Transform repetitive tasks into intelligent systems. Explore automation systems, request a new system, or book a free consultation." />
+  <meta name="theme-color" content="#07070f" />
   <title>Ogilvy Automation Team Portal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -12,759 +12,606 @@
       theme: {
         extend: {
           colors: {
-            brand: {
-              red: '#DC2626',
-              'red-dark': '#B91C1C',
-              amber: '#F59E0B',
-              'amber-dark': '#D97706',
-            }
-          },
-          animation: {
-            'count-up': 'countUp 2s ease-out forwards',
-            'fade-in': 'fadeIn 0.6s ease-out forwards',
-            'slide-up': 'slideUp 0.6s ease-out forwards',
-          },
-          keyframes: {
-            fadeIn: { from: { opacity: '0' }, to: { opacity: '1' } },
-            slideUp: { from: { opacity: '0', transform: 'translateY(20px)' }, to: { opacity: '1', transform: 'translateY(0)' } },
+            red: { 600: '#E30613', 700: '#b50510' },
+            glass: 'rgba(255,255,255,0.05)'
           }
         }
       }
     }
   </script>
+  <link rel="stylesheet" href="css/style.css" />
   <style>
-    @keyframes countUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
+    .hero-gradient-line {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(227,6,19,0.6), transparent);
+      margin-top: 4rem;
     }
-    .glow-amber {
-      box-shadow: 0 0 20px rgba(245, 158, 11, 0.4), 0 0 40px rgba(245, 158, 11, 0.15);
+    .stats-band {
+      background: rgba(0,0,0,0.35);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
-    .glow-amber:hover {
-      box-shadow: 0 0 28px rgba(245, 158, 11, 0.6), 0 0 56px rgba(245, 158, 11, 0.25);
+    .consultation-band {
+      background: linear-gradient(135deg, rgba(227,6,19,0.07) 0%, rgba(7,7,15,0) 60%);
+      border-top: 1px solid rgba(227,6,19,0.15);
+      border-bottom: 1px solid rgba(227,6,19,0.08);
     }
-    .stat-number {
-      animation: countUp 0.4s ease-out forwards;
+    .check-icon { color: #E30613; flex-shrink: 0; }
+    .testimonial-card {
+      border-left: 3px solid rgba(227,6,19,0.5);
     }
-    .nav-link {
-      position: relative;
+    .amber-glow-card {
+      box-shadow: 0 0 30px rgba(217,119,6,0.12), 0 0 0 1px rgba(217,119,6,0.2);
     }
-    .nav-link::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 0;
-      height: 2px;
-      background: #DC2626;
-      transition: width 0.25s ease;
+    .system-card-top { height: 3px; background: var(--red); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+    .impact-pill {
+      display: inline-flex; align-items: center; gap: 0.375rem;
+      background: rgba(227,6,19,0.12);
+      border: 1px solid rgba(227,6,19,0.2);
+      color: #f87171;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.3rem 0.75rem;
+      border-radius: 6px;
     }
-    .nav-link:hover::after {
-      width: 100%;
-    }
-    .card-hover {
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .card-hover:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-    }
-    .step-connector {
-      position: absolute;
-      top: 50%;
-      left: 100%;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(to right, #DC2626, #F59E0B);
-      transform: translateY(-50%);
-    }
+    .hero-min-h { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
   </style>
 </head>
-<body class="bg-white text-gray-900 font-sans antialiased">
+<body class="public-page min-h-screen">
 
-  <!-- ========================================================
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <!-- ================================================================
        NAVIGATION
-  ======================================================== -->
-  <nav class="bg-gray-900 sticky top-0 z-50 shadow-lg">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between h-16">
-
-        <!-- Logo -->
-        <a href="index.html" class="flex items-center gap-2 flex-shrink-0">
-          <span class="text-xl">⚙️</span>
-          <span class="text-white font-bold text-lg tracking-tight">
-            Ogilvy <span class="text-red-600">Automation</span>
-          </span>
-        </a>
-
-        <!-- Desktop Links -->
-        <div class="hidden md:flex items-center gap-6">
-          <a href="index.html"        class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">Home</a>
-          <a href="systems.html"      class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">Systems</a>
-          <a href="what-we-automate.html" class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">What We Automate</a>
-          <a href="about.html"        class="nav-link text-gray-300 hover:text-white text-sm font-medium transition-colors">About</a>
+  ================================================================ -->
+  <nav class="site-nav z-content">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
         </div>
-
-        <!-- Desktop CTA -->
-        <div class="hidden md:flex items-center gap-3">
-          <a href="request.html"
-             class="text-sm text-gray-300 hover:text-white border border-gray-600 hover:border-gray-400 px-4 py-2 rounded-lg transition-colors">
-            Request a System
-          </a>
-          <a href="book-consultation.html"
-             class="flex items-center gap-1.5 bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors glow-amber">
-            📅 Request Consultation
-          </a>
-        </div>
-
-        <!-- Mobile hamburger -->
-        <button id="mobile-menu-btn"
-                class="md:hidden text-gray-300 hover:text-white p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600"
-                aria-label="Toggle navigation menu"
-                aria-expanded="false">
-          <svg id="hamburger-icon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-          </svg>
-          <svg id="close-icon" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
+        <span>Ogilvy <span class="text-red-600">Automation</span></span>
+      </a>
+      <div class="nav-links hidden md:flex">
+        <a href="index.html" class="nav-link active">Home</a>
+        <a href="systems.html" class="nav-link">Systems</a>
+        <a href="what-we-automate.html" class="nav-link">What We Automate</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="book-consultation.html" class="nav-cta ml-3">Request Consultation</a>
       </div>
+      <button class="md:hidden btn-glass btn btn-sm" id="mobile-menu-btn" aria-label="Toggle navigation" aria-expanded="false">Menu</button>
     </div>
-
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden md:hidden bg-gray-800 border-t border-gray-700">
-      <div class="px-4 pt-3 pb-4 space-y-1">
-        <a href="index.html"            class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Home</a>
-        <a href="systems.html"          class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">Systems</a>
-        <a href="what-we-automate.html" class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">What We Automate</a>
-        <a href="about.html"            class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">About</a>
-        <div class="pt-2 border-t border-gray-700 space-y-2">
-          <a href="request.html"
-             class="block text-gray-300 hover:text-white hover:bg-gray-700 px-3 py-2 rounded-md text-sm font-medium transition-colors">
-            Request a System
-          </a>
-          <a href="book-consultation.html"
-             class="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white px-3 py-2.5 rounded-md text-sm font-semibold transition-colors">
-            📅 Request Consultation
-          </a>
-        </div>
-      </div>
+    <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 px-4 py-3 space-y-1">
+      <a href="index.html" class="nav-link block">Home</a>
+      <a href="systems.html" class="nav-link block">Systems</a>
+      <a href="what-we-automate.html" class="nav-link block">What We Automate</a>
+      <a href="about.html" class="nav-link block">About</a>
+      <a href="book-consultation.html" class="btn btn-primary btn-sm block text-center mt-2">Request Consultation</a>
     </div>
   </nav>
 
-  <!-- ========================================================
-       HERO SECTION
-  ======================================================== -->
-  <section class="relative bg-gradient-to-br from-gray-900 via-gray-800 to-red-800 text-white overflow-hidden">
-    <!-- Decorative background elements -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
-      <div class="absolute -top-24 -right-24 w-96 h-96 bg-red-700 opacity-20 rounded-full blur-3xl"></div>
-      <div class="absolute -bottom-16 -left-16 w-80 h-80 bg-red-900 opacity-20 rounded-full blur-3xl"></div>
-      <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-r from-transparent via-red-900/10 to-transparent"></div>
-    </div>
+  <div class="z-content relative">
 
-    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
-      <div class="text-center max-w-4xl mx-auto">
+    <!-- ================================================================
+         HERO
+    ================================================================ -->
+    <section class="hero hero-min-h">
+      <div class="container-md">
 
-        <!-- Badge -->
-        <div class="inline-flex items-center gap-2 bg-red-700/40 border border-red-600/50 text-red-200 text-xs font-semibold px-4 py-1.5 rounded-full mb-6 uppercase tracking-wider">
-          <span class="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse"></span>
-          Ogilvy Automation Team
+        <!-- Eyebrow -->
+        <div class="hero-eyebrow">
+          <span class="w-1.5 h-1.5 rounded-full bg-red-600 inline-block" style="flex-shrink:0;"></span>
+          Ogilvy Internal Platform
         </div>
 
-        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight mb-6">
-          Automate Your Workflow,<br/>
-          <span class="text-red-400">Amplify Your Impact</span>
+        <h1 class="hero-title">
+          Automate the Work,<br><span class="accent">Amplify the Impact</span>
         </h1>
 
-        <p class="text-lg sm:text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
-          The Ogilvy Automation Team transforms repetitive tasks into intelligent systems —
-          freeing your team to focus on work that truly matters.
+        <p class="hero-desc">
+          The Ogilvy Automation team builds intelligent systems that eliminate repetitive work and free your team to focus on what matters.
         </p>
 
-        <!-- CTAs -->
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
-          <a href="systems.html"
-             class="w-full sm:w-auto flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-3.5 rounded-xl text-base transition-colors shadow-lg shadow-red-900/40">
+        <div class="hero-actions">
+          <a href="systems.html" class="btn btn-glass btn-lg">
             Explore Our Systems
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
           </a>
-          <a href="book-consultation.html"
-             class="w-full sm:w-auto flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-white font-bold px-8 py-3.5 rounded-xl text-base transition-all glow-amber shadow-xl">
-            📅 Request Free Consultation
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
+          <a href="book-consultation.html" class="btn btn-primary btn-lg">
+            Request a Consultation
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
           </a>
         </div>
 
-        <!-- Reassurance text -->
-        <p class="text-sm text-gray-400 mb-14">
-          ✓ Submit your preferred time — we'll confirm within 24 hours
+        <p class="mt-4 text-sm" style="color: var(--text-muted);">
+          Submit your preferred time - we'll confirm within 24 hours
         </p>
 
-        <!-- How It Works mini-steps -->
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-0">
-          <!-- Step 1 -->
-          <div class="flex flex-col items-center px-6 py-4 bg-white/5 border border-white/10 rounded-xl backdrop-blur-sm min-w-[140px]">
-            <div class="w-9 h-9 flex items-center justify-center bg-red-600 rounded-full text-white font-bold text-sm mb-2">1</div>
-            <p class="font-semibold text-sm text-white">Request</p>
-            <p class="text-xs text-gray-400 text-center mt-0.5">Submit your preferred time</p>
-          </div>
-          <!-- Arrow -->
-          <div class="hidden sm:flex items-center text-gray-500 px-2">
-            <svg class="w-6 h-6 text-amber-500/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </div>
-          <div class="flex sm:hidden items-center text-gray-500">
-            <svg class="w-5 h-5 rotate-90 text-amber-500/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </div>
-          <!-- Step 2 -->
-          <div class="flex flex-col items-center px-6 py-4 bg-white/5 border border-white/10 rounded-xl backdrop-blur-sm min-w-[140px]">
-            <div class="w-9 h-9 flex items-center justify-center bg-amber-500 rounded-full text-white font-bold text-sm mb-2">2</div>
-            <p class="font-semibold text-sm text-white">We Review</p>
-            <p class="text-xs text-gray-400 text-center mt-0.5">Team reviews & prepares</p>
-          </div>
-          <!-- Arrow -->
-          <div class="hidden sm:flex items-center text-gray-500 px-2">
-            <svg class="w-6 h-6 text-amber-500/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </div>
-          <div class="flex sm:hidden items-center text-gray-500">
-            <svg class="w-5 h-5 rotate-90 text-amber-500/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </div>
-          <!-- Step 3 -->
-          <div class="flex flex-col items-center px-6 py-4 bg-white/5 border border-white/10 rounded-xl backdrop-blur-sm min-w-[140px]">
-            <div class="w-9 h-9 flex items-center justify-center bg-green-600 rounded-full text-white font-bold text-sm mb-2">3</div>
-            <p class="font-semibold text-sm text-white">You Get Link</p>
-            <p class="text-xs text-gray-400 text-center mt-0.5">Confirmed Teams meeting</p>
-          </div>
-        </div>
-
+        <div class="hero-gradient-line"></div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ========================================================
-       STATS BAR
-  ======================================================== -->
-  <section class="bg-gray-900 border-y border-gray-700" id="stats-section">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
+    <!-- ================================================================
+         STATS ROW
+    ================================================================ -->
+    <section class="stats-band py-12" id="stats-section">
+      <div class="container">
+        <div class="grid-4">
 
-        <div class="text-center">
-          <p class="text-3xl sm:text-4xl font-extrabold text-red-500 stat-number" data-target="50" data-suffix="+">0+</p>
-          <p class="text-gray-400 text-sm font-medium mt-1">Systems Deployed</p>
+          <div class="stat-card text-center">
+            <p class="stat-number text-red-600 stat-counter" data-target="50" data-suffix="+">0+</p>
+            <p class="stat-label">Systems Deployed</p>
+          </div>
+
+          <div class="stat-card text-center">
+            <p class="stat-number" style="color: var(--amber);">
+              <span class="stat-counter" data-target="10000" data-suffix="+" data-format="thousands">0+</span>
+            </p>
+            <p class="stat-label">Hours Saved</p>
+          </div>
+
+          <div class="stat-card text-center">
+            <p class="stat-number text-red-600 stat-counter" data-target="200" data-suffix="+">0+</p>
+            <p class="stat-label">Consultations</p>
+          </div>
+
+          <div class="stat-card text-center">
+            <p class="stat-number" style="color: var(--amber);">
+              <span class="stat-counter" data-target="15" data-suffix="+">0+</span>
+            </p>
+            <p class="stat-label">Departments Served</p>
+          </div>
+
         </div>
-
-        <div class="text-center">
-          <p class="text-3xl sm:text-4xl font-extrabold text-amber-400 stat-number" data-target="10000" data-suffix="+" data-prefix="">0+</p>
-          <p class="text-gray-400 text-sm font-medium mt-1">Hours Saved</p>
-        </div>
-
-        <div class="text-center">
-          <p class="text-3xl sm:text-4xl font-extrabold text-red-500 stat-number" data-target="200" data-suffix="+">0+</p>
-          <p class="text-gray-400 text-sm font-medium mt-1">Consultations Completed</p>
-        </div>
-
-        <div class="text-center">
-          <p class="text-3xl sm:text-4xl font-extrabold text-amber-400 stat-number" data-target="15" data-suffix="+">0+</p>
-          <p class="text-gray-400 text-sm font-medium mt-1">Departments Served</p>
-        </div>
-
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ========================================================
-       QUICK ACTIONS
-  ======================================================== -->
-  <section class="bg-gray-50 py-16">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-10">
-        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">What Would You Like to Do?</h2>
-        <p class="text-gray-500 mt-2">Get started quickly with one of our most popular actions.</p>
-      </div>
+    <!-- ================================================================
+         QUICK ACTIONS
+    ================================================================ -->
+    <section class="section-sm" style="padding: 4rem 0;">
+      <div class="container">
+        <div class="text-center mb-10">
+          <p class="section-eyebrow">Get Started</p>
+          <h2 class="section-title">What Would You Like to Do?</h2>
+          <p class="section-subtitle mx-auto" style="text-align:center;">Access the most common actions from the Automation Portal.</p>
+        </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+        <div class="grid-3">
 
-        <!-- Request a System -->
-        <a href="request.html"
-           class="card-hover group relative flex flex-col bg-red-600 hover:bg-red-700 text-white rounded-2xl p-7 shadow-lg shadow-red-200 transition-colors">
-          <div class="text-4xl mb-4">📋</div>
-          <h3 class="text-xl font-bold mb-2">Request a System</h3>
-          <p class="text-red-100 text-sm leading-relaxed flex-1">
-            Need a new automation? Submit a request and our team will build it for you.
-          </p>
-          <div class="mt-5 flex items-center gap-1.5 text-sm font-semibold text-red-200 group-hover:text-white transition-colors">
-            Submit Request
-            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </div>
-        </a>
-
-        <!-- Report an Issue -->
-        <a href="report-issue.html"
-           class="card-hover group relative flex flex-col bg-gray-700 hover:bg-gray-600 text-white rounded-2xl p-7 shadow-lg shadow-gray-200 transition-colors">
-          <div class="text-4xl mb-4">🐛</div>
-          <h3 class="text-xl font-bold mb-2">Report an Issue</h3>
-          <p class="text-gray-300 text-sm leading-relaxed flex-1">
-            Found a bug or something not working as expected? Let us know and we'll investigate.
-          </p>
-          <div class="mt-5 flex items-center gap-1.5 text-sm font-semibold text-gray-300 group-hover:text-white transition-colors">
-            Report Issue
-            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </div>
-        </a>
-
-        <!-- Request Consultation (FEATURED) -->
-        <a href="book-consultation.html"
-           class="card-hover group relative flex flex-col bg-amber-500 hover:bg-amber-400 text-white rounded-2xl p-7 shadow-xl shadow-amber-200 glow-amber transition-all">
-          <!-- Badge -->
-          <span class="absolute -top-3 left-7 bg-white text-amber-600 text-xs font-extrabold px-3 py-1 rounded-full shadow border border-amber-200 uppercase tracking-wider">
-            FREE &bull; 30 MIN
-          </span>
-          <div class="text-4xl mb-4 mt-2">📅</div>
-          <h3 class="text-xl font-bold mb-2">Request Consultation</h3>
-          <p class="text-amber-100 text-sm leading-relaxed flex-1">
-            Submit preferred time → Get confirmed within 24hrs with a Microsoft Teams meeting link.
-          </p>
-          <div class="mt-5 flex items-center gap-1.5 text-sm font-semibold text-amber-100 group-hover:text-white transition-colors">
-            Book Your Session
-            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-          </div>
-        </a>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================
-       CONSULTATION HIGHLIGHT BANNER
-  ======================================================== -->
-  <section class="py-16 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="bg-amber-50 border-l-4 border-amber-500 rounded-2xl p-8 sm:p-12 shadow-sm">
-        <div class="max-w-3xl mx-auto text-center">
-
-          <div class="inline-flex items-center gap-2 bg-amber-100 text-amber-700 text-xs font-bold px-4 py-1.5 rounded-full mb-5 uppercase tracking-wider">
-            Free Service
-          </div>
-
-          <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-gray-900 mb-4">
-            🗓️ Not sure where to start?<br/>
-            <span class="text-amber-600">Request a Free 30-Minute Consultation</span>
-          </h2>
-
-          <p class="text-gray-600 text-base sm:text-lg leading-relaxed mb-8">
-            Tell us your preferred time and what you'd like to discuss. Our team will review your request
-            and confirm your appointment within 24 hours — complete with a Microsoft Teams meeting link.
-          </p>
-
-          <!-- Benefits row -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
-            <div class="flex flex-col items-center gap-2 bg-white rounded-xl p-4 shadow-sm border border-amber-100">
-              <span class="text-2xl">🎯</span>
-              <p class="text-xs font-semibold text-gray-700 text-center">Personalized Advice</p>
+          <!-- Request a System -->
+          <a href="request.html" class="glass-card flex flex-col gap-4 group" style="text-decoration:none;">
+            <div class="flex items-center gap-3">
+              <div style="width:44px;height:44px;border-radius:10px;background:rgba(227,6,19,0.12);border:1px solid rgba(227,6,19,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              </div>
+              <h3 class="font-bold text-base" style="color:var(--text-primary);">Request a System</h3>
             </div>
-            <div class="flex flex-col items-center gap-2 bg-white rounded-xl p-4 shadow-sm border border-amber-100">
-              <span class="text-2xl">⚡</span>
-              <p class="text-xs font-semibold text-gray-700 text-center">Quick Solutions</p>
+            <p style="color:var(--text-secondary);font-size:0.875rem;line-height:1.6;">
+              Need a new automation? Submit a request and our team will build it for you.
+            </p>
+            <div class="flex items-center gap-1.5 mt-auto" style="color:var(--red);font-size:0.8125rem;font-weight:600;">
+              Submit Request
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
             </div>
-            <div class="flex flex-col items-center gap-2 bg-white rounded-xl p-4 shadow-sm border border-amber-100">
-              <span class="text-2xl">📋</span>
-              <p class="text-xs font-semibold text-gray-700 text-center">Actionable Plan</p>
-            </div>
-            <div class="flex flex-col items-center gap-2 bg-white rounded-xl p-4 shadow-sm border border-amber-100">
-              <span class="text-2xl">🎁</span>
-              <p class="text-xs font-semibold text-gray-700 text-center">Completely Free</p>
-            </div>
-          </div>
-
-          <a href="book-consultation.html"
-             class="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold px-10 py-4 rounded-xl text-base transition-all glow-amber shadow-lg">
-            Request Your Consultation Session →
           </a>
-          <p class="text-sm text-gray-500 mt-3">We'll confirm your appointment within 24 hours</p>
 
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================
-       FEATURED SYSTEMS
-  ======================================================== -->
-  <section class="py-16 bg-gray-50" id="featured-systems">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between mb-10 gap-4">
-        <div>
-          <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">Our Automation Systems</h2>
-          <p class="text-gray-500 mt-1.5">Explore the intelligent systems our team has deployed across Ogilvy.</p>
-        </div>
-        <a href="systems.html" class="inline-flex items-center gap-1.5 text-red-600 hover:text-red-700 font-semibold text-sm transition-colors flex-shrink-0">
-          View All Systems
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-          </svg>
-        </a>
-      </div>
-
-      <!-- Systems grid – dynamically replaced if Supabase data loads -->
-      <div id="systems-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-
-        <!-- Hardcoded fallback card 1 -->
-        <div class="card-hover bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-          <div class="h-2 bg-red-600"></div>
-          <div class="p-6 flex flex-col flex-1">
-            <div class="flex items-start justify-between mb-3">
-              <span class="inline-flex items-center bg-blue-50 text-blue-700 text-xs font-semibold px-2.5 py-1 rounded-full">Finance</span>
-              <span class="inline-flex items-center gap-1 bg-green-50 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
-                Active
-              </span>
-            </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2">Invoice Processing Automation</h3>
-            <p class="text-gray-500 text-sm leading-relaxed flex-1">
-              Automatically extracts, validates, and routes invoice data from email attachments into the finance system.
-            </p>
-            <div class="mt-5 flex items-center justify-between">
-              <div class="flex items-center gap-1.5 bg-red-50 text-red-700 text-xs font-bold px-3 py-1.5 rounded-lg">
-                ⏱ Saves 20hrs/week
+          <!-- Report an Issue -->
+          <a href="report-issue.html" class="glass-card flex flex-col gap-4 group" style="text-decoration:none;">
+            <div class="flex items-center gap-3">
+              <div style="width:44px;height:44px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
               </div>
-              <a href="systems.html" class="text-xs text-red-600 hover:text-red-700 font-semibold transition-colors">View Details →</a>
+              <h3 class="font-bold text-base" style="color:var(--text-primary);">Report an Issue</h3>
             </div>
-          </div>
-        </div>
-
-        <!-- Hardcoded fallback card 2 -->
-        <div class="card-hover bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-          <div class="h-2 bg-red-600"></div>
-          <div class="p-6 flex flex-col flex-1">
-            <div class="flex items-start justify-between mb-3">
-              <span class="inline-flex items-center bg-purple-50 text-purple-700 text-xs font-semibold px-2.5 py-1 rounded-full">Marketing</span>
-              <span class="inline-flex items-center gap-1 bg-green-50 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
-                Active
-              </span>
-            </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2">Social Media Scheduling</h3>
-            <p class="text-gray-500 text-sm leading-relaxed flex-1">
-              Drafts, schedules, and publishes social content across multiple platforms from a single content calendar.
+            <p style="color:var(--text-secondary);font-size:0.875rem;line-height:1.6;">
+              Found a bug or something not working? Let us know and we'll investigate promptly.
             </p>
-            <div class="mt-5 flex items-center justify-between">
-              <div class="flex items-center gap-1.5 bg-red-50 text-red-700 text-xs font-bold px-3 py-1.5 rounded-lg">
-                ⏱ Saves 15hrs/week
-              </div>
-              <a href="systems.html" class="text-xs text-red-600 hover:text-red-700 font-semibold transition-colors">View Details →</a>
+            <div class="flex items-center gap-1.5 mt-auto" style="color:var(--text-secondary);font-size:0.8125rem;font-weight:600;">
+              Report Issue
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
             </div>
-          </div>
-        </div>
-
-        <!-- Hardcoded fallback card 3 -->
-        <div class="card-hover bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">
-          <div class="h-2 bg-red-600"></div>
-          <div class="p-6 flex flex-col flex-1">
-            <div class="flex items-start justify-between mb-3">
-              <span class="inline-flex items-center bg-orange-50 text-orange-700 text-xs font-semibold px-2.5 py-1 rounded-full">HR</span>
-              <span class="inline-flex items-center gap-1 bg-green-50 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full">
-                <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
-                Active
-              </span>
-            </div>
-            <h3 class="text-lg font-bold text-gray-900 mb-2">HR Onboarding Workflow</h3>
-            <p class="text-gray-500 text-sm leading-relaxed flex-1">
-              Streamlines new hire onboarding by automating document collection, account provisioning, and welcome emails.
-            </p>
-            <div class="mt-5 flex items-center justify-between">
-              <div class="flex items-center gap-1.5 bg-red-50 text-red-700 text-xs font-bold px-3 py-1.5 rounded-lg">
-                ⏱ Saves 10hrs/week
-              </div>
-              <a href="systems.html" class="text-xs text-red-600 hover:text-red-700 font-semibold transition-colors">View Details →</a>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="text-center mt-10">
-        <a href="systems.html"
-           class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold px-8 py-3 rounded-xl text-sm transition-colors shadow-md shadow-red-100">
-          Browse All Systems
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-          </svg>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================
-       HOW IT WORKS (CONSULTATION)
-  ======================================================== -->
-  <section class="py-16 bg-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">How the Consultation Works</h2>
-        <p class="text-gray-500 mt-2 max-w-xl mx-auto">Getting expert automation advice is simple — three steps and you're in.</p>
-      </div>
-
-      <div class="relative grid grid-cols-1 sm:grid-cols-3 gap-8">
-
-        <!-- Connecting line (desktop only) -->
-        <div class="hidden sm:block absolute top-10 left-1/6 right-1/6 h-0.5 bg-gradient-to-r from-red-300 via-amber-400 to-green-400 z-0" style="left:16.67%;right:16.67%;top:2.5rem;"></div>
-
-        <!-- Step 1 -->
-        <div class="relative z-10 flex flex-col items-center text-center bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-          <div class="w-16 h-16 flex items-center justify-center bg-red-600 text-white rounded-full text-xl font-extrabold mb-5 shadow-lg shadow-red-200">
-            1
-          </div>
-          <h3 class="text-lg font-bold text-gray-900 mb-2">Submit Request</h3>
-          <p class="text-gray-500 text-sm leading-relaxed">
-            Choose your preferred date &amp; time and briefly describe what you'd like to discuss.
-          </p>
-        </div>
-
-        <!-- Step 2 -->
-        <div class="relative z-10 flex flex-col items-center text-center bg-white rounded-2xl border border-amber-200 shadow-sm p-8 ring-1 ring-amber-300/50">
-          <div class="w-16 h-16 flex items-center justify-center bg-amber-500 text-white rounded-full text-xl font-extrabold mb-5 shadow-lg shadow-amber-200">
-            2
-          </div>
-          <h3 class="text-lg font-bold text-gray-900 mb-2">We Review &amp; Confirm</h3>
-          <p class="text-gray-500 text-sm leading-relaxed">
-            Our team reviews your request and generates a Microsoft Teams meeting link within 24 hours.
-          </p>
-        </div>
-
-        <!-- Step 3 -->
-        <div class="relative z-10 flex flex-col items-center text-center bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
-          <div class="w-16 h-16 flex items-center justify-center bg-green-600 text-white rounded-full text-xl font-extrabold mb-5 shadow-lg shadow-green-200">
-            3
-          </div>
-          <h3 class="text-lg font-bold text-gray-900 mb-2">Meet with Us</h3>
-          <p class="text-gray-500 text-sm leading-relaxed">
-            Join the 30-minute Teams session for personalized automation advice tailored to your workflow.
-          </p>
-        </div>
-
-      </div>
-
-      <div class="text-center mt-10">
-        <a href="book-consultation.html"
-           class="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white font-bold px-10 py-3.5 rounded-xl text-sm transition-all glow-amber shadow-lg">
-          Start with a Request →
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================
-       TESTIMONIALS
-  ======================================================== -->
-  <section class="py-16 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-12">
-        <h2 class="text-2xl sm:text-3xl font-bold text-gray-900">What Our Colleagues Say</h2>
-        <p class="text-gray-500 mt-2">Real feedback from teams across Ogilvy.</p>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-
-        <!-- Testimonial 1 -->
-        <div class="card-hover bg-white rounded-2xl border border-gray-100 shadow-sm p-7 flex flex-col">
-          <div class="flex items-center gap-1 mb-4">
-            <span class="text-amber-400 text-sm">★★★★★</span>
-          </div>
-          <blockquote class="text-gray-600 text-sm leading-relaxed flex-1">
-            "I booked a consultation not knowing what to expect. Within 30 minutes, the team had a clear plan to automate our entire monthly reporting process. The Teams link came through the next morning."
-          </blockquote>
-          <div class="flex items-center gap-3 mt-6 pt-5 border-t border-gray-100">
-            <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600 font-bold text-sm flex-shrink-0">SR</div>
-            <div>
-              <p class="text-sm font-semibold text-gray-900">Sarah R.</p>
-              <p class="text-xs text-gray-500">Finance Department</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Testimonial 2 -->
-        <div class="card-hover bg-white rounded-2xl border border-amber-100 shadow-sm p-7 flex flex-col ring-1 ring-amber-200/60">
-          <div class="flex items-center gap-1 mb-4">
-            <span class="text-amber-400 text-sm">★★★★★</span>
-          </div>
-          <blockquote class="text-gray-600 text-sm leading-relaxed flex-1">
-            "The free consultation was genuinely the best use of half an hour I've had this year. They understood exactly what we needed and delivered a working prototype within the week."
-          </blockquote>
-          <div class="flex items-center gap-3 mt-6 pt-5 border-t border-gray-100">
-            <div class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 font-bold text-sm flex-shrink-0">MK</div>
-            <div>
-              <p class="text-sm font-semibold text-gray-900">Marcus K.</p>
-              <p class="text-xs text-gray-500">Marketing Strategy</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Testimonial 3 -->
-        <div class="card-hover bg-white rounded-2xl border border-gray-100 shadow-sm p-7 flex flex-col">
-          <div class="flex items-center gap-1 mb-4">
-            <span class="text-amber-400 text-sm">★★★★★</span>
-          </div>
-          <blockquote class="text-gray-600 text-sm leading-relaxed flex-1">
-            "Our onboarding used to take two full days of manual work. After one consultation session, the automation team built a workflow that handles it in under an hour. Incredible."
-          </blockquote>
-          <div class="flex items-center gap-3 mt-6 pt-5 border-t border-gray-100">
-            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 font-bold text-sm flex-shrink-0">JP</div>
-            <div>
-              <p class="text-sm font-semibold text-gray-900">Jamie P.</p>
-              <p class="text-xs text-gray-500">Human Resources</p>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ========================================================
-       FOOTER
-  ======================================================== -->
-  <footer class="bg-gray-900 text-gray-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-10">
-
-        <!-- Brand column -->
-        <div class="sm:col-span-2 lg:col-span-1">
-          <a href="index.html" class="flex items-center gap-2 mb-3">
-            <span class="text-xl">⚙️</span>
-            <span class="text-white font-bold text-lg tracking-tight">
-              Ogilvy <span class="text-red-500">Automation</span>
-            </span>
           </a>
-          <p class="text-gray-400 text-sm leading-relaxed">
-            Transforming repetitive tasks into intelligent systems that amplify human creativity and impact.
-          </p>
-        </div>
 
-        <!-- Navigation column -->
-        <div>
-          <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Navigation</h4>
-          <ul class="space-y-2.5">
-            <li><a href="index.html"            class="text-gray-400 hover:text-white text-sm transition-colors">Home</a></li>
-            <li><a href="systems.html"          class="text-gray-400 hover:text-white text-sm transition-colors">Systems</a></li>
-            <li><a href="what-we-automate.html" class="text-gray-400 hover:text-white text-sm transition-colors">What We Automate</a></li>
-            <li><a href="about.html"            class="text-gray-400 hover:text-white text-sm transition-colors">About</a></li>
-          </ul>
-        </div>
+          <!-- Request Consultation - featured -->
+          <a href="book-consultation.html" class="glass-card amber-glow-card flex flex-col gap-4 group" style="text-decoration:none;border-color:rgba(217,119,6,0.25);">
+            <div class="flex items-center gap-3">
+              <div style="width:44px;height:44px;border-radius:10px;background:rgba(217,119,6,0.15);border:1px solid rgba(217,119,6,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+              <h3 class="font-bold text-base" style="color:var(--text-primary);">Request Consultation</h3>
+            </div>
+            <p style="color:var(--text-secondary);font-size:0.875rem;line-height:1.6;">
+              Submit your preferred time and we'll confirm a free 30-minute session within 24 hours.
+            </p>
+            <div class="flex items-center gap-1.5 mt-auto" style="color:var(--amber);font-size:0.8125rem;font-weight:600;">
+              Book a Session
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+            </div>
+          </a>
 
-        <!-- Services column -->
-        <div>
-          <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Services</h4>
-          <ul class="space-y-2.5">
-            <li><a href="request.html"          class="text-gray-400 hover:text-white text-sm transition-colors">Request a System</a></li>
-            <li><a href="report-issue.html"     class="text-gray-400 hover:text-white text-sm transition-colors">Report an Issue</a></li>
-            <li><a href="book-consultation.html" class="text-gray-400 hover:text-white text-sm transition-colors">Book Consultation</a></li>
-          </ul>
         </div>
+      </div>
+    </section>
 
-        <!-- Footer CTA column -->
-        <div>
-          <h4 class="text-white font-semibold text-sm uppercase tracking-wider mb-4">Get Started</h4>
-          <p class="text-gray-400 text-sm mb-4 leading-relaxed">
-            Not sure where to begin? Request a free 30-minute consultation.
-          </p>
-          <a href="book-consultation.html"
-             class="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-bold px-5 py-2.5 rounded-lg transition-all glow-amber">
-            📅 Request Consultation
+    <!-- ================================================================
+         CONSULTATION FEATURE SECTION
+    ================================================================ -->
+    <section class="consultation-band" style="padding: 5rem 0;">
+      <div class="container">
+        <div class="grid-2" style="gap:3rem;align-items:center;">
+
+          <!-- Left -->
+          <div>
+            <p class="section-eyebrow">Free Service</p>
+            <h2 class="section-title mb-4">Schedule a Free 30-Minute Consultation</h2>
+            <p style="color:var(--text-secondary);line-height:1.75;margin-bottom:1.5rem;">
+              Not sure where to begin with automation? Our team offers free consultations to help you identify opportunities, scope solutions, and chart a path forward. Submit your preferred time - we'll review your request and confirm within 24 hours with a Microsoft Teams meeting link.
+            </p>
+            <a href="book-consultation.html" class="btn btn-primary btn-lg">
+              Request a Consultation
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+            </a>
+            <p class="mt-3" style="color:var(--text-muted);font-size:0.8125rem;">
+              Your request will be reviewed - confirmation within 24 hours
+            </p>
+          </div>
+
+          <!-- Right: Benefits -->
+          <div class="flex flex-col gap-4">
+
+            <div class="flex items-start gap-3">
+              <div class="check-icon mt-0.5">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <p class="font-semibold" style="color:var(--text-primary);font-size:0.9375rem;">Personalized Automation Advice</p>
+                <p style="color:var(--text-secondary);font-size:0.875rem;margin-top:0.25rem;">We'll focus entirely on your team's workflows and specific pain points.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="check-icon mt-0.5">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <p class="font-semibold" style="color:var(--text-primary);font-size:0.9375rem;">Actionable Next Steps</p>
+                <p style="color:var(--text-secondary);font-size:0.875rem;margin-top:0.25rem;">Leave the session with a clear plan you can act on immediately.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="check-icon mt-0.5">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <p class="font-semibold" style="color:var(--text-primary);font-size:0.9375rem;">No Commitment Required</p>
+                <p style="color:var(--text-secondary);font-size:0.875rem;margin-top:0.25rem;">A consultation carries zero obligation - just honest, expert guidance.</p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <div class="check-icon mt-0.5">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              </div>
+              <div>
+                <p class="font-semibold" style="color:var(--text-primary);font-size:0.9375rem;">Confirmed via Microsoft Teams</p>
+                <p style="color:var(--text-secondary);font-size:0.875rem;margin-top:0.25rem;">You'll receive a Teams meeting link once your request is confirmed.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         FEATURED SYSTEMS
+    ================================================================ -->
+    <section class="section" id="featured-systems">
+      <div class="container">
+
+        <div class="flex items-end justify-between mb-10 flex-wrap gap-4">
+          <div>
+            <p class="section-eyebrow">Live Systems</p>
+            <h2 class="section-title">Featured Automation Systems</h2>
+            <p class="section-subtitle">A selection of intelligent systems currently running across Ogilvy.</p>
+          </div>
+          <a href="systems.html" class="btn btn-ghost btn-sm flex-shrink-0">
+            View All Systems
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
           </a>
         </div>
 
-      </div>
+        <div id="systems-grid" class="grid-3">
 
-      <!-- Bottom bar -->
-      <div class="border-t border-gray-700 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-        <p class="text-gray-500 text-xs">© 2025 Ogilvy Automation Team. All rights reserved.</p>
-        <p class="text-gray-600 text-xs">Built by the Ogilvy Automation Team</p>
-      </div>
-    </div>
-  </footer>
+          <!-- Invoice Processing -->
+          <div class="glass-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column;">
+            <div class="system-card-top"></div>
+            <div style="padding:1.5rem;flex:1;display:flex;flex-direction:column;gap:0.875rem;">
+              <div class="flex items-start justify-between">
+                <span class="badge-dept dept-finance">Finance</span>
+                <span class="badge badge-approved">
+                  <span style="width:6px;height:6px;border-radius:50%;background:var(--success);display:inline-block;flex-shrink:0;"></span>
+                  Active
+                </span>
+              </div>
+              <div>
+                <h3 style="color:var(--text-primary);font-weight:700;font-size:1.0625rem;margin-bottom:0.375rem;">Invoice Processing</h3>
+                <p style="color:var(--text-secondary);font-size:0.875rem;line-height:1.6;">Automatically extracts, validates, and routes invoice data from email attachments into the finance system.</p>
+              </div>
+              <div class="flex items-center justify-between mt-auto pt-2">
+                <span class="impact-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Saves 20hrs/week
+                </span>
+                <a href="systems.html" style="color:var(--red);font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:0.25rem;">
+                  Details
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
 
-  <!-- ========================================================
+          <!-- Social Media Scheduler -->
+          <div class="glass-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column;">
+            <div class="system-card-top"></div>
+            <div style="padding:1.5rem;flex:1;display:flex;flex-direction:column;gap:0.875rem;">
+              <div class="flex items-start justify-between">
+                <span class="badge-dept dept-marketing">Marketing</span>
+                <span class="badge badge-approved">
+                  <span style="width:6px;height:6px;border-radius:50%;background:var(--success);display:inline-block;flex-shrink:0;"></span>
+                  Active
+                </span>
+              </div>
+              <div>
+                <h3 style="color:var(--text-primary);font-weight:700;font-size:1.0625rem;margin-bottom:0.375rem;">Social Media Scheduler</h3>
+                <p style="color:var(--text-secondary);font-size:0.875rem;line-height:1.6;">Drafts, schedules, and publishes content across multiple platforms from a single content calendar.</p>
+              </div>
+              <div class="flex items-center justify-between mt-auto pt-2">
+                <span class="impact-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Saves 15hrs/week
+                </span>
+                <a href="systems.html" style="color:var(--red);font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:0.25rem;">
+                  Details
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- HR Onboarding -->
+          <div class="glass-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column;">
+            <div class="system-card-top"></div>
+            <div style="padding:1.5rem;flex:1;display:flex;flex-direction:column;gap:0.875rem;">
+              <div class="flex items-start justify-between">
+                <span class="badge-dept dept-hr">HR</span>
+                <span class="badge badge-approved">
+                  <span style="width:6px;height:6px;border-radius:50%;background:var(--success);display:inline-block;flex-shrink:0;"></span>
+                  Active
+                </span>
+              </div>
+              <div>
+                <h3 style="color:var(--text-primary);font-weight:700;font-size:1.0625rem;margin-bottom:0.375rem;">HR Onboarding Workflow</h3>
+                <p style="color:var(--text-secondary);font-size:0.875rem;line-height:1.6;">Streamlines new hire onboarding by automating document collection, account provisioning, and welcome emails.</p>
+              </div>
+              <div class="flex items-center justify-between mt-auto pt-2">
+                <span class="impact-pill">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  Saves 10hrs/week
+                </span>
+                <a href="systems.html" style="color:var(--red);font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:0.25rem;">
+                  Details
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="text-center mt-10">
+          <a href="systems.html" class="btn btn-ghost btn-lg">
+            Browse All Systems
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         TESTIMONIALS
+    ================================================================ -->
+    <section class="section" style="padding-top:0;">
+      <div class="container">
+        <div class="text-center mb-10">
+          <p class="section-eyebrow">From Our Colleagues</p>
+          <h2 class="section-title">What Ogilvy Teams Are Saying</h2>
+          <p class="section-subtitle mx-auto" style="text-align:center;">Feedback from teams who have worked with the Automation team.</p>
+        </div>
+
+        <div class="grid-3">
+
+          <!-- Testimonial 1 -->
+          <div class="glass-card testimonial-card flex flex-col gap-4">
+            <blockquote style="color:var(--text-secondary);font-size:0.9375rem;line-height:1.75;flex:1;font-style:italic;">
+              "I booked a consultation not knowing what to expect. Within 30 minutes, the team had a clear plan to automate our entire monthly reporting process. The Teams link came through the next morning."
+            </blockquote>
+            <div class="flex items-center gap-3 pt-4" style="border-top:1px solid rgba(255,255,255,0.07);">
+              <div class="team-avatar" style="width:40px;height:40px;border-radius:10px;font-size:0.8rem;">SR</div>
+              <div>
+                <p style="color:var(--text-primary);font-weight:600;font-size:0.9rem;">Sarah R.</p>
+                <p style="color:var(--text-muted);font-size:0.8rem;">Finance Department</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Testimonial 2 -->
+          <div class="glass-card testimonial-card flex flex-col gap-4">
+            <blockquote style="color:var(--text-secondary);font-size:0.9375rem;line-height:1.75;flex:1;font-style:italic;">
+              "The free consultation was genuinely the best use of half an hour I've had this year. They understood exactly what we needed and delivered a working prototype within the week."
+            </blockquote>
+            <div class="flex items-center gap-3 pt-4" style="border-top:1px solid rgba(255,255,255,0.07);">
+              <div class="team-avatar" style="width:40px;height:40px;border-radius:10px;font-size:0.8rem;">MK</div>
+              <div>
+                <p style="color:var(--text-primary);font-weight:600;font-size:0.9rem;">Marcus K.</p>
+                <p style="color:var(--text-muted);font-size:0.8rem;">Marketing Strategy</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Testimonial 3 -->
+          <div class="glass-card testimonial-card flex flex-col gap-4">
+            <blockquote style="color:var(--text-secondary);font-size:0.9375rem;line-height:1.75;flex:1;font-style:italic;">
+              "Our onboarding used to take two full days of manual work. After one consultation session, the automation team built a workflow that handles it in under an hour."
+            </blockquote>
+            <div class="flex items-center gap-3 pt-4" style="border-top:1px solid rgba(255,255,255,0.07);">
+              <div class="team-avatar" style="width:40px;height:40px;border-radius:10px;font-size:0.8rem;">JP</div>
+              <div>
+                <p style="color:var(--text-primary);font-weight:600;font-size:0.9rem;">Jamie P.</p>
+                <p style="color:var(--text-muted);font-size:0.8rem;">Human Resources</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================================================================
+         FOOTER
+    ================================================================ -->
+    <footer style="background:rgba(0,0,0,0.4);border-top:1px solid rgba(255,255,255,0.06);">
+      <!-- Red accent line -->
+      <div style="height:3px;background:linear-gradient(90deg, var(--red) 0%, rgba(227,6,19,0.3) 60%, transparent 100%);"></div>
+
+      <div class="container" style="padding-top:3rem;padding-bottom:2rem;">
+        <div class="grid-4" style="gap:2.5rem;margin-bottom:2.5rem;">
+
+          <!-- Brand -->
+          <div>
+            <a href="index.html" class="nav-logo" style="margin-bottom:1rem;display:inline-flex;">
+              <div class="nav-logo-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
+              </div>
+              <span>Ogilvy <span class="text-red-600">Automation</span></span>
+            </a>
+            <p style="color:var(--text-muted);font-size:0.875rem;line-height:1.65;margin-top:0.75rem;">
+              Transforming repetitive tasks into intelligent systems that amplify human creativity and impact across Ogilvy.
+            </p>
+          </div>
+
+          <!-- Navigation -->
+          <div>
+            <h4 style="color:var(--text-primary);font-weight:700;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;">Navigation</h4>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:0.625rem;">
+              <li><a href="index.html" style="color:var(--text-secondary);font-size:0.875rem;transition:color 0.2s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">Home</a></li>
+              <li><a href="systems.html" style="color:var(--text-secondary);font-size:0.875rem;transition:color 0.2s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">Systems</a></li>
+              <li><a href="what-we-automate.html" style="color:var(--text-secondary);font-size:0.875rem;transition:color 0.2s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">What We Automate</a></li>
+              <li><a href="about.html" style="color:var(--text-secondary);font-size:0.875rem;transition:color 0.2s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">About</a></li>
+            </ul>
+          </div>
+
+          <!-- Services -->
+          <div>
+            <h4 style="color:var(--text-primary);font-weight:700;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;">Services</h4>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:0.625rem;">
+              <li><a href="request.html" style="color:var(--text-secondary);font-size:0.875rem;transition:color 0.2s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">Request a System</a></li>
+              <li><a href="report-issue.html" style="color:var(--text-secondary);font-size:0.875rem;transition:color 0.2s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">Report an Issue</a></li>
+              <li><a href="book-consultation.html" style="color:var(--text-secondary);font-size:0.875rem;transition:color 0.2s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">Book Consultation</a></li>
+            </ul>
+          </div>
+
+          <!-- Contact -->
+          <div>
+            <h4 style="color:var(--text-primary);font-weight:700;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:1rem;">Contact</h4>
+            <ul style="list-style:none;display:flex;flex-direction:column;gap:0.625rem;">
+              <li style="color:var(--text-secondary);font-size:0.875rem;">
+                <span style="color:var(--text-muted);font-size:0.75rem;display:block;margin-bottom:0.125rem;">Email</span>
+                <a href="mailto:automation@ogilvy.com" style="color:var(--text-secondary);transition:color 0.2s;" onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">automation@ogilvy.com</a>
+              </li>
+              <li style="color:var(--text-secondary);font-size:0.875rem;">
+                <span style="color:var(--text-muted);font-size:0.75rem;display:block;margin-bottom:0.125rem;">Teams Channel</span>
+                #ogilvy-automation
+              </li>
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- Bottom bar -->
+        <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.75rem;">
+          <p style="color:var(--text-muted);font-size:0.8rem;">2025 Ogilvy Automation Team. All rights reserved.</p>
+          <p style="color:var(--text-muted);font-size:0.8rem;">Built by the Ogilvy Automation Team</p>
+        </div>
+      </div>
+    </footer>
+
+  </div><!-- end z-content -->
+
+  <!-- ================================================================
        SCRIPTS
-  ======================================================== -->
+  ================================================================ -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase-config.js"></script>
   <script src="js/main.js"></script>
 
   <script>
-    // ── Mobile nav toggle ──────────────────────────────────────
+    // ── Mobile nav toggle ───────────────────────────────────────────
     (function () {
-      var btn        = document.getElementById('mobile-menu-btn');
-      var menu       = document.getElementById('mobile-menu');
-      var hamburger  = document.getElementById('hamburger-icon');
-      var closeIcon  = document.getElementById('close-icon');
-      var open       = false;
-
+      var btn  = document.getElementById('mobile-menu-btn');
+      var menu = document.getElementById('mobile-menu');
+      var open = false;
       btn.addEventListener('click', function () {
         open = !open;
         menu.classList.toggle('hidden', !open);
-        hamburger.classList.toggle('hidden', open);
-        closeIcon.classList.toggle('hidden', !open);
         btn.setAttribute('aria-expanded', String(open));
+        btn.textContent = open ? 'Close' : 'Menu';
       });
     })();
 
-    // ── Animated counter for stats ────────────────────────────
+    // ── Animated stat counters on scroll ───────────────────────────
     (function () {
-      var stats = document.querySelectorAll('.stat-number');
-      var animated = false;
+      var counters  = document.querySelectorAll('.stat-counter');
+      var animated  = false;
 
-      function formatNumber(n) {
-        return n >= 1000 ? (n / 1000).toFixed(0) + ',000' : String(n);
+      function formatValue(n, format) {
+        if (format === 'thousands' && n >= 1000) {
+          return (n / 1000).toFixed(0) + ',000';
+        }
+        return String(n);
       }
 
       function animateCounters() {
         if (animated) return;
         animated = true;
-        stats.forEach(function (el) {
-          var target = parseInt(el.getAttribute('data-target'), 10);
-          var suffix = el.getAttribute('data-suffix') || '';
+        counters.forEach(function (el) {
+          var target   = parseInt(el.getAttribute('data-target'), 10);
+          var suffix   = el.getAttribute('data-suffix') || '';
+          var format   = el.getAttribute('data-format') || '';
           var duration = 1800;
-          var startTime = null;
+          var start    = null;
 
-          function step(timestamp) {
-            if (!startTime) startTime = timestamp;
-            var progress = Math.min((timestamp - startTime) / duration, 1);
-            // Ease-out cubic
-            var eased = 1 - Math.pow(1 - progress, 3);
-            var current = Math.round(eased * target);
-            el.textContent = formatNumber(current) + suffix;
+          function step(ts) {
+            if (!start) start = ts;
+            var progress = Math.min((ts - start) / duration, 1);
+            var eased    = 1 - Math.pow(1 - progress, 3);
+            var current  = Math.round(eased * target);
+            el.textContent = formatValue(current, format) + suffix;
             if (progress < 1) {
               requestAnimationFrame(step);
             } else {
-              el.textContent = formatNumber(target) + suffix;
+              el.textContent = formatValue(target, format) + suffix;
             }
           }
           requestAnimationFrame(step);
         });
       }
 
-      // Trigger when stats section enters viewport
-      var statsSection = document.getElementById('stats-section');
-      if ('IntersectionObserver' in window) {
+      var section = document.getElementById('stats-section');
+      if ('IntersectionObserver' in window && section) {
         var observer = new IntersectionObserver(function (entries) {
           entries.forEach(function (entry) {
             if (entry.isIntersecting) {
@@ -772,20 +619,29 @@
               observer.disconnect();
             }
           });
-        }, { threshold: 0.3 });
-        observer.observe(statsSection);
+        }, { threshold: 0.25 });
+        observer.observe(section);
       } else {
-        // Fallback: run immediately
         animateCounters();
       }
     })();
 
-    // ── Dynamic featured systems from Supabase ────────────────
+    // ── Load featured systems from Supabase (optional) ─────────────
     (function () {
-      // Wait for supabase-config.js to expose `window.supabaseClient`
+      var deptClasses = {
+        Finance:   'dept-finance',
+        Marketing: 'dept-marketing',
+        HR:        'dept-hr',
+        Operations:'dept-operations',
+        IT:        'dept-it',
+        Legal:     'dept-legal',
+        Strategy:  'dept-strategy',
+        Creative:  'dept-creative',
+      };
+
       window.addEventListener('load', async function () {
         var client = window.supabaseClient;
-        if (!client) return; // gracefully fall back to hardcoded cards
+        if (!client) return;
 
         try {
           var result = await client
@@ -797,40 +653,26 @@
 
           if (result.error || !result.data || result.data.length === 0) return;
 
-          var systems = result.data;
-          var grid    = document.getElementById('systems-grid');
+          var grid = document.getElementById('systems-grid');
           if (!grid) return;
 
-          var deptColors = {
-            Finance:   'blue',
-            Marketing: 'purple',
-            HR:        'orange',
-            Operations:'teal',
-            IT:        'indigo',
-            Legal:     'pink',
-          };
-
-          var html = systems.map(function (s) {
-            var color = deptColors[s.department] || 'gray';
-            return '<div class="card-hover bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col">'
-              + '<div class="h-2 bg-red-600"></div>'
-              + '<div class="p-6 flex flex-col flex-1">'
-              + '<div class="flex items-start justify-between mb-3">'
-              + '<span class="inline-flex items-center bg-' + color + '-50 text-' + color + '-700 text-xs font-semibold px-2.5 py-1 rounded-full">' + (s.department || 'General') + '</span>'
-              + '<span class="inline-flex items-center gap-1 bg-green-50 text-green-700 text-xs font-semibold px-2.5 py-1 rounded-full"><span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>' + (s.status || 'Active') + '</span>'
+          grid.innerHTML = result.data.map(function (s) {
+            var deptClass = deptClasses[s.department] || 'dept-other';
+            return '<div class="glass-card" style="padding:0;overflow:hidden;display:flex;flex-direction:column;">'
+              + '<div class="system-card-top"></div>'
+              + '<div style="padding:1.5rem;flex:1;display:flex;flex-direction:column;gap:0.875rem;">'
+              + '<div class="flex items-start justify-between">'
+              + '<span class="badge-dept ' + deptClass + '">' + (s.department || 'General') + '</span>'
+              + '<span class="badge badge-approved"><span style="width:6px;height:6px;border-radius:50%;background:var(--success);display:inline-block;flex-shrink:0;"></span> Active</span>'
               + '</div>'
-              + '<h3 class="text-lg font-bold text-gray-900 mb-2">' + s.name + '</h3>'
-              + '<p class="text-gray-500 text-sm leading-relaxed flex-1">' + (s.description || '') + '</p>'
-              + '<div class="mt-5 flex items-center justify-between">'
-              + (s.impact ? '<div class="flex items-center gap-1.5 bg-red-50 text-red-700 text-xs font-bold px-3 py-1.5 rounded-lg">⏱ ' + s.impact + '</div>' : '<div></div>')
-              + '<a href="systems.html" class="text-xs text-red-600 hover:text-red-700 font-semibold transition-colors">View Details →</a>'
-              + '</div>'
-              + '</div></div>';
+              + '<div><h3 style="color:var(--text-primary);font-weight:700;font-size:1.0625rem;margin-bottom:0.375rem;">' + s.name + '</h3>'
+              + '<p style="color:var(--text-secondary);font-size:0.875rem;line-height:1.6;">' + (s.description || '') + '</p></div>'
+              + '<div class="flex items-center justify-between mt-auto pt-2">'
+              + (s.impact ? '<span class="impact-pill"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' + s.impact + '</span>' : '<span></span>')
+              + '<a href="systems.html" style="color:var(--red);font-size:0.8rem;font-weight:600;display:flex;align-items:center;gap:0.25rem;">Details <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 5l7 7-7 7"/></svg></a>'
+              + '</div></div></div>';
           }).join('');
-
-          grid.innerHTML = html;
         } catch (e) {
-          // Silent catch – hardcoded fallback cards remain visible
           console.warn('Could not load systems from Supabase:', e);
         }
       });
